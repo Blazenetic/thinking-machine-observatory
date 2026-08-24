@@ -136,6 +136,7 @@ export function GuidedLaboratory({
                   <button
                     className="text-button"
                     disabled={draft.trim().length === 0}
+                    id={`append-reflection-${experiment.id}`}
                     onClick={() => {
                       onAddReflection(experiment, draft, evaluation.status);
                       setDrafts((current) => ({ ...current, [experiment.id]: '' }));

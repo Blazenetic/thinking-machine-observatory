@@ -30,7 +30,7 @@ bundle budgets.
 
 | Asset                       |      Observed |           Limit | Result |
 | --------------------------- | ------------: | --------------: | ------ |
-| Application JavaScript gzip | 108,751 bytes |   128,000 bytes | passed |
+| Application JavaScript gzip | 108,759 bytes |   128,000 bytes | passed |
 | Application CSS gzip        |   6,901 bytes |    10,240 bytes | passed |
 | Inference worker JavaScript | 922,478 bytes | 1,048,576 bytes | passed |
 

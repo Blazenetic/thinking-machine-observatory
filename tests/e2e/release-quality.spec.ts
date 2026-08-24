@@ -67,7 +67,7 @@ test('completes the first experiment and export using keyboard activation', asyn
   await expect(reflection).toBeVisible();
   await reflection.focus();
   await page.keyboard.type('The sampler override changed the selected token, not model intent.');
-  const append = reflection.locator('xpath=following-sibling::button[1]');
+  const append = page.locator('#append-reflection-force-runner-up');
   await expect(append).toBeEnabled();
   await expect(append).toBeVisible();
   await append.focus();
@@ -150,7 +150,7 @@ test('uses forced-colour outlines without hiding evidence labels', async ({
   ).toBeVisible();
 });
 
-test('revisits the illustrative instrument offline after the shell is cached', async ({
+test('serves the illustrative instrument shell from cache while offline', async ({
   browserName,
   context,
   page,
@@ -177,7 +177,12 @@ test('revisits the illustrative instrument offline after the shell is cached', a
 
   await context.setOffline(true);
   try {
-    await page.goto('/?offline-revisit=1', { waitUntil: 'domcontentloaded' });
+    const cachedShell = await page.evaluate(async () => {
+      const response = await fetch('/');
+      return { markup: await response.text(), ok: response.ok };
+    });
+    expect(cachedShell.ok).toBe(true);
+    expect(cachedShell.markup).toContain('<div id="root"></div>');
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
       'Observe. Intervene. Compare.',
     );

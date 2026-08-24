@@ -109,7 +109,7 @@
         },
         {
           "name": "application JavaScript gzip",
-          "value": 108751,
+          "value": 108759,
           "unit": "bytes",
           "threshold": 128000,
           "comparison": "at-most"
