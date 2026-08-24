@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/domain" },
+    { "path": "packages/sampler" },
+    { "path": "packages/trace-schema" },
+    { "path": "packages/instruments" },
+    { "path": "packages/experiments" },
+    { "path": "packages/inference-worker" },
+    { "path": "apps/observatory" }
+  ]
+}

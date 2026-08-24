@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "composite": false,
+    "jsx": "react-jsx",
+    "noEmit": true
+  },
+  "include": [
+    "*.js",
+    "*.ts",
+    "apps/**/*.ts",
+    "apps/**/*.tsx",
+    "packages/**/*.ts",
+    "scripts/**/*.ts",
+    "scripts/**/*.mjs",
+    "tests/**/*.ts"
+  ],
+  "exclude": ["**/dist/**", "node_modules/**"]
+}

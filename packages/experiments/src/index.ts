@@ -1,0 +1,108 @@
+import type { GuidedExperiment } from '@observatory/domain';
+
+export const GUIDED_EXPERIMENTS: readonly GuidedExperiment[] = [
+  {
+    action: 'Compare temperature 0.5, 1.0 and 1.5 while logits, filters and seed stay fixed.',
+    controlledVariables: ['logits', 'top-k', 'top-p', 'seed'],
+    evidenceClasses: ['derived'],
+    id: 'temperature-without-mysticism',
+    integrityNote: 'Temperature rescales logits before softmax; it does not alter model knowledge.',
+    learningObjective: 'Relate temperature scaling to probability concentration and entropy.',
+    limitation:
+      'This does not prove that high temperature is creative or low temperature is truthful.',
+    observe: ['top probability', 'entropy', 'rank stability', 'retained mass'],
+    question: 'How does temperature reshape a fixed candidate distribution?',
+    title: 'Temperature without mysticism',
+  },
+  {
+    action: 'Disable top-k and compare top-p at 0.5, 0.8, 0.95 and 1.0.',
+    controlledVariables: ['logits', 'temperature', 'seed'],
+    evidenceClasses: ['derived'],
+    id: 'nucleus-boundary',
+    integrityNote:
+      'The boundary candidate is retained when its cumulative mass reaches the threshold.',
+    learningObjective: 'See why top-p retains a variable-size candidate prefix.',
+    limitation: 'Removed candidates were not impossible under the model distribution.',
+    observe: ['cumulative mass', 'boundary candidate', 'survivor count', 'renormalisation'],
+    question: 'Which candidates survive top-p, and why does their count change?',
+    title: 'The nucleus boundary',
+  },
+  {
+    action: 'Create three branches with identical settings and different seeds.',
+    controlledVariables: ['prompt', 'model build', 'logits', 'sampler settings'],
+    evidenceClasses: ['measured', 'derived', 'interventional'],
+    id: 'same-model-different-dice',
+    integrityNote: 'Only the pseudo-random sequence changes at the first branch point.',
+    learningObjective: 'Separate model output from stochastic token selection.',
+    limitation: 'The model itself did not change between these branches.',
+    observe: ['seeded draw', 'first token divergence', 'later compounding differences'],
+    question: 'What changes when only the random seed changes?',
+    title: 'Same model, different dice',
+  },
+  {
+    action: 'Compare two prompts differing by one token or punctuation mark with matched seeds.',
+    controlledVariables: ['model build', 'sampler settings', 'seed'],
+    evidenceClasses: ['measured', 'derived', 'interventional'],
+    id: 'single-token-butterfly',
+    integrityNote: 'This is a controlled rerun for one prompt pair, not a universal causal claim.',
+    learningObjective: 'Observe how input changes can alter and compound future distributions.',
+    limitation: 'Small edits do not always cause large downstream changes.',
+    observe: ['tokenisation', 'first distribution change', 'entropy delta', 'future divergence'],
+    question: 'How can one prompt token alter later candidate distributions?',
+    title: 'A single-token butterfly effect',
+  },
+  {
+    action: 'Keep the baseline, force its second-ranked token in a child branch, then compare.',
+    controlledVariables: ['prompt', 'model build', 'sampler settings'],
+    evidenceClasses: ['derived', 'interventional'],
+    id: 'force-runner-up',
+    integrityNote:
+      'The forced token is a recorded manual override, never attributed to model intent.',
+    learningObjective: 'Use immutable branching to examine a locally plausible counterfactual.',
+    limitation: 'The alternate future was not a hidden intention of the model.',
+    observe: ['shared ancestor', 'override marker', 'first divergence', 'distribution difference'],
+    question: 'What future appears if the runner-up is selected manually?',
+    title: 'Force the runner-up',
+  },
+  {
+    action: 'Scrub a supported, versioned layerwise probe from input to final layer.',
+    controlledVariables: ['prompt position', 'probe version', 'candidate set'],
+    evidenceClasses: ['probed', 'derived'],
+    id: 'when-certainty-forms',
+    integrityNote:
+      'A logit lens is a probe with architectural assumptions, not a direct thought readout.',
+    learningObjective: 'Inspect how decodable candidate information changes through model depth.',
+    limitation: 'A layer does not literally hold a settled next-token belief.',
+    observe: ['probe rank', 'probe entropy', 'candidate instability'],
+    question: 'How does candidate concentration appear to evolve across layers?',
+    title: 'When certainty forms',
+  },
+  {
+    action: 'Compare one attention pattern with several controlled input interventions.',
+    controlledVariables: ['head', 'layer', 'output position', 'sampler'],
+    evidenceClasses: ['measured', 'interventional', 'derived'],
+    id: 'attention-is-not-importance',
+    integrityNote: 'Attention weights and output sensitivity answer different questions.',
+    learningObjective: 'Distinguish attention measurement from interventional evidence.',
+    limitation: 'Neither attention nor a single ablation provides a complete causal explanation.',
+    observe: ['attention weights', 'output-distribution change', 'mismatched rankings'],
+    question: 'Does high attention identify the most causally important input token?',
+    title: 'Attention is not importance',
+  },
+  {
+    action: 'Inspect paired inputs containing spaces, capitals, emoji, punctuation and rare words.',
+    controlledVariables: ['tokenizer build'],
+    evidenceClasses: ['measured'],
+    id: 'tokenisation-surprises',
+    integrityNote: 'Exact token IDs and byte fragments come from the pinned tokenizer asset.',
+    learningObjective: 'Understand that language models receive token IDs rather than human words.',
+    limitation: 'A token does not map cleanly to one human concept.',
+    observe: ['token count', 'IDs', 'decoded fragments', 'byte boundaries'],
+    question: 'Why do spaces, punctuation and uncommon text form unexpected tokens?',
+    title: 'Tokenisation surprises',
+  },
+] as const;
+
+export function findExperiment(id: string): GuidedExperiment | undefined {
+  return GUIDED_EXPERIMENTS.find((experiment) => experiment.id === id);
+}
