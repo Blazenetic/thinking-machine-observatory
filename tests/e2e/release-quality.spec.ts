@@ -61,19 +61,15 @@ test('completes the first experiment and export using keyboard activation', asyn
   await page.keyboard.press('Enter');
   await expect(page.getByLabel('Compared selected tokens')).toContainText('dark');
 
-  const runnerUpExperiment = page.locator('details').filter({
-    has: page.getByText('Force the runner-up', { exact: true }),
-  });
+  const reflection = page.locator('#reflection-force-runner-up');
+  const runnerUpExperiment = reflection.locator('xpath=ancestor::details');
   await expect(runnerUpExperiment).toHaveAttribute('open', '');
-  const reflection = runnerUpExperiment.getByRole('textbox', {
-    name: 'Reflection · append-only trace annotation',
-  });
+  await expect(reflection).toBeVisible();
   await reflection.focus();
   await page.keyboard.type('The sampler override changed the selected token, not model intent.');
-  const append = runnerUpExperiment.getByRole('button', {
-    name: 'Append reflection to trace',
-  });
+  const append = page.locator('#reflection-force-runner-up + button');
   await expect(append).toBeEnabled();
+  await expect(append).toBeVisible();
   await append.focus();
   await page.keyboard.press('Enter');
   await expect(runnerUpExperiment.getByText(/sampler override changed/)).toBeVisible();

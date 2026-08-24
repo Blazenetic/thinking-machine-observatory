@@ -1,4 +1,4 @@
-const CACHE_NAME = 'observatory-shell-v2';
+const CACHE_NAME = 'observatory-shell-v3';
 const APP_SHELL_URL = new URL('./', self.registration.scope).href;
 
 async function cacheApplicationShell() {
@@ -38,8 +38,8 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request)
         .then(async (response) => {
-          if (response.ok)
-            await (await caches.open(CACHE_NAME)).put(APP_SHELL_URL, response.clone());
+          if (!response.ok) return (await caches.match(APP_SHELL_URL)) ?? response;
+          await (await caches.open(CACHE_NAME)).put(APP_SHELL_URL, response.clone());
           return response;
         })
         .catch(async () => (await caches.match(APP_SHELL_URL)) ?? Response.error()),
