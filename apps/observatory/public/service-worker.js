@@ -1,12 +1,12 @@
-const CACHE_NAME = 'observatory-shell-v1';
-const APP_SHELL = './';
+const CACHE_NAME = 'observatory-shell-v2';
+const APP_SHELL_URL = new URL('./', self.registration.scope).href;
 
 async function cacheApplicationShell() {
   const cache = await caches.open(CACHE_NAME);
-  const response = await fetch(APP_SHELL, { cache: 'reload' });
+  const response = await fetch(APP_SHELL_URL, { cache: 'reload' });
   if (!response.ok) throw new Error(`Application shell returned ${response.status}.`);
   const markup = await response.clone().text();
-  await cache.put(APP_SHELL, response);
+  await cache.put(APP_SHELL_URL, response);
 
   const assetPaths = [...markup.matchAll(/(?:href|src)="([^"#]+)"/g)]
     .map((match) => match[1])
@@ -38,10 +38,11 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request)
         .then(async (response) => {
-          if (response.ok) await (await caches.open(CACHE_NAME)).put(APP_SHELL, response.clone());
+          if (response.ok)
+            await (await caches.open(CACHE_NAME)).put(APP_SHELL_URL, response.clone());
           return response;
         })
-        .catch(async () => (await caches.match(APP_SHELL)) ?? Response.error()),
+        .catch(async () => (await caches.match(APP_SHELL_URL)) ?? Response.error()),
     );
     return;
   }

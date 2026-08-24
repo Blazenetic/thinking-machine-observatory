@@ -38,7 +38,7 @@ test('supports reversible calibration before a branch is committed', async ({ pa
 test('compares the greedy baseline with a seeded stochastic branch', async ({ page }) => {
   await page.goto('/');
 
-  await page.getByLabel('Seed').fill('0');
+  await page.getByRole('textbox', { name: 'Seed', exact: true }).fill('0');
   await page.getByRole('button', { name: /Commit branch 1/ }).click();
 
   await expect(page.getByLabel('Compared selected tokens')).toContainText('clear');
