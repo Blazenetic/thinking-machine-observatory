@@ -1,0 +1,9 @@
+packages:
+  - apps/*
+  - packages/*
+overrides:
+  # Transformers.js does not use this native image path in the browser bundle;
+  # keep its transitive install on the patched libvips line nonetheless.
+  sharp: 0.35.3
+minimumReleaseAgeExclude:
+  - '@types/react-dom@19.2.5'

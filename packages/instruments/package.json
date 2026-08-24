@@ -1,0 +1,15 @@
+{
+  "name": "@observatory/instruments",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@observatory/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "@observatory/sampler": "workspace:*"
+  }
+}

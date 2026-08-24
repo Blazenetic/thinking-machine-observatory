@@ -1,0 +1,8 @@
+dist
+coverage
+playwright-report
+test-results
+pnpm-lock.yaml
+fixtures/traces/*.json
+docs/0[0-9]-*.md
+docs/10-*.md

@@ -105,3 +105,18 @@ This document hands the package to an implementation agent and records the curre
 # Expected final agent report
 
 Summarise what was built, how to run it, what was verified, measured performance, supported modes, scientific limitations, known defects, decisions made, files changed and the recommended next build session. Include direct evidence for the hero workflow rather than only a feature list.
+
+# Implementation update — 24 August 2026
+
+Session 01 established the modular monorepo and a working exact-sampler teaching vertical slice. The implementation deliberately separates an illustrative ten-candidate fixture from an unverified pinned DistilGPT2 worker adapter. Exact live sampling remains blocked until the full vocabulary, asset hashes and golden comparisons are available.
+
+Accepted implementation decisions:
+
+| ID | Decision | Status | Evidence/Reason | Consequences |
+| :---- | :---- | :---- | :---- | :---- |
+| D-006 | pnpm workspaces with dependency-directed TypeScript packages | Accepted | Keeps scientific logic independent of runtime and UI | More manifests; no task orchestrator yet |
+| D-007 | Exact sampler and trace engine land before verified model instrumentation | Accepted | Enables tested hero workflow without fabricating model output | Fixture must remain visibly illustrative |
+| D-008 | Pinned Transformers.js DistilGPT2 worker is experimental and top-N only | Provisional | Concrete feasibility seam; no golden comparison yet | Cannot drive exact live sampling |
+| D-009 | Trace schema 1.0.0 uses strict validation and immutable value operations | Accepted | Reproducible selection and ancestor stability | Future migrations must be explicit |
+
+See `docs/implementation/01-session-01-handover.md` for verification results, limitations and the next bounded session.

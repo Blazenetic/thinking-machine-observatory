@@ -1,0 +1,16 @@
+{
+  "name": "@observatory/trace-schema",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@observatory/domain": "workspace:*",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@observatory/sampler": "workspace:*"
+  }
+}

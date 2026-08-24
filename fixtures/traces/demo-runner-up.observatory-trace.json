@@ -1,0 +1,288 @@
+{
+  "annotations": [],
+  "calculationVersions": {
+    "entropy": "bits-1",
+    "sampler": "1",
+    "softmax": "stable-1"
+  },
+  "createdAt": "2026-08-24T00:01:00.000Z",
+  "mode": "illustrative-demo",
+  "model": {
+    "assetHash": null,
+    "id": "observatory-teaching-fixture",
+    "revision": "1",
+    "dtype": "illustrative-fixture",
+    "runtime": "@observatory/sampler",
+    "verificationStatus": "illustrative"
+  },
+  "parent": {
+    "forkStep": 1,
+    "traceId": "demo-baseline"
+  },
+  "prompt": "The night sky was",
+  "promptTokens": [
+    {
+      "byteValues": [
+        84,
+        104,
+        101
+      ],
+      "position": 0,
+      "text": "The",
+      "tokenId": 464
+    },
+    {
+      "byteValues": [
+        32,
+        110,
+        105,
+        103,
+        104,
+        116
+      ],
+      "position": 1,
+      "text": " night",
+      "tokenId": 1755
+    },
+    {
+      "byteValues": [
+        32,
+        115,
+        107,
+        121
+      ],
+      "position": 2,
+      "text": " sky",
+      "tokenId": 6766
+    },
+    {
+      "byteValues": [
+        32,
+        119,
+        97,
+        115
+      ],
+      "position": 3,
+      "text": " was",
+      "tokenId": 373
+    }
+  ],
+  "schemaVersion": "1.0.0",
+  "steps": [
+    {
+      "candidateUniverse": {
+        "captured": 10,
+        "complete": true,
+        "label": "Complete 10-candidate teaching universe",
+        "size": 10
+      },
+      "createdOrder": 0,
+      "inference": {
+        "durationMs": null,
+        "evidenceClass": "derived",
+        "mode": "illustrative-demo",
+        "note": "Illustrative fixture logits; sampler transforms and seeded selection are exact.",
+        "verificationStatus": "illustrative"
+      },
+      "inputTokenIds": [
+        464,
+        1755,
+        6766,
+        373
+      ],
+      "position": 4,
+      "sampler": {
+        "candidates": [
+          {
+            "cumulativeProbabilityBeforeTopP": 0.4419183762454523,
+            "eliminationReason": null,
+            "finalProbability": 0.45385790647474383,
+            "interval": [
+              0,
+              0.45385790647474383
+            ],
+            "logit": 10.2,
+            "probabilityBeforeTopP": 0.4419183762454523,
+            "rawRank": 1,
+            "retainedByTopK": true,
+            "retainedByTopP": true,
+            "temperatureScaledLogit": 12.749999999999998,
+            "text": " clear",
+            "tokenId": 1598
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": 0.7099554205287428,
+            "eliminationReason": null,
+            "finalProbability": 0.2752787354299216,
+            "interval": [
+              0.45385790647474383,
+              0.7291366419046654
+            ],
+            "logit": 9.8,
+            "probabilityBeforeTopP": 0.26803704428329045,
+            "rawRank": 2,
+            "retainedByTopK": true,
+            "retainedByTopP": true,
+            "temperatureScaledLogit": 12.25,
+            "text": " dark",
+            "tokenId": 3223
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": 0.8365671551437313,
+            "eliminationReason": null,
+            "finalProbability": 0.13003246729793763,
+            "interval": [
+              0.7291366419046654,
+              0.859169109202603
+            ],
+            "logit": 9.2,
+            "probabilityBeforeTopP": 0.12661173461498837,
+            "rawRank": 3,
+            "retainedByTopK": true,
+            "retainedByTopP": true,
+            "temperatureScaledLogit": 11.499999999999998,
+            "text": " filled",
+            "tokenId": 3881
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": 0.9043375330810173,
+            "eliminationReason": null,
+            "finalProbability": 0.06960136419974298,
+            "interval": [
+              0.859169109202603,
+              0.928770473402346
+            ],
+            "logit": 8.7,
+            "probabilityBeforeTopP": 0.06777037793728596,
+            "rawRank": 4,
+            "retainedByTopK": true,
+            "retainedByTopP": true,
+            "temperatureScaledLogit": 10.874999999999998,
+            "text": " a",
+            "tokenId": 257
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": 0.9454423451202939,
+            "eliminationReason": null,
+            "finalProbability": 0.042215361344969456,
+            "interval": [
+              0.928770473402346,
+              0.9709858347473155
+            ],
+            "logit": 8.3,
+            "probabilityBeforeTopP": 0.04110481203927663,
+            "rawRank": 5,
+            "retainedByTopK": true,
+            "retainedByTopP": true,
+            "temperatureScaledLogit": 10.375,
+            "text": " bright",
+            "tokenId": 6016
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": 0.9736932417416068,
+            "eliminationReason": null,
+            "finalProbability": 0.02901416525268434,
+            "interval": [
+              0.9709858347473155,
+              1
+            ],
+            "logit": 8,
+            "probabilityBeforeTopP": 0.0282508966213129,
+            "rawRank": 6,
+            "retainedByTopK": true,
+            "retainedByTopP": true,
+            "temperatureScaledLogit": 10,
+            "text": " alive",
+            "tokenId": 4242
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": 0.9908282767068051,
+            "eliminationReason": "top-p",
+            "finalProbability": 0,
+            "interval": null,
+            "logit": 7.6,
+            "probabilityBeforeTopP": 0.017135034965198293,
+            "rawRank": 7,
+            "retainedByTopK": true,
+            "retainedByTopP": false,
+            "temperatureScaledLogit": 9.499999999999998,
+            "text": " beautiful",
+            "tokenId": 4950
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": 1,
+            "eliminationReason": "top-p",
+            "finalProbability": 0,
+            "interval": null,
+            "logit": 7.1,
+            "probabilityBeforeTopP": 0.009171723293194885,
+            "rawRank": 8,
+            "retainedByTopK": true,
+            "retainedByTopP": false,
+            "temperatureScaledLogit": 8.874999999999998,
+            "text": " illuminated",
+            "tokenId": 17428
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": null,
+            "eliminationReason": "top-k",
+            "finalProbability": 0,
+            "interval": null,
+            "logit": 6.8,
+            "probabilityBeforeTopP": 0,
+            "rawRank": 9,
+            "retainedByTopK": false,
+            "retainedByTopP": false,
+            "temperatureScaledLogit": 8.5,
+            "text": " empty",
+            "tokenId": 5876
+          },
+          {
+            "cumulativeProbabilityBeforeTopP": null,
+            "eliminationReason": "top-k",
+            "finalProbability": 0,
+            "interval": null,
+            "logit": 6.4,
+            "probabilityBeforeTopP": 0,
+            "rawRank": 10,
+            "retainedByTopK": false,
+            "retainedByTopP": false,
+            "temperatureScaledLogit": 8,
+            "text": " endless",
+            "tokenId": 16115
+          }
+        ],
+        "config": {
+          "mode": "sampled",
+          "seed": "observatory-42",
+          "temperature": 0.8,
+          "topK": 8,
+          "topP": 0.95
+        },
+        "entropyBits": 2.0207887991153415,
+        "interventions": {
+          "forcedTokenId": 3223,
+          "suppressedTokenIds": []
+        },
+        "selection": {
+          "draw": null,
+          "interval": [
+            0.45385790647474383,
+            0.7291366419046654
+          ],
+          "mode": "forced",
+          "probability": 0.2752787354299216,
+          "text": " dark",
+          "tokenId": 3223
+        }
+      }
+    }
+  ],
+  "title": "Forced “dark”",
+  "tokenizer": {
+    "assetHash": null,
+    "id": "gpt2-shaped-teaching-fixture",
+    "revision": "1"
+  },
+  "traceId": "demo-branch-1"
+}
