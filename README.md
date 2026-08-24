@@ -8,7 +8,7 @@ A local-first scientific instrument for inspecting next-token prediction, changi
 
 ## Current instrument
 
-Phase 4 turns the verified multi-step branch observatory into a capability-gated learning instrument:
+Phase 5 turns the capability-gated laboratory into an evidence-bound public release candidate:
 
 - an exact, deterministic sampler with temperature, top-k, top-p, greedy mode, suppression, forcing and xoshiro128\*\* seeded selection;
 - a schema 1.2 ancestry bundle with content-addressed float32 payloads, explicit import limits and lossless schema 1.0/1.1 migration;
@@ -22,7 +22,18 @@ Phase 4 turns the verified multi-step branch observatory into a capability-gated
 - transactional IndexedDB notebook storage with payload reference counts, quota preflight and parent-deletion protection; and
 - a verified token specimen bench with visible boundaries, code points, derived UTF-8 bytes, a semantic table and copyable text;
 - session-scoped capability declarations plus deliberate unavailable states for hidden states, attention, probes and projections; and
-- unit, coverage and Playwright hero-loop tests in CI.
+- a 78-criterion acceptance ledger whose summary cannot promote blocked or unrun evidence;
+- keyboard, semantic, reduced-motion, forced-colour, zoom and responsive Playwright journeys across
+  Chromium, Firefox and WebKit;
+- a same-origin offline application shell that leaves cross-origin model caching to the pinned
+  runtime path;
+- checked static-host CSP/security headers, bundle budgets, privacy wording and third-party notices;
+  and
+- unit, coverage and Playwright release-evidence tests in CI.
+
+The source candidate is implemented, but the release decision remains evidence-gated. Physical
+device, screen-reader, deployed-origin and learner-study results stay blocked or not-run until they
+are actually observed; see the generated [release evidence summary](release-evidence/summary.md).
 
 The default score field remains intentionally labelled **illustrative** so the instrument is immediately useful without a 327.8 MB download. Its ten logits are a teaching fixture, not model output. The optional fp32 WASM path is separately labelled **verified measured** and may enter exact sampling/replay. WebGPU fp16 remains measured but unverified.
 
@@ -41,7 +52,9 @@ Open `http://localhost:5173`.
 pnpm check          # formatting, lint, strict types, fixtures, unit tests and build
 pnpm test:coverage  # exact-core coverage thresholds
 pnpm build          # static production bundle
-pnpm e2e            # Playwright hero-loop and responsive checks
+pnpm phase5:verify  # acceptance, contrast, static policy and evidence integrity
+pnpm phase5:budgets # checked production-asset budgets after build
+pnpm e2e            # Chromium, Firefox and WebKit release journeys
 ```
 
 Playwright requires its Chromium build once per development machine:
@@ -125,6 +138,8 @@ pnpm trace:verify:live
 - No account or backend is required.
 - No analytics or prompt telemetry is present.
 - Model files use the browser/runtime cache.
+- The production service worker caches same-origin application-shell assets for offline revisit; it
+  does not cache the cross-origin model itself.
 - Compact trace bundles are downloaded only when the user explicitly exports them.
 - IndexedDB persistence is explicit: the user chooses **Save to local notebook**. Payloads are deduplicated, quota failure is atomic and parents with descendants cannot be deleted accidentally.
 
@@ -133,6 +148,7 @@ pnpm trace:verify:live
 - [Canonical architecture map](docs/architecture/README.md)
 - [Runtime and interaction flows](docs/architecture/runtime-flows.md)
 - [Trace, replay and persistence integrity](docs/architecture/trace-integrity.md)
+- [Release, offline and deployment boundary](docs/architecture/release-boundary.md)
 - [Human and AI agent guide](AGENTS.md)
 - [Five-phase implementation plan](docs/implementation/00-five-phase-plan.md)
 - [Contribution workflow](CONTRIBUTING.md)
@@ -143,14 +159,18 @@ pnpm trace:verify:live
 - [Phase 1–4 integration hardening](docs/implementation/integration-hardening-2026-08-24.md)
 - [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md)
 - [Phase 5 readiness contract](docs/implementation/05-phase-05-readiness.md)
+- [Release evidence ledger and generated decision](release-evidence)
+- [Static release runbook](docs/deployment/static-release.md)
+- [Privacy statement](PRIVACY.md)
+- [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Architecture decisions](docs/adr)
 - [Model verification boundary](model-tools/README.md)
 - [Original product and architecture package](docs/00-project-overview-and-directors-brief.md)
 
 ## Next high-value slice
 
-Phase 5 is release evidence, not feature expansion: accessibility and reduced-motion review,
-measured browser/device capability results, memory and offline-revisit tests, deployment/security
-decisions, licences and a two-minute first-use study. Hidden states, attention, logit-lens probes
-and semantic projections remain unavailable until an exact purpose-built output profile passes the
-independent gate. See the [Phase 5 readiness contract](docs/implementation/05-phase-05-readiness.md).
+Freeze the Phase 5 source candidate, collect CI and deployed-origin evidence, complete one named
+desktop screen-reader smoke plus physical Android/Safari checks where devices are available, then
+run the consented two-minute learner protocol. These are evidence tasks, not interpretability
+feature work. Hidden states, attention, logit-lens probes and semantic projections remain
+unavailable until an exact purpose-built output profile passes the independent gate.

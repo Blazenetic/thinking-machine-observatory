@@ -77,6 +77,8 @@ pnpm fixtures:check
 pnpm trace:verify:live
 pnpm payload:verify
 pnpm phase4:verify
+pnpm phase5:verify
+pnpm phase5:budgets
 pnpm build
 ```
 
@@ -89,6 +91,8 @@ assets. Do not claim either ran unless it actually completed.
 - Formatting, lint, strict TypeScript, fixtures, replay gates, tests and production build pass.
 - Coverage remains above the checked thresholds; new boundary logic has a regression test.
 - Browser behaviour has Playwright coverage or an explicit environment limitation.
+- Release claims resolve through `release-evidence/manifest.json`; blocked and not-run evidence are
+  never counted as passed.
 - No evidence status was promoted by UI state, a model name or a self-declared trace field.
 - Documentation describes the current implementation, not just the intended design.
 - The pull request states the user outcome, scientific boundary, observed commands and one bounded

@@ -1,6 +1,6 @@
 # ADR 0009 — Public release evidence profile
 
-- Status: Proposed
+- Status: Accepted
 - Date: 24 August 2026
 
 ## Context

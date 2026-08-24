@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "A local-first laboratory for observing and intervening in next-token prediction.",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE",
   "packageManager": "pnpm@11.19.0",
   "engines": {
     "node": ">=24.0.0",
@@ -13,7 +13,7 @@
   "scripts": {
     "build": "pnpm --filter @observatory/app build",
     "capture:evidence": "node scripts/capture-evidence.mjs",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm fixtures:check && pnpm trace:verify:live && pnpm payload:verify && pnpm phase3:verify && pnpm phase4:verify && pnpm test && pnpm build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm fixtures:check && pnpm trace:verify:live && pnpm payload:verify && pnpm phase3:verify && pnpm phase4:verify && pnpm phase5:verify && pnpm test && pnpm build && pnpm phase5:budgets",
     "dev": "pnpm --filter @observatory/app dev",
     "e2e": "playwright test",
     "fixtures:check": "node --experimental-strip-types scripts/generate-fixtures.ts --check && node scripts/check-model-fixtures.mjs",
@@ -28,6 +28,8 @@
     "payload:verify": "node --experimental-strip-types scripts/verify-compact-payload.ts",
     "phase3:verify": "vitest run packages/trace-schema/src/compact.test.ts packages/trace-schema/src/notebook.test.ts packages/inference-worker/src/generation-controller.test.ts apps/observatory/src/data/live.test.ts",
     "phase4:verify": "vitest run packages/instruments/src/instruments.test.ts packages/experiments/src/experiments.test.ts packages/inference-worker/src/inference-worker.test.ts packages/trace-schema/src/compact.test.ts && node --experimental-strip-types scripts/verify-instrument-capabilities.ts",
+    "phase5:budgets": "node --experimental-strip-types scripts/verify-build-budgets.ts",
+    "phase5:verify": "vitest run scripts/lib/release-evidence.test.ts && node --experimental-strip-types scripts/verify-colour-contrast.ts && node --experimental-strip-types scripts/verify-static-release.ts && node --experimental-strip-types scripts/verify-release-evidence.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",

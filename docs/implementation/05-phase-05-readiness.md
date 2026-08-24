@@ -1,6 +1,6 @@
 # Phase 5 readiness — public release evidence
 
-- Status: Draft implementation contract
+- Status: Implemented source candidate; external and manual evidence collection in progress
 - Depends on: merged Phases 1–4 and the integration-hardening baseline on `main`
 - Target outcome: a dependable public portfolio and learning instrument whose support claims are
   backed by recorded evidence
@@ -29,7 +29,7 @@ every supported visitor to reach a useful experiment or a precise fallback.
 Only `passed` satisfies a launch-blocking criterion. Missing device access, unsupported APIs and
 network restrictions are recorded as blocked/not-run, never silently treated as support.
 
-Proposed [ADR 0009](../adr/0009-release-evidence-profile.md) defines the checked manifest and
+[ADR 0009](../adr/0009-release-evidence-profile.md) defines the checked manifest and
 release-candidate binding.
 
 ## Launch paths and support claims

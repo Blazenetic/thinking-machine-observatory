@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './App';
+import { registerOfflineShell } from './registerOfflineShell';
 import './styles.css';
 
 const root = document.querySelector<HTMLDivElement>('#root');
@@ -12,3 +13,5 @@ createRoot(root).render(
     <App />
   </StrictMode>,
 );
+
+registerOfflineShell();

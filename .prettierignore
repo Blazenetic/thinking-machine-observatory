@@ -6,3 +6,6 @@ pnpm-lock.yaml
 fixtures/traces/*.json
 docs/0[0-9]-*.md
 docs/10-*.md
+LICENSE
+apps/observatory/public/_headers
+release-evidence/summary.md

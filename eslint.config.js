@@ -34,6 +34,6 @@ export default tseslint.config(
   },
   {
     ...tseslint.configs.disableTypeChecked,
-    files: ['**/*.mjs'],
+    files: ['**/*.mjs', 'apps/observatory/public/*.js'],
   },
 );

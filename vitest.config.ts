@@ -31,6 +31,14 @@ export default defineConfig({
           name: 'app',
         },
       },
+      {
+        extends: true,
+        test: {
+          environment: 'node',
+          include: ['scripts/**/*.test.ts'],
+          name: 'release-evidence',
+        },
+      },
     ],
   },
 });

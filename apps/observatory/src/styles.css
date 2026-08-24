@@ -60,6 +60,14 @@ input[type='range'] {
   cursor: pointer;
 }
 
+button,
+summary,
+select,
+input[type='text'],
+input[type='file'] {
+  min-block-size: 2rem;
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.42;
@@ -2247,5 +2255,36 @@ footer p {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --amber: CanvasText;
+    --cyan: LinkText;
+    --focus: Highlight;
+    --hairline: CanvasText;
+    --hairline-bright: CanvasText;
+    --instrument-black: Canvas;
+    --instrument-raised: Canvas;
+    --ivory: CanvasText;
+    --ivory-muted: CanvasText;
+    --night: Canvas;
+    --red: Mark;
+    --steel: CanvasText;
+  }
+
+  .candidate-row__bar,
+  .evidence-badge__mark,
+  .status-lamp::before {
+    border: 1px solid CanvasText;
+    forced-color-adjust: none;
+  }
+
+  .candidate-row--selected,
+  .branch-node--active,
+  .branch-card[aria-pressed='true'] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
   }
 }

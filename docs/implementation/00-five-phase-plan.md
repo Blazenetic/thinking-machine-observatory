@@ -122,7 +122,7 @@ Readiness contract: [Phase 4 honest instruments and guided laboratory](04-phase-
 
 ## Phase 5 — Public release quality
 
-**Status: readiness drafted; release-evidence gated**
+**Status: source candidate implemented; release-evidence gated**
 
 Outcome: a dependable public portfolio and learning instrument.
 
