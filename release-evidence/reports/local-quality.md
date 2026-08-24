@@ -1,8 +1,8 @@
 # Local quality evidence
 
-- Source candidate: `280734bd2bd367275bae376dec676c1b63581934`
+- Source candidate: `ae9f7605a9cf613695c4363faa3e5250b67673a8`
 - Environment: Node 24.19.0, pnpm 11.19.0, Linux x86_64 harness
-- Observation date: 24 August 2026
+- Observation date: 25 August 2026
 
 ## Passed commands
 
@@ -39,3 +39,7 @@ bundle budgets.
 The local Playwright browser installation did not run: the harness returned zero-byte or truncated
 archives for the Playwright download. No local Chromium, Firefox, WebKit, offline, forced-colour or
 keyboard journey is claimed. GitHub CI remains the candidate browser gate.
+
+The exact source candidate subsequently passed GitHub CI run 28 in Chromium, Firefox and WebKit;
+that result is recorded separately in `github-ci-browser.md` and does not retroactively create a
+local browser result.

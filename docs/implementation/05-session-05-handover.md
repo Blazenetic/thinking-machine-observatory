@@ -2,7 +2,7 @@
 
 ## Outcome
 
-The Phase 5 source candidate is frozen at `280734bd2bd367275bae376dec676c1b63581934`. It hardens the
+The Phase 5 source candidate is frozen at `ae9f7605a9cf613695c4363faa3e5250b67673a8`. It hardens the
 Observatory for a public release without widening the interpretability surface.
 
 Implemented:
@@ -39,16 +39,19 @@ summary.
 - the full-vocabulary hero trace replayed token 3223 (`" dark"`) from 50,257 logits;
 - compact payload verification retained all sampler fields at 98.89% less JSON than the expanded
   representation;
-- application JavaScript measured 108,751 bytes gzip, CSS 6,901 bytes gzip and the worker 922,478
+- application JavaScript measured 108,752 bytes gzip, CSS 6,901 bytes gzip and the worker 922,478
   bytes uncompressed, all within the Phase 5 limits; and
 - `pnpm audit --prod --audit-level high` reported no known vulnerabilities.
 
-## Browser limitation
+## Browser verification
 
 The local harness could not install Playwright browsers because its download was returned as a
-zero-byte or truncated archive. No browser result is claimed locally. The draft PR must remain
-evidence-gated until GitHub's candidate Chromium, Firefox and WebKit job completes. Physical Android,
-real Safari, screen-reader and deployed-origin checks remain separate manual records.
+zero-byte or truncated archive, so no local browser result is claimed. The exact source candidate
+subsequently passed [GitHub CI run 28](https://github.com/Blazenetic/thinking-machine-observatory/actions/runs/32737565886)
+with 33 passed journeys and six declared skips across Chromium, Firefox and WebKit. The skips cover
+the opt-in live-model journey in all engines, non-Chromium forced-colour emulation and WebKit offline
+automation. Physical Android, real Safari, screen-reader, deployed-origin and current screenshot
+checks remain separate evidence records.
 
 ## Publication follow-up
 
@@ -61,12 +64,13 @@ The first published quality job exposed a shallow-checkout integration issue: `p
 correctly asks Git for the earlier candidate, but the default checkout contained only the PR head.
 The quality job now fetches full history before verifying candidate ancestry and lockfile contents.
 
-The first real three-engine run then exposed ambiguous Playwright locators, a non-portable CSS
-`zoom` simulation and an unreliable WebKit offline-reload driver path. The browser-stable candidate
-scopes controls to their visible experiment, uses a half-width reflow proxy, records the WebKit
-offline driver gap as skipped, and gives the service-worker shell an absolute, versioned cache key.
-Because the shell changed, this is a new source candidate at `280734b`; evidence is rebound in
-`38e773b`.
+The first real three-engine runs then exposed ambiguous Playwright locators, a non-portable CSS
+`zoom` simulation, an unreliable WebKit offline-reload driver path and a real React event-lifetime
+crash while typing a reflection. The final candidate uses stable control IDs, a half-width reflow
+proxy, direct cached-shell verification, an absolute versioned service-worker cache key and
+synchronous reflection-value capture. Run 28 passed after those repairs. The machine decision still
+remains conservative because the green automated run does not establish every live, manual or
+handover criterion grouped in the browser evidence record.
 
 ## Release decision
 
@@ -75,8 +79,8 @@ must not be tagged while any launch-blocking criterion is failed, blocked or not
 
 ## Next bounded evidence work
 
-1. Run the GitHub quality and three-engine browser jobs against the source candidate.
-2. Attach their exact URLs and promote only criteria they directly establish.
+1. Split and promote only the individual browser criteria directly established by CI run 28.
+2. Capture current hero-loop screenshots or a recording from the exact source candidate.
 3. Deploy that candidate to the prepared static host and run the header, offline and hero-loop
    smoke.
 4. Complete a named desktop screen-reader smoke and available physical Android/Safari checks.

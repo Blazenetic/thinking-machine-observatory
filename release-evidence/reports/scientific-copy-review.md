@@ -1,10 +1,10 @@
 # Scientific copy review
 
-- Source candidate: `280734bd2bd367275bae376dec676c1b63581934`
+- Source candidate: `ae9f7605a9cf613695c4363faa3e5250b67673a8`
 - Scope: `apps/observatory/index.html` and user-facing strings under `apps/observatory/src`
 - Result: passed
 - Reviewer: Codex source inspection
-- Date: 24 August 2026
+- Date: 25 August 2026
 
 The review searched for forms of “think”, “thought”, “believe”, “want”, “desire”, “intent”, “mind”,
 “know”, “understand”, “conscious” and “decide”, then inspected each match in context.
