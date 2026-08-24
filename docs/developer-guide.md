@@ -79,6 +79,10 @@ When application behaviour, dependencies, generated assets or release claims cha
 Only `passed` satisfies a launch-blocking criterion. A missing browser, physical device,
 screen-reader, deployment or learner session stays `blocked` or `not-run`.
 
+Any CI job that runs `pnpm phase5:verify` must fetch the manifest's source-candidate commit. The
+default one-commit `actions/checkout` depth is insufficient once evidence and documentation commits
+follow the candidate; use full history or fetch the named candidate explicitly.
+
 ## Documentation and handover
 
 - Update `docs/user-guide.md` when a control, label, local-storage or privacy behaviour changes.

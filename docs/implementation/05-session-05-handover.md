@@ -58,6 +58,10 @@ and present-tense Phase 5/evidence wording. It does not change the built applica
 lock, evidence manifest or accepted release claims, so the source candidate remains `8799c6e` and
 the candidate-bound evidence commit remains `96ad3c3`.
 
+The first published quality job exposed a shallow-checkout integration issue: `phase5:verify`
+correctly asks Git for the earlier candidate, but the default checkout contained only the PR head.
+The quality job now fetches full history before verifying candidate ancestry and lockfile contents.
+
 ## Release decision
 
 Read `release-evidence/summary.md`, not this handover, for the machine-derived decision. The candidate
