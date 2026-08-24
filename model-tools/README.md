@@ -25,8 +25,9 @@ Both model repositories declare Apache-2.0. Exact source URLs, every small asset
 - `verification/wasm-fp32-report.json` records the accepted comparison.
 - `verification/wasm-int8-report.json` preserves why the smaller graph was rejected.
 - `verification/live-trace-report.json` proves the accepted hero vector survives exact sample, JSON import and replay.
+- `verification/compact-payload-spike-report.json` proves the proposed Phase 3 representation preserves that result with 98.89% less JSON.
 
-`pnpm fixtures:check` hashes the vectors and re-evaluates the accepted errors/ranks without downloading weights. `pnpm trace:verify:live` exercises the production sampler and trace parser with the accepted hero vector. Both run in ordinary CI.
+`pnpm fixtures:check` hashes the vectors and re-evaluates the accepted errors/ranks without downloading weights. `pnpm trace:verify:live` exercises the production sampler and trace parser with the accepted hero vector. `pnpm payload:verify` checks the Phase 3 codec and exact sampler equivalence. All run in ordinary CI on the readiness branch.
 
 ## Reference environment
 

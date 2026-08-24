@@ -31,6 +31,18 @@ export class SamplerConfigurationError extends Error {
   }
 }
 
+function assertPrngState(state: PrngState): void {
+  if (
+    state.length !== 4 ||
+    state.some((value) => !Number.isInteger(value) || value < 0 || value > 4_294_967_295) ||
+    state.every((value) => value === 0)
+  ) {
+    throw new SamplerConfigurationError(
+      'PRNG state must contain four unsigned 32-bit words and must not be all zero.',
+    );
+  }
+}
+
 function rotateLeft(value: number, shift: number): number {
   return ((value << shift) | (value >>> (32 - shift))) >>> 0;
 }
@@ -75,11 +87,7 @@ export class Xoshiro128StarStar {
 
   public constructor(seedOrState: string | PrngState) {
     const state = typeof seedOrState === 'string' ? seedToState(seedOrState) : seedOrState;
-    if (state.length !== 4 || state.every((value) => value === 0)) {
-      throw new SamplerConfigurationError(
-        'PRNG state must contain four non-zero-compatible words.',
-      );
-    }
+    assertPrngState(state);
     this.#state = [...state];
   }
 
@@ -269,6 +277,7 @@ function selectCandidate(
   allCandidates: WorkingCandidate[],
   config: SamplerConfig,
   interventions: SamplerInterventions,
+  prngState?: PrngState,
 ): SelectionRecord {
   if (interventions.forcedTokenId !== null) {
     const forced = allCandidates.find(
@@ -308,7 +317,7 @@ function selectCandidate(
     };
   }
 
-  const generator = new Xoshiro128StarStar(config.seed);
+  const generator = new Xoshiro128StarStar(prngState ?? config.seed);
   const stateBefore = generator.getState();
   const value = generator.nextFloat();
   const stateAfter = generator.getState();
@@ -343,6 +352,7 @@ export function runSampler(
   rawCandidates: readonly RawCandidate[],
   config: SamplerConfig,
   interventions: SamplerInterventions = NO_INTERVENTIONS,
+  prngState?: PrngState,
 ): SamplerResult {
   validateSamplerConfig(config);
   assertCandidates(rawCandidates);
@@ -354,7 +364,7 @@ export function runSampler(
   }
   const topPCandidates = applyTopP(topKCandidates, config.topP);
   assignFinalDistribution(topPCandidates);
-  const selection = selectCandidate(topPCandidates, candidates, config, interventions);
+  const selection = selectCandidate(topPCandidates, candidates, config, interventions, prngState);
 
   const records: CandidateRecord[] = candidates.map((candidate) => {
     const { inputOrder, ...record } = candidate;

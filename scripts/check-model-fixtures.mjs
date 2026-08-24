@@ -16,6 +16,12 @@ const rejected = JSON.parse(
 const liveTrace = JSON.parse(
   await readFile(resolve(root, 'model-tools/verification/live-trace-report.json'), 'utf8'),
 );
+const compactPayload = JSON.parse(
+  await readFile(
+    resolve(root, 'model-tools/verification/compact-payload-spike-report.json'),
+    'utf8',
+  ),
+);
 
 const EXPECTED = {
   browserId: 'Xenova/distilgpt2',
@@ -216,7 +222,19 @@ invariant(
   liveTrace.verificationProfileId === accepted.toleranceProfile.profileId,
   'live trace verification profile differs',
 );
+invariant(compactPayload.reportFormatVersion === '1.0.0', 'compact report format is unknown');
+invariant(compactPayload.valueCount === EXPECTED.vocabularySize, 'compact payload is truncated');
+invariant(compactPayload.exactSamplerMatch, 'compact payload changed the sampler result');
+invariant(
+  compactPayload.contentAddress === liveTrace.sourceLogitsSha256,
+  'compact payload content address differs from the accepted hero vector',
+);
+invariant(
+  compactPayload.expandedTraceJsonBytes === liveTrace.jsonBytes,
+  'compact report compares against stale expanded-trace evidence',
+);
+invariant(compactPayload.reductionRatio > 0.98, 'compact payload did not reduce JSON by 98%');
 
 console.log(
-  `Verified ${manifest.cases.length} source/WASM full-vocabulary pairs and the recorded int8 rejection.`,
+  `Verified ${manifest.cases.length} source/WASM pairs, the int8 rejection and compact-payload evidence.`,
 );

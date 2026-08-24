@@ -57,7 +57,7 @@ Exit evidence:
 
 ## Phase 3 — Multi-step generation and branch DAG
 
-**Status: readiness drafted; implementation next**
+**Status: implemented in draft PR**
 
 Outcome: the branch workflow becomes the product’s operational centre rather than a one-step demonstration.
 
@@ -74,7 +74,19 @@ Work:
 
 Entry gate: replace repeated expanded 50,257-candidate records with a content-addressed, lossless logit payload while preserving schema 1.1 import and exact sampler replay. The Phase 2 measurement shows that naively repeating the expanded record would add roughly 23 MiB and substantial heap use per step.
 
+Readiness contract: [Phase 3 multi-step generation and branch DAG](03-phase-03-readiness.md).
+
 Exit gate: force the runner-up, run both futures for several tokens, locate the first divergence, export, import and replay without ancestor mutation.
+
+Exit evidence:
+
+- schema 1.2 stores canonical float32 payloads once by SHA-256 and migrates replayable 1.0/1.1 roots only after expanded replay;
+- five cursor-continuous steps replay without loading a model;
+- worker responses carry generation, request-order and worker-epoch identity, with stale responses ignored;
+- historical forks resolve immutable effective histories and portable bundles include every required ancestor/payload once;
+- the local notebook uses atomic trace/payload/metadata transactions, reference counts, quota preflight and prevent-by-default parent deletion;
+- 61 unit/integration tests and a deterministic fixture-worker Chromium journey cover the Phase 3 core; and
+- the network-backed verified-WASM multi-step smoke remains opt-in.
 
 ## Phase 4 — Honest instruments and guided laboratory
 

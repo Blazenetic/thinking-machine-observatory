@@ -7,9 +7,20 @@ import {
   DISTILGPT2_RUNTIME,
   DISTILGPT2_VERIFICATION,
 } from '@observatory/inference-worker';
-import { replayTrace, serialiseTrace } from '@observatory/trace-schema';
+import {
+  createEmbeddedFloat32Payload,
+  replayCompactTraceBundle,
+  replayTrace,
+  serialiseCompactTraceBundle,
+  serialiseTrace,
+} from '@observatory/trace-schema';
 
-import { assertAcceptedLiveTrace, createLiveTrace, LiveTraceError } from './live';
+import {
+  assertAcceptedLiveTrace,
+  createCompactLiveTrace,
+  createLiveTrace,
+  LiveTraceError,
+} from './live';
 
 function capture(status: PredictionCapture['model']['verificationStatus'] = 'verified') {
   return {
@@ -55,6 +66,24 @@ describe('verified live trace', () => {
       verificationStatus: 'verified',
     });
     expect(replayTrace(JSON.parse(serialiseTrace(trace)) as typeof trace).matches).toBe(true);
+  });
+
+  it('commits schema 1.2 without expanded candidate duplication', async () => {
+    const fixture = capture();
+    const payload = await createEmbeddedFloat32Payload(fixture.logits);
+    const bundle = await createCompactLiveTrace(
+      'T',
+      { ...fixture, logitsSha256: payload.sha256 },
+      {
+        createdAt: '2026-08-24T04:00:00.000Z',
+        traceId: 'compact-live-fixture',
+      },
+    );
+
+    expect(bundle.schemaVersion).toBe('1.2.0');
+    expect(Object.keys(bundle.payloads)).toEqual([payload.sha256]);
+    expect(serialiseCompactTraceBundle(bundle)).not.toContain('temperatureScaledLogit');
+    await expect(replayCompactTraceBundle(bundle)).resolves.toMatchObject({ matches: true });
   });
 
   it('does not promote incomplete or unverified captures', () => {

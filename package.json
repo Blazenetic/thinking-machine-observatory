@@ -13,7 +13,7 @@
   "scripts": {
     "build": "pnpm --filter @observatory/app build",
     "capture:evidence": "node scripts/capture-evidence.mjs",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm fixtures:check && pnpm trace:verify:live && pnpm test && pnpm build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm fixtures:check && pnpm trace:verify:live && pnpm payload:verify && pnpm phase3:verify && pnpm test && pnpm build",
     "dev": "pnpm --filter @observatory/app dev",
     "e2e": "playwright test",
     "fixtures:check": "node --experimental-strip-types scripts/generate-fixtures.ts --check && node scripts/check-model-fixtures.mjs",
@@ -25,6 +25,8 @@
     "model:verify": "pnpm model:verify:wasm && pnpm model:verify:int8-rejection",
     "model:verify:int8-rejection": "node packages/inference-worker/scripts/verify-golden.mjs --variant int8 --expect-rejection",
     "model:verify:wasm": "node packages/inference-worker/scripts/verify-golden.mjs --variant fp32",
+    "payload:verify": "node --experimental-strip-types scripts/verify-compact-payload.ts",
+    "phase3:verify": "vitest run packages/trace-schema/src/compact.test.ts packages/trace-schema/src/notebook.test.ts packages/inference-worker/src/generation-controller.test.ts apps/observatory/src/data/live.test.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
