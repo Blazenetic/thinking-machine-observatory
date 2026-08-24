@@ -13,7 +13,7 @@ result and limitation to `manifest.json`.
 | Real Safari smoke                       | Current Safari on macOS or iOS              | not-run        | Device/browser version and task result |
 | Deployed-origin CSP/header smoke        | Exact candidate URL                         | not-run        | Header capture and hero-loop result    |
 | Dependency/security disposition         | Candidate lockfile                          | not-run        | Audit output and reviewed exceptions   |
-| Scientific copy review                  | All user-facing release copy                | not-run        | Reviewer notes and search protocol     |
+| Scientific copy review                  | All user-facing release copy                | passed         | `reports/scientific-copy-review.md`    |
 
 The local harness could not install a browser because its Playwright download was returned as a
 zero-byte or truncated archive. That is an environment block, not a failed browser result and not a

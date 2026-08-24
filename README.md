@@ -156,6 +156,7 @@ pnpm trace:verify:live
 - [Session 02 handover](docs/implementation/02-session-02-handover.md)
 - [Session 03 handover](docs/implementation/03-session-03-handover.md)
 - [Session 04 handover](docs/implementation/04-session-04-handover.md)
+- [Session 05 handover](docs/implementation/05-session-05-handover.md)
 - [Phase 1–4 integration hardening](docs/implementation/integration-hardening-2026-08-24.md)
 - [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md)
 - [Phase 5 readiness contract](docs/implementation/05-phase-05-readiness.md)

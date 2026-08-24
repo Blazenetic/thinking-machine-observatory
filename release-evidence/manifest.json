@@ -2,32 +2,37 @@
   "$schema": "./release-evidence.schema.json",
   "profileVersion": "1.0.0",
   "candidate": {
-    "label": "phase-5-readiness-baseline",
-    "commit": "a9983be595db414918b97fa639cfbd87be3b6b7d",
+    "label": "phase-5-source-candidate",
+    "commit": "8799c6e1e4d38253a6c607632cdddd9902baf2ed",
     "lockfile": {
       "path": "pnpm-lock.yaml",
       "sha256": "5733e79ae9cd1d92d09d036070f9a7d7ffd7d4fe107034ca50a5901ab8ee179c"
     },
     "runtime": {
-      "node": "24.x",
+      "node": "24.19.0",
       "packageManager": "pnpm@11.19.0"
     }
   },
-  "environments": [],
+  "environments": [
+    {
+      "id": "local-node24-linux",
+      "operatingSystem": "Linux x86_64 harness",
+      "deviceClass": "ephemeral development runner",
+      "capabilities": {
+        "node": "24.19.0",
+        "pnpm": "11.19.0",
+        "browserRunner": "blocked: Playwright download archive unavailable"
+      }
+    }
+  ],
   "evidence": [
     {
-      "id": "EV-PHASE5-NOT-RUN",
+      "id": "EV-LOCAL-EXACT-CORE",
       "criteria": [
-        "TMO-FUNC-001",
-        "TMO-FUNC-002",
-        "TMO-FUNC-003",
         "TMO-FUNC-004",
-        "TMO-FUNC-005",
         "TMO-FUNC-006",
         "TMO-FUNC-007",
         "TMO-FUNC-008",
-        "TMO-FUNC-009",
-        "TMO-FUNC-010",
         "TMO-MATH-001",
         "TMO-MATH-002",
         "TMO-MATH-003",
@@ -38,10 +43,8 @@
         "TMO-MATH-008",
         "TMO-MODEL-001",
         "TMO-MODEL-002",
-        "TMO-MODEL-003",
         "TMO-MODEL-004",
         "TMO-MODEL-005",
-        "TMO-MODEL-006",
         "TMO-TRACE-001",
         "TMO-TRACE-002",
         "TMO-TRACE-003",
@@ -49,8 +52,132 @@
         "TMO-TRACE-005",
         "TMO-TRACE-006",
         "TMO-TRACE-007",
+        "TMO-RES-002",
+        "TMO-RES-003",
+        "TMO-RES-005",
+        "TMO-RES-007",
+        "TMO-SCI-005",
+        "TMO-SCI-006",
+        "TMO-HAND-001",
+        "TMO-HAND-003",
+        "TMO-HAND-004",
+        "TMO-HAND-006"
+      ],
+      "result": "passed",
+      "method": {
+        "kind": "automated",
+        "description": "Pinned local exact-core, coverage, build-budget and dependency-audit gates.",
+        "command": "pnpm check && pnpm test:coverage && pnpm audit --prod --audit-level high"
+      },
+      "environments": ["local-node24-linux"],
+      "artifacts": [
+        "release-evidence/reports/local-quality.md",
+        "release-evidence/reports/bundle-budget.json",
+        "release-evidence/reports/dependency-audit.json",
+        "model-tools/verification/wasm-fp32-report.json",
+        "model-tools/verification/live-trace-report.json",
+        "fixtures/traces/demo-baseline.observatory-trace.json"
+      ],
+      "measurements": [
+        {
+          "name": "statement coverage",
+          "value": 86.33,
+          "unit": "%",
+          "threshold": 85,
+          "comparison": "at-least"
+        },
+        {
+          "name": "branch coverage",
+          "value": 72.17,
+          "unit": "%",
+          "threshold": 70,
+          "comparison": "at-least"
+        },
+        {
+          "name": "function coverage",
+          "value": 93.75,
+          "unit": "%",
+          "threshold": 85,
+          "comparison": "at-least"
+        },
+        {
+          "name": "line coverage",
+          "value": 88.1,
+          "unit": "%",
+          "threshold": 85,
+          "comparison": "at-least"
+        },
+        {
+          "name": "application JavaScript gzip",
+          "value": 108751,
+          "unit": "bytes",
+          "threshold": 128000,
+          "comparison": "at-most"
+        },
+        {
+          "name": "application CSS gzip",
+          "value": 6901,
+          "unit": "bytes",
+          "threshold": 10240,
+          "comparison": "at-most"
+        },
+        {
+          "name": "inference worker JavaScript",
+          "value": 922478,
+          "unit": "bytes",
+          "threshold": 1048576,
+          "comparison": "at-most"
+        }
+      ],
+      "limitation": "The large network-backed live-model browser smoke is opt-in and is not represented by this local gate.",
+      "reviewer": "Codex automated gate",
+      "observedAt": "2026-08-24T19:05:45+10:00"
+    },
+    {
+      "id": "EV-LOCAL-EVIDENCE-BOUNDARY",
+      "criteria": ["TMO-FUNC-009", "TMO-MODEL-006", "TMO-SCI-001", "TMO-SCI-007", "TMO-HAND-007"],
+      "result": "passed",
+      "method": {
+        "kind": "automated",
+        "description": "Capability declarations, model identity, evidence vocabulary and static release policy verification.",
+        "command": "pnpm phase4:verify && pnpm phase5:verify"
+      },
+      "environments": ["local-node24-linux"],
+      "artifacts": [
+        "model-tools/verification/instrument-capability-report.json",
+        "apps/observatory/src/components/EvidenceBadge.tsx",
+        "apps/observatory/src/components/CapabilityInstrumentRack.tsx",
+        "release-evidence/reports/scientific-copy-review.md",
+        "THIRD_PARTY_NOTICES.md"
+      ],
+      "limitation": "The source copy passed; rendered-state focus and screen-reader behaviour remain browser-gated.",
+      "reviewer": "Codex automated gate",
+      "observedAt": "2026-08-24T19:05:45+10:00"
+    },
+    {
+      "id": "EV-SECONDARY-NOT-APPLICABLE",
+      "criteria": ["TMO-MODEL-003", "TMO-SCI-002", "TMO-SCI-003"],
+      "result": "not-run",
+      "method": {
+        "kind": "inspection",
+        "description": "Accepted Phase 5 scope and zero-allocation capability report."
+      },
+      "environments": ["local-node24-linux"],
+      "artifacts": [
+        "docs/adr/0008-capability-gated-instrument-outputs.md",
+        "model-tools/verification/instrument-capability-report.json"
+      ],
+      "limitation": "These criteria are classified not-applicable because hidden states, attention, probes and projections remain unavailable; no output was promoted or tested."
+    },
+    {
+      "id": "EV-LOCAL-BROWSER-BLOCKED",
+      "criteria": [
+        "TMO-FUNC-001",
+        "TMO-FUNC-002",
+        "TMO-FUNC-003",
+        "TMO-FUNC-005",
+        "TMO-FUNC-010",
         "TMO-E2E-001",
-        "TMO-E2E-002",
         "TMO-E2E-003",
         "TMO-E2E-004",
         "TMO-E2E-005",
@@ -69,42 +196,72 @@
         "TMO-A11Y-004",
         "TMO-A11Y-005",
         "TMO-A11Y-006",
-        "TMO-A11Y-007",
-        "TMO-RES-001",
-        "TMO-RES-002",
-        "TMO-RES-003",
-        "TMO-RES-004",
-        "TMO-RES-005",
         "TMO-RES-006",
-        "TMO-RES-007",
-        "TMO-BROWSER-001",
         "TMO-BROWSER-002",
-        "TMO-BROWSER-003",
-        "TMO-BROWSER-004",
-        "TMO-BROWSER-005",
-        "TMO-SCI-001",
-        "TMO-SCI-002",
-        "TMO-SCI-003",
         "TMO-SCI-004",
-        "TMO-SCI-005",
-        "TMO-SCI-006",
-        "TMO-SCI-007",
-        "TMO-HAND-001",
         "TMO-HAND-002",
-        "TMO-HAND-003",
-        "TMO-HAND-004",
-        "TMO-HAND-005",
-        "TMO-HAND-006",
-        "TMO-HAND-007"
+        "TMO-HAND-005"
       ],
+      "result": "blocked",
+      "method": {
+        "kind": "automated",
+        "description": "Candidate Playwright release suite; local browser installation prerequisite failed.",
+        "command": "pnpm exec playwright install chromium firefox webkit && pnpm e2e"
+      },
+      "environments": ["local-node24-linux"],
+      "artifacts": [
+        "tests/e2e/release-quality.spec.ts",
+        "release-evidence/reports/local-quality.md",
+        "release-evidence/manual-review.md"
+      ],
+      "limitation": "The harness returned zero-byte or truncated Playwright archives, so no local browser, accessibility, offline or current screenshot result exists.",
+      "reviewer": "Codex environment observation",
+      "observedAt": "2026-08-24T19:08:00+10:00"
+    },
+    {
+      "id": "EV-UNRUN-EXTENDED-JOURNEYS",
+      "criteria": ["TMO-E2E-002"],
       "result": "not-run",
       "method": {
         "kind": "not-run",
-        "description": "Initial manifest created before Phase 5 evidence collection."
+        "description": "No candidate evidence yet covers every exact step in these extended live, divergence, suppression, step-three replay and interruption scenarios."
+      },
+      "environments": [],
+      "artifacts": ["docs/07-acceptance-criteria-and-test-plan.md"],
+      "limitation": "Existing unit and fixture paths establish components of these journeys but are not promoted to full end-to-end acceptance."
+    },
+    {
+      "id": "EV-UNRUN-PERFORMANCE-LIFECYCLE",
+      "criteria": ["TMO-RES-001", "TMO-RES-004"],
+      "result": "not-run",
+      "method": {
+        "kind": "not-run",
+        "description": "Named-device long-task and ten-cycle retained-heap measurements have not been gathered."
       },
       "environments": [],
       "artifacts": ["docs/implementation/05-phase-05-readiness.md"],
-      "limitation": "This baseline records no Phase 5 acceptance result and must not be used to authorise a release."
+      "limitation": "Bundle size and disposal logic passed, but they do not prove main-thread responsiveness or settled heap growth on a browser device."
+    },
+    {
+      "id": "EV-UNRUN-MANUAL-ENVIRONMENTS",
+      "criteria": [
+        "TMO-A11Y-007",
+        "TMO-BROWSER-001",
+        "TMO-BROWSER-003",
+        "TMO-BROWSER-004",
+        "TMO-BROWSER-005"
+      ],
+      "result": "not-run",
+      "method": {
+        "kind": "manual",
+        "description": "Screen-reader, WebGPU, physical browser/device and low-memory reviews await named environments."
+      },
+      "environments": [],
+      "artifacts": [
+        "release-evidence/manual-review.md",
+        "release-evidence/learner-study-protocol.md"
+      ],
+      "limitation": "No physical device, real Safari/WebGPU session or screen-reader smoke is claimed."
     }
   ]
 }
