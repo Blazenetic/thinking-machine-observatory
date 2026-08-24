@@ -6,7 +6,9 @@ import {
 } from '@observatory/inference-worker';
 
 const workerScope = self as DedicatedWorkerGlobalScope;
-const handleRequest = createInferenceWorkerHandler((response) => workerScope.postMessage(response));
+const handleRequest = createInferenceWorkerHandler((response, transfer = []) =>
+  workerScope.postMessage(response, [...transfer]),
+);
 
 workerScope.addEventListener('message', (event: MessageEvent<InferenceWorkerRequest>) => {
   void handleRequest(event.data);

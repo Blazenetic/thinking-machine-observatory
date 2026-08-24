@@ -1,0 +1,25 @@
+{
+  "candidateRecords": 50257,
+  "commitDurationMs": 278.116287,
+  "environment": {
+    "architecture": "x64",
+    "node": "v24.19.0",
+    "platform": "linux"
+  },
+  "gzipBytes": 1155791,
+  "heapDeltaBytes": 186679592,
+  "jsonBytes": 24179109,
+  "replayDurationMs": 448.4567259999999,
+  "replayMatches": true,
+  "reportFormatVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
+  "selectedToken": {
+    "probability": 0.051293482339668364,
+    "text": " dark",
+    "tokenId": 3223
+  },
+  "serialiseDurationMs": 167.56829799999997,
+  "sourceLogitsSha256": "0c2ea6650f31e52fdd9054bb57d652899c51d4dd2b3979300d5e8ec406524998",
+  "traceId": "verified-live-hero-v1",
+  "verificationProfileId": "distilgpt2-wasm-fp32-v1"
+}

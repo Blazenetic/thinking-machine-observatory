@@ -1,0 +1,219 @@
+{
+  "accepted": false,
+  "backend": {
+    "executionProvider": "wasm",
+    "model": {
+      "assetPath": "onnx/model_int8.onnx",
+      "id": "Xenova/distilgpt2",
+      "revision": "a41c10485c18a64b6606729b6a082330cbd8f49e",
+      "sha256": "80b02da4fe266412bc49c9955a518151c50f9bac062f596a875068492a21f080",
+      "variant": "int8"
+    },
+    "onnxRuntimeWeb": "1.22.0-dev.20250409-89f8206ba4",
+    "transformersJs": "3.8.1"
+  },
+  "cases": [
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 37.6347541809082,
+        "prefixMaxAbsolute": 4.175537109375
+      },
+      "fixtureId": "hero",
+      "inferenceDurationMs": 61.59024700000009,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": 6.907309450436111,
+          "maxAbsolute": 10.578025817871094,
+          "maxCentredAbsolute": 3.6707163674349825,
+          "maxRelative": 0.11928816485146829,
+          "meanAbsolute": 6.907309450436111,
+          "meanCentredAbsolute": 0.6359438467390255,
+          "meanRelative": 0.08297431904752853,
+          "rootMeanSquare": 6.953839356363019
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 24.44,
+          "top1Match": true,
+          "top10Overlap": 5,
+          "top40BoundaryOverlap": 29,
+          "top50ExactPositions": 4,
+          "top50Overlap": 36,
+          "top50OverlapRatio": 0.72
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": null,
+        "sha256": "6f37ab11bb0a7012dc13b4f3ed7c9e9b98127885ff00fa1db91ca4b1c91b56e1",
+        "valueCount": 50257
+      },
+      "prompt": "The night sky was",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [464, 1755, 6766, 373]
+      },
+      "acceptance": {
+        "failures": ["causal prefix changed after a future-token mutation"],
+        "passed": false
+      }
+    },
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 13.879016876220703,
+        "prefixMaxAbsolute": 4.044761657714844
+      },
+      "fixtureId": "punctuation",
+      "inferenceDurationMs": 25.187406999999894,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": 4.423163793843055,
+          "maxAbsolute": 6.337318420410156,
+          "maxCentredAbsolute": 2.4474481566360238,
+          "maxRelative": 0.09627536492781773,
+          "meanAbsolute": 4.423163793843055,
+          "meanCentredAbsolute": 0.3539894773508312,
+          "meanRelative": 0.06541136745153328,
+          "rootMeanSquare": 4.445444286743233
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 7.9,
+          "top1Match": false,
+          "top10Overlap": 8,
+          "top40BoundaryOverlap": 37,
+          "top50ExactPositions": 3,
+          "top50Overlap": 45,
+          "top50OverlapRatio": 0.9
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": null,
+        "sha256": "70f785e03ca5a448fb8a418a3c87db52c543bb5209487a1311a887d4d0dc0874",
+        "valueCount": 50257
+      },
+      "prompt": "Wait—what?!",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [21321, 960, 10919, 12248]
+      },
+      "acceptance": {
+        "failures": ["top-1 token differs", "causal prefix changed after a future-token mutation"],
+        "passed": false
+      }
+    },
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 6.360877990722656,
+        "prefixMaxAbsolute": 2.5765609741210938
+      },
+      "fixtureId": "unicode",
+      "inferenceDurationMs": 49.89775499999996,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": 0.8570815719269604,
+          "maxAbsolute": 2.9210166931152344,
+          "maxCentredAbsolute": 2.063935121188274,
+          "maxRelative": 0.055039126213341005,
+          "meanAbsolute": 0.8764851616032218,
+          "meanCentredAbsolute": 0.4169808583372797,
+          "meanRelative": 0.016174094220051696,
+          "rootMeanSquare": 1.0032067994821596
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 16.48,
+          "top1Match": false,
+          "top10Overlap": 7,
+          "top40BoundaryOverlap": 29,
+          "top50ExactPositions": 2,
+          "top50Overlap": 37,
+          "top50OverlapRatio": 0.74
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": null,
+        "sha256": "623f331329a1276b22e2cd6edfb57a5908c796e0d44267ed1557501426aec6f9",
+        "valueCount": 50257
+      },
+      "prompt": "Café déjà vu ☕",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [34, 1878, 2634, 39073, 73, 24247, 410, 84, 34719, 243]
+      },
+      "acceptance": {
+        "failures": ["top-1 token differs", "causal prefix changed after a future-token mutation"],
+        "passed": false
+      }
+    },
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 15.96023178100586,
+        "prefixMaxAbsolute": 2.0163421630859375
+      },
+      "fixtureId": "leading-space",
+      "inferenceDurationMs": 27.217697000000044,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": 1.1059165202534995,
+          "maxAbsolute": 2.7576065063476562,
+          "maxCentredAbsolute": 2.5164084636128745,
+          "maxRelative": 0.03810566158195955,
+          "meanAbsolute": 1.1094896761438442,
+          "meanCentredAbsolute": 0.36287001200141206,
+          "meanRelative": 0.015477202694371549,
+          "rootMeanSquare": 1.1960220627880538
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 5.7,
+          "top1Match": true,
+          "top10Overlap": 9,
+          "top40BoundaryOverlap": 34,
+          "top50ExactPositions": 3,
+          "top50Overlap": 44,
+          "top50OverlapRatio": 0.88
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": null,
+        "sha256": "9ee56b1fe929e40391890682651b616e9f55857aa1924e1487ac8631dbc475de",
+        "valueCount": 50257
+      },
+      "prompt": "  indented text",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [220, 773, 4714, 2420]
+      },
+      "acceptance": {
+        "failures": ["causal prefix changed after a future-token mutation"],
+        "passed": false
+      }
+    }
+  ],
+  "environment": {
+    "architecture": "x64",
+    "node": "v24.19.0",
+    "operatingSystem": "linux 6.18.35"
+  },
+  "performance": {
+    "loadDurationMs": 2342.648516,
+    "peakRssBytes": 1705959424,
+    "rssAfterLoadBytes": 1531285504,
+    "rssBeforeLoadBytes": 338542592,
+    "warmHeroInferenceDurationMs": 25.47514799999999
+  },
+  "reportFormatVersion": "1.0.0",
+  "toleranceProfile": {
+    "profileId": "distilgpt2-wasm-int8-v1",
+    "requirements": {
+      "causalPrefixMaxAbsoluteError": 0.00001,
+      "maxAbsoluteError": 20,
+      "maxCentredAbsoluteError": 8,
+      "meanAbsoluteError": 10,
+      "meanCentredAbsoluteError": 1,
+      "minimumTop50Overlap": 0.5,
+      "requireExactTokenizer": true,
+      "requireTop1Match": true
+    }
+  }
+}

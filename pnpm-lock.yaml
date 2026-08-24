@@ -107,6 +107,10 @@ importers:
       '@observatory/domain':
         specifier: workspace:*
         version: link:../domain
+    devDependencies:
+      onnxruntime-web:
+        specifier: 1.22.0-dev.20250409-89f8206ba4
+        version: 1.22.0-dev.20250409-89f8206ba4
 
   packages/instruments:
     dependencies:
@@ -129,13 +133,12 @@ importers:
       '@observatory/domain':
         specifier: workspace:*
         version: link:../domain
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-    devDependencies:
       '@observatory/sampler':
         specifier: workspace:*
         version: link:../sampler
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
 
 packages:
 

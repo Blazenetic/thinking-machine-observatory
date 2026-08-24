@@ -7,4 +7,12 @@ Session 01 screenshots are generated from the production build with `pnpm captur
 - `session-01-branch-chamber.png` — immutable baseline/child comparison.
 - `session-01-mobile.png` — 390 × 844 reduced-width observation view.
 
-These screenshots show the illustrative teaching path. They are not evidence that the live model adapter has passed golden verification.
+These screenshots show the illustrative teaching path. Phase 2 numerical evidence is deliberately machine-readable rather than inferred from screenshots:
+
+- `fixtures/model-golden/source-fp32` — source-framework token and full-logit fixtures;
+- `fixtures/model-golden/wasm-fp32` — accepted runtime full-logit fixtures;
+- `model-tools/verification/wasm-fp32-report.json` — accepted comparison;
+- `model-tools/verification/wasm-int8-report.json` — preserved rejection; and
+- `model-tools/verification/live-trace-report.json` — exact selected-token export/import/replay and trace-size evidence.
+
+The live interface remains covered by an opt-in network-backed Playwright test. A screenshot alone is not accepted as proof of numerical equivalence.

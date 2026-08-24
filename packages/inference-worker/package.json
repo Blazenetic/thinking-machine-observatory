@@ -6,8 +6,14 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "verify:golden": "node scripts/verify-golden.mjs"
+  },
   "dependencies": {
     "@huggingface/transformers": "3.8.1",
     "@observatory/domain": "workspace:*"
+  },
+  "devDependencies": {
+    "onnxruntime-web": "1.22.0-dev.20250409-89f8206ba4"
   }
 }

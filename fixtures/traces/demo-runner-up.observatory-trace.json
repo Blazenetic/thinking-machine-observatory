@@ -67,7 +67,7 @@
       "tokenId": 373
     }
   ],
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "steps": [
     {
       "candidateUniverse": {
@@ -82,7 +82,9 @@
         "evidenceClass": "derived",
         "mode": "illustrative-demo",
         "note": "Illustrative fixture logits; sampler transforms and seeded selection are exact.",
-        "verificationStatus": "illustrative"
+        "verificationStatus": "illustrative",
+        "logitsSha256": null,
+        "verificationProfileId": null
       },
       "inputTokenIds": [
         464,

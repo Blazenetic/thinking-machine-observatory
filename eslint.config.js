@@ -32,4 +32,8 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  {
+    ...tseslint.configs.disableTypeChecked,
+    files: ['**/*.mjs'],
+  },
 );

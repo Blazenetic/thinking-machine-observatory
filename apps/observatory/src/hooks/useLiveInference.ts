@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { InferenceStatus, PredictionCapture } from '@observatory/domain';
+import type { InferenceStatus, ModelLoadReport, PredictionCapture } from '@observatory/domain';
 import {
   detectRuntimeCapabilities,
   type InferenceWorkerRequest,
@@ -15,6 +15,7 @@ function requestId(prefix: string): string {
 export function useLiveInference() {
   const capabilities = useMemo(() => detectRuntimeCapabilities(), []);
   const workerReference = useRef<Worker | null>(null);
+  const loadReportReference = useRef<ModelLoadReport | null>(null);
   const [status, setStatus] = useState<InferenceStatus>({ state: 'idle' });
   const [capture, setCapture] = useState<PredictionCapture | null>(null);
 
@@ -33,10 +34,19 @@ export function useLiveInference() {
           state: 'loading',
         });
       } else if (response.type === 'ready') {
-        setStatus({ model: response.model, state: 'ready' });
+        loadReportReference.current = response.load;
+        setStatus({ load: response.load, model: response.model, state: 'ready' });
       } else if (response.type === 'prediction') {
         setCapture(response.capture);
-        setStatus({ model: response.capture.model, state: 'ready' });
+        setStatus({
+          load: loadReportReference.current ?? {
+            cacheStatus: 'unavailable',
+            durationMs: 0,
+            modelAssetBytes: 0,
+          },
+          model: response.capture.model,
+          state: 'ready',
+        });
       } else if (response.type === 'disposed') {
         setStatus({ state: 'idle' });
       } else {
@@ -59,6 +69,7 @@ export function useLiveInference() {
 
   const load = useCallback(
     (backend: LiveBackend) => {
+      loadReportReference.current = null;
       setCapture(null);
       setStatus({ message: 'Preparing model loader', progress: 0, state: 'loading' });
       post({ backend, id: requestId('load'), type: 'load' });
@@ -69,7 +80,7 @@ export function useLiveInference() {
   const predict = useCallback(
     (prompt: string) => {
       setStatus({ state: 'predicting' });
-      post({ id: requestId('predict'), prompt, topN: 20, type: 'predict' });
+      post({ id: requestId('predict'), prompt, topN: 50, type: 'predict' });
     },
     [post],
   );
@@ -77,6 +88,7 @@ export function useLiveInference() {
   const cancel = useCallback(() => {
     workerReference.current?.terminate();
     workerReference.current = null;
+    loadReportReference.current = null;
     setCapture(null);
     setStatus({ state: 'idle' });
   }, []);
