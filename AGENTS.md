@@ -10,6 +10,20 @@ Deepen the **observe → intervene → branch → compare** learning loop withou
 model or instrument exposes. Correctness, provenance and replayability take priority over feature
 count.
 
+## Fresh-session start
+
+1. Read this file, `README.md`, `docs/architecture/README.md` and the newest file in
+   `docs/implementation`.
+2. Inspect `git status --short --branch`, the recent log and the pull request before assuming the
+   handover still matches the branch.
+3. Read `release-evidence/summary.md` and `manifest.json` before making a release-readiness claim.
+4. Install with `pnpm install --frozen-lockfile`; use the pinned Node 24 and pnpm 11 toolchain.
+5. Identify whether the task changes the frozen source candidate, adds evidence for it or only
+   improves repository guidance. Do not silently mix those scopes.
+
+Use `docs/developer-guide.md` for task routing and commands. A clean worktree is not proof that the
+remote branch or PR is current; verify both before publishing.
+
 ## Non-negotiable invariants
 
 1. Keep illustrative, measured, derived, projected, probed and interventional evidence visibly
@@ -97,3 +111,15 @@ assets. Do not claim either ran unless it actually completed.
 - Documentation describes the current implementation, not just the intended design.
 - The pull request states the user outcome, scientific boundary, observed commands and one bounded
   next slice.
+
+## Handover contract
+
+Leave the next human or agent an exact branch, source-candidate SHA, evidence-commit SHA where
+applicable, commands actually observed and a clean/dirty worktree statement. Separate passed,
+failed, blocked and not-run checks. Name missing browser binaries, model assets, hardware or
+deployment access as prerequisites rather than weakening a gate or implying that it passed.
+
+If a post-candidate documentation change alters application behaviour, public support claims or an
+accepted evidence artefact, treat it as a new candidate input and rebind the evidence. Navigation,
+contributor guidance and historical handover corrections may follow the evidence commit when they
+do not change the built application or its release claims.

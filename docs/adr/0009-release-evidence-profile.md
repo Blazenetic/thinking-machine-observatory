@@ -15,7 +15,7 @@ Release evidence needs the same provenance discipline as model evidence: named e
 method, result, artefact and limitation. The release should remain static and local-first; this
 process must not become a bespoke deployment platform.
 
-## Proposed decision
+## Decision
 
 Create one checked release-evidence manifest tied to the release-candidate commit. Each criterion
 records:

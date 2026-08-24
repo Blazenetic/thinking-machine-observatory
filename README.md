@@ -6,6 +6,17 @@ A local-first scientific instrument for inspecting next-token prediction, changi
 
 ![The Thinking Machine Observatory welcome deck](docs/evidence/session-01-welcome.png)
 
+## Start here
+
+| I want to…                          | Read or run                                                 |
+| ----------------------------------- | ----------------------------------------------------------- |
+| try the two-minute teaching loop    | [User guide](docs/user-guide.md)                            |
+| understand what the evidence means  | [Scientific status](#scientific-status)                     |
+| make a code or documentation change | [Developer guide](docs/developer-guide.md)                  |
+| start a fresh coding-agent session  | [Agent operating contract](AGENTS.md)                       |
+| review release readiness            | [Generated release evidence](release-evidence/summary.md)   |
+| deploy or roll back the static app  | [Static release runbook](docs/deployment/static-release.md) |
+
 ## Current instrument
 
 Phase 5 turns the capability-gated laboratory into an evidence-bound public release candidate:
@@ -42,7 +53,7 @@ The default score field remains intentionally labelled **illustrative** so the i
 Requirements: Node.js 24+ and pnpm 11+.
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
@@ -57,10 +68,11 @@ pnpm phase5:budgets # checked production-asset budgets after build
 pnpm e2e            # Chromium, Firefox and WebKit release journeys
 ```
 
-Playwright requires its Chromium build once per development machine:
+The ordinary end-to-end suite targets all three Playwright engines. Install them once per
+development machine:
 
 ```bash
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium firefox webkit
 ```
 
 ## Try the hero loop
@@ -71,6 +83,9 @@ pnpm exec playwright install chromium
 4. Commit the preview as an immutable child trace.
 5. Compare selection, entropy and Jensen–Shannon divergence in the Branch Chamber.
 6. Export the selected schema-valid trace as JSON.
+
+The [user guide](docs/user-guide.md) explains the controls, evidence labels, local storage and
+recovery paths without requiring knowledge of the repository architecture.
 
 Or load **Verified WASM** in the full-vocabulary panel, pause on the complete distribution, advance or run several exact-prefix steps, fork a historical token, save locally and export/import its ancestry bundle. The initial implementation deliberately reruns the full token-ID prefix; it does not claim unverified KV-cache equivalence.
 
@@ -145,6 +160,9 @@ pnpm trace:verify:live
 
 ## Documentation
 
+- [Documentation map](docs/README.md)
+- [User guide](docs/user-guide.md)
+- [Developer guide](docs/developer-guide.md)
 - [Canonical architecture map](docs/architecture/README.md)
 - [Runtime and interaction flows](docs/architecture/runtime-flows.md)
 - [Trace, replay and persistence integrity](docs/architecture/trace-integrity.md)

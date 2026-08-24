@@ -5,12 +5,13 @@
 - Target outcome: a dependable public portfolio and learning instrument whose support claims are
   backed by recorded evidence
 
-## Readiness result
+## Implementation result
 
-Phase 4 completes the product boundary required for release work: the instant teaching path is
+Phase 4 completed the product boundary required for release work: the instant teaching path is
 coherent, the verified local path is replayable and branch-centred, optional instruments fail
-honestly, and guided completion is predicate-based. Phase 5 should freeze interpretability breadth
-and prove that this product is accessible, resilient, deployable and understandable.
+honestly, and guided completion is predicate-based. Phase 5 froze interpretability breadth and
+implemented the acceptance ledger, release checks and evidence protocols needed to prove that this
+product is accessible, resilient, deployable and understandable.
 
 The launch target is demo-first static HTTPS with optional verified fp32 WASM. WebGPU inspection is
 experimental, and hidden-state, attention, logit-lens and semantic views remain unavailable. A
@@ -179,7 +180,7 @@ named. Do not invent a universal millisecond budget from CI hardware.
 - universal WebGPU support; and
 - a custom deployment/control plane for one static application.
 
-## Recommended implementation order
+## Implemented sequence
 
 1. 5A evidence manifest and current acceptance mapping.
 2. 5B keyboard/accessibility fixes while source changes are still cheap.
@@ -188,6 +189,7 @@ named. Do not invent a universal millisecond budget from CI hardware.
 5. 5E deployed-origin security, assets and licences.
 6. 5F screenshots, recording, first-use sessions and release handback.
 
-Phase 5 is ready to begin once the release-candidate evidence format and launch-blocking criterion
-classification receive review. Feature additions should wait until after the public release
-evidence is complete.
+The source candidate and candidate-bound local evidence are implemented. The next work is evidence
+collection: run the three-engine CI job, attach its exact run to the manifest, exercise the deployed
+origin, complete named assistive-technology and physical-device reviews, and run the consented
+learner protocol. Feature additions should wait until the public release evidence is complete.

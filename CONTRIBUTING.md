@@ -5,6 +5,9 @@ This is a learning project with a production-minded scientific core. Contributio
 Read the [agent operating contract](AGENTS.md) and [canonical architecture map](docs/architecture/README.md)
 before changing a package boundary, trace format or evidence status.
 
+For a task-oriented repository tour, command matrix and release-evidence workflow, use the
+[developer guide](docs/developer-guide.md).
+
 ## Working principles
 
 1. Deepen **observe → intervene → branch → compare** before adding a disconnected surface.
@@ -18,7 +21,7 @@ before changing a package boundary, trace format or evidence status.
 Use the versions pinned by `.node-version` and `packageManager`.
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
@@ -30,7 +33,11 @@ pnpm test:coverage
 pnpm e2e
 ```
 
-Install Playwright's browser once with `pnpm exec playwright install chromium`. The network-backed local-model smoke and reproducibility environment are opt-in; see the README and `model-tools/README.md`.
+Install the ordinary suite's browsers once with
+`pnpm exec playwright install chromium firefox webkit`. Installing only Chromium is sufficient for
+a focused `--project=chromium` run, but it is not the full release browser gate. The network-backed
+local-model smoke and reproducibility environment are opt-in; see the README and
+`model-tools/README.md`.
 
 ## Dependency direction
 
@@ -64,6 +71,21 @@ address and every sampler field in schema 1.2. `pnpm phase4:verify` checks token
 versioned experiment predicates, append-only compact annotations and the checked capability report.
 Do not enable a secondary instrument by editing UI state: add a worker declaration and an accepted
 source/runtime evidence profile first.
+
+Phase 5 adds two distinct gates. `pnpm phase5:verify` checks the acceptance ledger, evidence
+manifest, contrast and static-host policy. `pnpm phase5:budgets` checks the built JavaScript, CSS and
+worker artefacts against the accepted budgets, so run `pnpm build` first when invoking it directly.
+The generated `release-evidence/summary.md` is authoritative for the candidate decision; do not
+manually convert a blocked or unrun result to passed.
+
+## Before opening or updating a pull request
+
+1. Inspect `git status` and stage only the files that belong to the change.
+2. Run the smallest focused gate while iterating, then `pnpm check` and `pnpm test:coverage`.
+3. Run the relevant Playwright projects, or record the exact installation/runtime block.
+4. Update present-tense architecture, user guidance and the current handover when their claims
+   changed.
+5. Confirm generated evidence still names the intended source-candidate commit and lockfile.
 
 ## Pull requests
 

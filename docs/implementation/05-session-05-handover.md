@@ -50,6 +50,14 @@ zero-byte or truncated archive. No browser result is claimed locally. The draft 
 evidence-gated until GitHub's candidate Chromium, Firefox and WebKit job completes. Physical Android,
 real Safari, screen-reader and deployed-origin checks remain separate manual records.
 
+## Post-candidate documentation pass
+
+A later documentation-only follow-up adds audience-specific user and developer guides, a
+documentation map, fresh-agent start and handover rules, corrected three-engine Playwright setup,
+and present-tense Phase 5/evidence wording. It does not change the built application, dependency
+lock, evidence manifest or accepted release claims, so the source candidate remains `8799c6e` and
+the candidate-bound evidence commit remains `96ad3c3`.
+
 ## Release decision
 
 Read `release-evidence/summary.md`, not this handover, for the machine-derived decision. The candidate
