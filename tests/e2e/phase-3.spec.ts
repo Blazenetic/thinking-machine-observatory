@@ -17,25 +17,30 @@ async function installVerifiedFixtureWorker(page: Page): Promise<void> {
     }
 
     class FixtureWorker {
-      readonly #listeners = new Map<string, Set<EventListener>>();
-      #terminated = false;
+      declare listeners: Map<string, Set<EventListener>>;
+      declare terminated: boolean;
 
-      public addEventListener(type: string, listener: EventListener): void {
-        const listeners = this.#listeners.get(type) ?? new Set<EventListener>();
-        listeners.add(listener);
-        this.#listeners.set(type, listeners);
+      public constructor() {
+        this.listeners = new Map();
+        this.terminated = false;
       }
 
-      #emit(type: string, event: Event): void {
-        for (const listener of this.#listeners.get(type) ?? []) listener(event);
+      public addEventListener(type: string, listener: EventListener): void {
+        const listeners = this.listeners.get(type) ?? new Set<EventListener>();
+        listeners.add(listener);
+        this.listeners.set(type, listeners);
+      }
+
+      public emit(type: string, event: Event): void {
+        for (const listener of this.listeners.get(type) ?? []) listener(event);
       }
 
       public postMessage(request: FixtureRequest): void {
-        if (this.#terminated) return;
+        if (this.terminated) return;
         if (request.type === 'load') {
           setTimeout(() => {
-            if (this.#terminated) return;
-            this.#emit(
+            if (this.terminated) return;
+            this.emit(
               'message',
               new MessageEvent('message', {
                 data: {
@@ -64,7 +69,7 @@ async function installVerifiedFixtureWorker(page: Page): Promise<void> {
           return;
         }
         if (request.type === 'dispose') {
-          this.#emit(
+          this.emit(
             'message',
             new MessageEvent('message', {
               data: { context: request.context, id: request.id, type: 'disposed' },
@@ -83,8 +88,8 @@ async function installVerifiedFixtureWorker(page: Page): Promise<void> {
           const logitsSha256 = [...new Uint8Array(digest)]
             .map((value) => value.toString(16).padStart(2, '0'))
             .join('');
-          if (this.#terminated) return;
-          this.#emit(
+          if (this.terminated) return;
+          this.emit(
             'message',
             new MessageEvent('message', {
               data: {
@@ -138,7 +143,7 @@ async function installVerifiedFixtureWorker(page: Page): Promise<void> {
       }
 
       public terminate(): void {
-        this.#terminated = true;
+        this.terminated = true;
       }
     }
 
