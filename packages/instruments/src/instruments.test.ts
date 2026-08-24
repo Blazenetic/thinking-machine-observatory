@@ -5,9 +5,13 @@ import { runSampler } from '@observatory/sampler';
 
 import {
   buildProbabilityRows,
+  buildTokenSpecimenRows,
   compareBranches,
   explainSelection,
   jensenShannonDivergenceBits,
+  tokenSpecimenTextAlternative,
+  utf8FragmentBytes,
+  visibleTokenFragment,
 } from './index';
 
 const rawCandidates = [
@@ -103,5 +107,32 @@ describe('probability instruments', () => {
       draw: 'No pseudo-random draw was used.',
       selectionRule: 'A recorded manual intervention forced this candidate.',
     });
+  });
+});
+
+describe('token specimen instrument', () => {
+  it('renders leading space, punctuation, controls, Unicode and replacement characters stably', () => {
+    expect(visibleTokenFragment(' hello')).toBe('␠hello');
+    expect(visibleTokenFragment('!')).toBe('!');
+    expect(visibleTokenFragment('\tline\n')).toBe('⇥line↵');
+    expect(visibleTokenFragment('🛰️')).toBe('🛰️');
+    expect(visibleTokenFragment('\uFFFD')).toBe('\uFFFD');
+    expect(utf8FragmentBytes('🛰')).toEqual([240, 159, 155, 176]);
+  });
+
+  it('builds copyable rows and identifies recorded byte mismatches', () => {
+    const rows = buildTokenSpecimenRows({
+      generated: [{ text: '!', tokenId: 1 }],
+      pending: { text: '\uFFFD', tokenId: 2 },
+      promptTokens: [
+        { byteValues: [32, 104, 105], position: 0, text: ' hi', tokenId: 10 },
+        { byteValues: [0], position: 1, text: 'é', tokenId: 11 },
+      ],
+    });
+
+    expect(rows.map((row) => row.position)).toEqual([0, 1, 2, 3]);
+    expect(rows[0]).toMatchObject({ byteHex: '20 68 69', recordedBytesMatch: true });
+    expect(rows[1]).toMatchObject({ byteDecimal: '195 169', recordedBytesMatch: false });
+    expect(tokenSpecimenTextAlternative(rows)).toContain('"�"');
   });
 });

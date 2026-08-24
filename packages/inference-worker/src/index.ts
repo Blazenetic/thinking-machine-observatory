@@ -1,5 +1,6 @@
 import type {
   AssetCacheStatus,
+  InstrumentCapability,
   ModelIdentity,
   ModelLoadReport,
   PredictionCapture,
@@ -57,6 +58,74 @@ export const DISTILGPT2_VERIFICATION = {
   },
 } as const;
 
+export const TOKEN_SPECIMEN_PROFILE_ID = 'distilgpt2-tokenizer-specimens-v1' as const;
+export const TOKEN_SPECIMEN_METHOD_VERSION = 'decoded-fragment-utf8-v1' as const;
+
+const NO_CAPTURE = Object.freeze({ maxCapturedBytes: 0 });
+
+/**
+ * Declares only outputs available from the active worker session. The accepted
+ * fp32 graph currently exposes final logits, not intermediate tensors.
+ */
+export function instrumentCapabilitiesForModel(
+  model: ModelIdentity,
+): readonly InstrumentCapability[] {
+  const pinnedTokenizer =
+    model.id === DISTILGPT2_MODEL.id && model.revision === DISTILGPT2_MODEL.revision;
+  return Object.freeze([
+    {
+      evidenceClass: 'measured',
+      id: 'token-specimens',
+      limits: Object.freeze({ maxFragmentBytes: 256, maxTokens: 128 }),
+      methodVersion: TOKEN_SPECIMEN_METHOD_VERSION,
+      profileId: pinnedTokenizer ? TOKEN_SPECIMEN_PROFILE_ID : null,
+      reason: pinnedTokenizer
+        ? 'Exact token IDs and decoded fragments come from the pinned tokenizer; displayed UTF-8 bytes are derived from each fragment.'
+        : 'The active tokenizer does not match the accepted token-specimen profile.',
+      status: pinnedTokenizer ? 'verified' : 'unverified',
+    },
+    {
+      evidenceClass: 'measured',
+      id: 'hidden-states',
+      limits: NO_CAPTURE,
+      methodVersion: 'not-admitted',
+      profileId: null,
+      reason:
+        'The active ONNX graph exposes final logits only; no hidden-state output has passed a golden profile.',
+      status: 'unavailable',
+    },
+    {
+      evidenceClass: 'measured',
+      id: 'attention',
+      limits: NO_CAPTURE,
+      methodVersion: 'not-admitted',
+      profileId: null,
+      reason:
+        'No attention tensor with verified axes, causal mask and row normalisation is exposed by the active graph.',
+      status: 'unavailable',
+    },
+    {
+      evidenceClass: 'probed',
+      id: 'logit-lens',
+      limits: NO_CAPTURE,
+      methodVersion: 'deferred',
+      profileId: null,
+      reason: 'No named layer-normalisation and unembedding probe has been selected or verified.',
+      status: 'unavailable',
+    },
+    {
+      evidenceClass: 'projected',
+      id: 'semantic-projection',
+      limits: NO_CAPTURE,
+      methodVersion: 'deferred',
+      profileId: null,
+      reason:
+        'No verified vector source, distance metric or deterministic projection profile is available.',
+      status: 'unavailable',
+    },
+  ]);
+}
+
 export type LiveBackend = 'wasm' | 'webgpu';
 
 export interface LoadProgress {
@@ -97,6 +166,7 @@ export type InferenceWorkerResponse =
   | {
       readonly context: GenerationRequestContext;
       readonly id: string;
+      readonly instrumentCapabilities: readonly InstrumentCapability[];
       readonly load: ModelLoadReport;
       readonly model: ModelIdentity;
       readonly type: 'ready';
@@ -263,6 +333,10 @@ export class TransformersDistilGpt2Adapter {
     };
   }
 
+  public get instrumentCapabilities(): readonly InstrumentCapability[] {
+    return instrumentCapabilitiesForModel(this.modelIdentity);
+  }
+
   public get tokenizerIdentity(): TokenizerIdentity {
     return {
       assetHash: `sha256:${DISTILGPT2_ASSETS.tokenizerBundle.sha256}`,
@@ -406,6 +480,7 @@ export class TransformersDistilGpt2Adapter {
 }
 
 export interface InferenceAdapter {
+  readonly instrumentCapabilities: readonly InstrumentCapability[];
   readonly modelIdentity: ModelIdentity;
   dispose(): Promise<void>;
   load(onProgress?: (progress: LoadProgress) => void): Promise<ModelLoadReport>;
@@ -439,6 +514,7 @@ export function createInferenceWorkerHandler(
         postResponse({
           context: request.context,
           id: request.id,
+          instrumentCapabilities: loadingAdapter.instrumentCapabilities,
           load,
           model: loadingAdapter.modelIdentity,
           type: 'ready',

@@ -33,6 +33,7 @@ jobs:
       - run: pnpm fixtures:check
       - run: pnpm trace:verify:live
       - run: pnpm payload:verify
+      - run: pnpm phase4:verify
       - run: pnpm test:coverage
       - run: pnpm build
 

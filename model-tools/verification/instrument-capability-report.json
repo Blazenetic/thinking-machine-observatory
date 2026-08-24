@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0.0",
+  "evaluatedAt": "2026-08-24",
+  "status": "accepted-with-secondary-outputs-unavailable",
+  "activeExport": {
+    "assetPath": "onnx/model.onnx",
+    "graphSha256": "d605c4b3740df3960e8f84e4c5735af8d81d19105eb915b692272c08cc800b0c",
+    "model": "Xenova/distilgpt2",
+    "revision": "a41c10485c18a64b6606729b6a082330cbd8f49e",
+    "runtime": "@huggingface/transformers@3.8.1; onnxruntime-web@1.22.0-dev.20250409-89f8206ba4",
+    "observedAdapterOutputs": ["logits"],
+    "observationMethod": "Accepted Transformers.js AutoModelForCausalLM adapter contract and wasm-fp32 golden profile"
+  },
+  "acceptedPrimaryOutput": {
+    "name": "final-position logits",
+    "profileId": "distilgpt2-wasm-fp32-v1",
+    "shape": [1, "sequence", 50257],
+    "status": "accepted",
+    "verificationReport": "model-tools/verification/wasm-fp32-report.json"
+  },
+  "capabilities": [
+    {
+      "id": "token-specimens",
+      "status": "verified",
+      "profileId": "distilgpt2-tokenizer-specimens-v1",
+      "methodVersion": "decoded-fragment-utf8-v1",
+      "evidenceClass": "measured",
+      "limits": { "maxTokens": 128, "maxFragmentBytes": 256 },
+      "reason": "Pinned tokenizer IDs and decoded fragments are available; displayed UTF-8 bytes are derived separately."
+    },
+    {
+      "id": "hidden-states",
+      "status": "unavailable",
+      "profileId": null,
+      "methodVersion": "not-admitted",
+      "evidenceClass": "measured",
+      "limits": { "maxCapturedBytes": 0 },
+      "reason": "The accepted export exposes no verified hidden-state output."
+    },
+    {
+      "id": "attention",
+      "status": "unavailable",
+      "profileId": null,
+      "methodVersion": "not-admitted",
+      "evidenceClass": "measured",
+      "limits": { "maxCapturedBytes": 0 },
+      "reason": "The accepted export exposes no attention output with verified axes, mask and normalisation."
+    },
+    {
+      "id": "logit-lens",
+      "status": "unavailable",
+      "profileId": null,
+      "methodVersion": "deferred",
+      "evidenceClass": "probed",
+      "limits": { "maxCapturedBytes": 0 },
+      "reason": "No layer normalisation and unembedding probe definition has been selected."
+    },
+    {
+      "id": "semantic-projection",
+      "status": "unavailable",
+      "profileId": null,
+      "methodVersion": "deferred",
+      "evidenceClass": "projected",
+      "limits": { "maxCapturedBytes": 0 },
+      "reason": "No verified vector source, distance metric or projection profile has been selected."
+    }
+  ],
+  "candidateSecondaryCaptureBudget": {
+    "maxLayers": 2,
+    "maxHeads": 2,
+    "maxTokenPositions": 16,
+    "maxCapturedBytes": 1048576,
+    "allocationRule": "Validate shape multiplication and byte count before allocation."
+  },
+  "decisions": {
+    "secondaryTensorSchema": "Require schema 1.3 before persistence; schema 1.2 remains unchanged.",
+    "logitLens": "Deferred until a named normalisation and unembedding method is verified.",
+    "semanticVectors": "Deferred until a tied embedding or separate asset is explicitly identified."
+  },
+  "secondaryOutputAdmission": {
+    "status": "rejected-for-current-export",
+    "reason": "No purpose-built candidate graph and no source/runtime secondary-output fixtures are present."
+  }
+}

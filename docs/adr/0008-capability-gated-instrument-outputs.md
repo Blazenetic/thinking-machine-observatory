@@ -1,6 +1,6 @@
 # ADR 0008 — Capability-gated secondary instrument outputs
 
-- Status: Proposed
+- Status: Accepted
 - Date: 24 August 2026
 
 ## Context
@@ -34,3 +34,15 @@ Optional captured tensors use typed content-addressed payloads only after a sche
 - Instrument code must handle unavailable/unverified states as ordinary product states.
 - Additional graph assets and tensors are admitted one capability at a time, making size and memory costs reviewable.
 - The Observatory gains less visual breadth initially, but every enabled view has an auditable scientific meaning.
+
+## Phase 4 resolution
+
+The first accepted registry declares five session capabilities. Token specimens are verified under
+`distilgpt2-tokenizer-specimens-v1`; hidden states, attention, logit lens and semantic projection
+are unavailable and carry a zero-byte allocation limit. Model reload begins by clearing the prior
+registry, and the worker supplies the replacement declaration only after the new session is ready.
+
+The first candidate secondary-output profile is bounded to two layers, two heads, sixteen token
+positions and 1 MiB before allocation. If a future export passes the independent gate, persisted
+secondary tensors require schema 1.3; schema 1.2 is not widened implicitly. Logit-lens and semantic
+vector definitions remain deliberately deferred.

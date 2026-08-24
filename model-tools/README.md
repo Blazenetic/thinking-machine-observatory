@@ -90,3 +90,10 @@ The int8 profile intentionally allowed much larger numeric error while retaining
 ## Purpose-built instrumentation
 
 ONNX Runtime exposes only declared graph outputs. Hidden states or attention must be promoted to explicit outputs in a purpose-built graph and independently verified against the source framework. Until that work passes its own profile, the corresponding instrument remains unavailable rather than approximated.
+
+Phase 4 records that boundary in
+[`verification/instrument-capability-report.json`](verification/instrument-capability-report.json).
+The report accepts pinned tokenizer specimens, rejects secondary-output admission for the current
+logits-only export, fixes a pre-allocation budget for a future candidate graph and requires schema
+1.3 before any secondary tensor can be persisted. Run `pnpm phase4:verify` to check that runtime
+declarations and the evidence report have not silently widened.

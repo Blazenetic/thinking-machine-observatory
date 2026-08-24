@@ -46,6 +46,31 @@ async function installVerifiedFixtureWorker(page: Page): Promise<void> {
                 data: {
                   context: request.context,
                   id: request.id,
+                  instrumentCapabilities: [
+                    {
+                      evidenceClass: 'measured',
+                      id: 'token-specimens',
+                      limits: { maxFragmentBytes: 256, maxTokens: 128 },
+                      methodVersion: 'decoded-fragment-utf8-v1',
+                      profileId: 'distilgpt2-tokenizer-specimens-v1',
+                      reason: 'Pinned tokenizer fixture.',
+                      status: 'verified',
+                    },
+                    ...[
+                      ['hidden-states', 'measured'],
+                      ['attention', 'measured'],
+                      ['logit-lens', 'probed'],
+                      ['semantic-projection', 'projected'],
+                    ].map(([id, evidenceClass]) => ({
+                      evidenceClass,
+                      id,
+                      limits: { maxCapturedBytes: 0 },
+                      methodVersion: 'not-admitted',
+                      profileId: null,
+                      reason: 'The fixture graph exposes final logits only.',
+                      status: 'unavailable',
+                    })),
+                  ],
                   load: {
                     cacheStatus: 'warm-cache',
                     durationMs: 1,
@@ -119,12 +144,15 @@ async function installVerifiedFixtureWorker(page: Page): Promise<void> {
                       '@huggingface/transformers@3.8.1; onnxruntime-web@1.22.0-dev.20250409-89f8206ba4',
                     verificationStatus: 'verified',
                   },
-                  promptTokens: inputTokenIds.map((tokenId, position) => ({
-                    byteValues: [],
-                    position,
-                    text: position < 4 ? ['The', ' night', ' sky', ' was'][position] : '',
-                    tokenId,
-                  })),
+                  promptTokens: inputTokenIds.map((tokenId, position) => {
+                    const text = position < 4 ? ['The', ' night', ' sky', ' was'][position] : '';
+                    return {
+                      byteValues: [...new TextEncoder().encode(text)],
+                      position,
+                      text,
+                      tokenId,
+                    };
+                  }),
                   tokenizer: {
                     assetHash:
                       'sha256:fb803549cd431422aa2398fd669a1b2cff3ac8c57ff5843d9a65869a4df0b592',
@@ -164,6 +192,15 @@ test('runs a compact multi-step branch and round-trips its local evidence', asyn
   await page.getByRole('button', { name: 'Start new baseline' }).click();
   await expect(page.getByText(/Paused before selection 1/)).toBeVisible();
   await expect(page.getByText('50,257 complete logits')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Decoded fragments and UTF-8 bytes' }),
+  ).toBeVisible();
+  await expect(page.getByText('distilgpt2-tokenizer-specimens-v1')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Layer telescope' })).toBeVisible();
+  await expect(
+    page.getByText('The fixture graph exposes final logits only.').first(),
+  ).toBeVisible();
+  await expect(page.getByRole('cell', { name: '20 6E 69 67 68 74' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Advance one token' }).click();
   await expect(page.getByText(/Paused before selection 2/)).toBeVisible();
@@ -173,6 +210,17 @@ test('runs a compact multi-step branch and round-trips its local evidence', asyn
   await page.getByRole('button', { name: 'Fork decoded alternative' }).click();
   await expect(page.getByText(/First selection divergence: step 1/)).toBeVisible();
   await expect(page.getByText(/preserved the baseline bytes/)).toBeVisible();
+
+  const experimentNotebook = page.locator('section').filter({
+    has: page.getByRole('heading', { name: 'Exportable, replay-reviewable reflections' }),
+  });
+  await experimentNotebook.getByLabel('Protocol').selectOption('force-runner-up');
+  await expect(experimentNotebook.locator('.experiment-result')).toContainText('observed');
+  await experimentNotebook
+    .getByLabel('Reflection · append-only annotation')
+    .fill('The forced runner-up changed the selected future, not the model intent.');
+  await experimentNotebook.getByRole('button', { name: 'Append to selected trace' }).click();
+  await expect(experimentNotebook.getByText(/forced runner-up changed/)).toBeVisible();
 
   await page.getByRole('button', { name: 'Save to local notebook' }).click();
   await expect(page.getByText(/Saved 2 traces with 2 deduplicated payloads locally/)).toBeVisible();
@@ -186,4 +234,8 @@ test('runs a compact multi-step branch and round-trips its local evidence', asyn
   await page.getByLabel('Import 1.0 / 1.1 / 1.2').setInputFiles(path);
   await expect(page.getByText(/effective steps replayed exactly/)).toBeVisible();
   await expect(page.getByText(/KiB/).last()).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Decoded fragments and UTF-8 bytes' }),
+  ).toBeVisible();
+  await expect(experimentNotebook.getByText(/forced runner-up changed/)).toBeVisible();
 });

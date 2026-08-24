@@ -1335,6 +1335,168 @@ tbody th {
   border-inline-start: 1px solid var(--amber-dim);
 }
 
+.experiment-card[data-status='observed'] summary strong {
+  color: var(--cyan);
+}
+
+.experiment-card[data-status='blocked'] summary small {
+  color: var(--amber);
+}
+
+.experiment-predicates {
+  margin-block-start: 0.8rem;
+}
+
+.experiment-predicates > span,
+.experiment-reflection label {
+  color: var(--steel);
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.experiment-predicates ul {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0;
+  list-style: none;
+}
+
+.experiment-predicates li {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.55rem;
+  color: var(--ivory-muted);
+  font-size: 0.66rem;
+  background: var(--night);
+}
+
+.experiment-predicates li > strong {
+  color: var(--steel);
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.experiment-predicates li[data-status='observed'] > strong {
+  color: var(--cyan);
+}
+
+.experiment-predicates li[data-status='blocked'] > strong {
+  color: var(--amber);
+}
+
+.experiment-predicates code {
+  color: var(--steel);
+}
+
+.experiment-reflection {
+  display: grid;
+  gap: 0.55rem;
+  margin-block-start: 1rem;
+}
+
+.experiment-reflection textarea {
+  width: 100%;
+  padding: 0.7rem;
+  resize: vertical;
+  color: var(--ivory);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  background: var(--night);
+  border: 1px solid var(--hairline-bright);
+}
+
+.experiment-reflection ol {
+  display: grid;
+  gap: 0.35rem;
+  padding-inline-start: 1.2rem;
+  color: var(--steel);
+  font-family: ui-monospace, monospace;
+  font-size: 0.62rem;
+  line-height: 1.5;
+}
+
+.live-experiment-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(150px, 0.35fr);
+  gap: 0.75rem;
+}
+
+.live-experiment-layout label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--steel);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+}
+
+.live-experiment-layout select {
+  width: 100%;
+  padding: 0.65rem;
+  color: var(--ivory);
+  background: var(--night);
+  border: 1px solid var(--hairline-bright);
+}
+
+.experiment-result {
+  display: grid;
+  gap: 0.3rem;
+  align-content: center;
+  padding: 0.65rem;
+  background: var(--night);
+}
+
+.experiment-result span {
+  color: var(--steel);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+
+.experiment-result strong {
+  color: var(--amber);
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.experiment-result[data-status='observed'] strong {
+  color: var(--cyan);
+}
+
+.live-experiment-predicates {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0;
+  list-style: none;
+}
+
+.live-experiment-predicates li {
+  display: grid;
+  grid-template-columns: 65px 1fr auto;
+  gap: 0.6rem;
+  padding: 0.55rem;
+  color: var(--ivory-muted);
+  font-size: 0.66rem;
+  background: var(--night);
+}
+
+.live-experiment-predicates strong {
+  color: var(--steel);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+
+.live-experiment-predicates li[data-status='observed'] strong {
+  color: var(--cyan);
+}
+
+.live-experiment-predicates li[data-status='blocked'] strong {
+  color: var(--amber);
+}
+
 .capability-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1367,6 +1529,204 @@ tbody th {
 
 .capability-grid p[data-available='false'] strong {
   color: var(--amber);
+}
+
+.capability-instruments,
+.token-bench {
+  margin-block-start: 1rem;
+}
+
+.capability-instrument-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.capability-instrument-grid article {
+  padding: 1rem;
+  background: var(--night);
+  border: 1px solid var(--hairline);
+}
+
+.capability-instrument-grid article[data-status='verified'] {
+  border-color: var(--cyan-dim);
+}
+
+.capability-instrument-grid article > div:first-child,
+.token-bench__evidence {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.capability-status,
+.token-bench__evidence > strong {
+  color: var(--amber);
+  font-family: ui-monospace, monospace;
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.token-bench__evidence > strong[data-status='verified'] {
+  color: var(--cyan);
+}
+
+.capability-instrument-grid h4 {
+  margin-block: 0.9rem 0.4rem;
+  font-size: 1rem;
+  font-weight: 560;
+}
+
+.capability-instrument-grid article > p,
+.instrument-availability-note {
+  color: var(--ivory-muted);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.capability-instrument-grid dl,
+.instrument-provenance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-block: 0.8rem;
+}
+
+.capability-instrument-grid dl div,
+.instrument-provenance div {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.55rem;
+  background: var(--instrument-black);
+}
+
+.capability-instrument-grid dt,
+.instrument-provenance dt {
+  color: var(--steel);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.capability-instrument-grid dd,
+.instrument-provenance dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, monospace;
+  font-size: 0.65rem;
+}
+
+.instrument-unavailable-reason {
+  padding-inline-start: 0.7rem;
+  border-inline-start: 2px solid var(--amber-dim);
+}
+
+.instrument-limitation {
+  color: var(--steel) !important;
+}
+
+.instrument-unavailable {
+  padding: 1rem;
+  background: var(--night);
+  border: 1px dashed var(--amber-dim);
+}
+
+.instrument-unavailable p {
+  margin: 0.4rem 0 0;
+  color: var(--steel);
+  font-size: 0.72rem;
+}
+
+.token-specimen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.token-specimen-grid li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.65rem;
+  min-width: 0;
+  padding: 0.7rem;
+  background: var(--night);
+  border-block-start: 1px solid var(--hairline-bright);
+}
+
+.token-specimen-grid li[data-origin='generated'] {
+  border-color: var(--cyan-dim);
+}
+
+.token-specimen-grid li[data-origin='pending'] {
+  border-color: var(--amber);
+}
+
+.token-specimen-grid li > span,
+.token-specimen-grid li > small {
+  color: var(--steel);
+  font-family: ui-monospace, monospace;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+
+.token-specimen-grid li > strong {
+  overflow: hidden;
+  color: var(--ivory);
+  font-family: Charter, Georgia, serif;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.token-specimen-grid li > code {
+  grid-column: 2;
+  overflow: hidden;
+  color: var(--ivory-muted);
+  font-size: 0.62rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.token-specimen-table {
+  max-height: 390px;
+  margin-block-start: 0.8rem;
+}
+
+.token-text-alternative {
+  margin-block-start: 0.8rem;
+  padding: 0.75rem;
+  background: var(--night);
+  border: 1px solid var(--hairline);
+}
+
+.token-text-alternative summary {
+  color: var(--ivory-muted);
+  font-size: 0.72rem;
+}
+
+.token-text-alternative button {
+  margin-block: 0.7rem;
+}
+
+.token-text-alternative textarea {
+  display: block;
+  width: 100%;
+  min-height: 150px;
+  padding: 0.7rem;
+  resize: vertical;
+  color: var(--ivory-muted);
+  font-family: ui-monospace, monospace;
+  font-size: 0.64rem;
+  line-height: 1.5;
+  background: var(--instrument-black);
+  border: 1px solid var(--hairline-bright);
 }
 
 .model-manifest {
@@ -1756,6 +2116,7 @@ footer p {
   }
 
   .capability-grid,
+  .capability-instrument-grid,
   .model-manifest,
   .live-capture__summary {
     grid-template-columns: 1fr 1fr;
@@ -1775,6 +2136,10 @@ footer p {
   }
 
   .generation-settings {
+    grid-template-columns: 1fr;
+  }
+
+  .live-experiment-layout {
     grid-template-columns: 1fr;
   }
 
@@ -1854,6 +2219,7 @@ footer p {
 
   .metric-grid,
   .capability-grid,
+  .capability-instrument-grid,
   .model-manifest,
   .live-capture__summary {
     grid-template-columns: 1fr;

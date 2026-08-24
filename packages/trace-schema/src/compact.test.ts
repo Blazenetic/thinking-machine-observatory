@@ -12,6 +12,7 @@ import type {
 
 import {
   appendCompactGenerationStep,
+  appendCompactTraceAnnotation,
   CompactTraceError,
   compareCompactTraceSelections,
   createCompactGenerationStep,
@@ -109,6 +110,27 @@ describe('compact schema 1.2', () => {
     expect(restored).toEqual(bundle);
     expect(Object.keys(restored.payloads)).toHaveLength(1);
     await expect(replayCompactTraceBundle(restored)).resolves.toMatchObject({ matches: true });
+  });
+
+  it('appends reflection annotations without mutating prior evidence', async () => {
+    const original = appendCompactGenerationStep(
+      emptyBundle(),
+      'compact-baseline',
+      await firstStep(),
+    );
+    const annotated = appendCompactTraceAnnotation(original, 'compact-baseline', {
+      createdAt: '2026-08-24T01:00:00.000Z',
+      id: 'reflection-1',
+      note: '[observatory-reflection/v1] force-runner-up@1 observed: It diverged.',
+      step: 0,
+    });
+
+    expect(original.traces[0]?.annotations).toEqual([]);
+    expect(annotated.traces[0]?.annotations).toHaveLength(1);
+    expect(annotated.traces[0]?.annotations[0]?.id).toBe('reflection-1');
+    await expect(
+      parseCompactTraceBundleJson(serialiseCompactTraceBundle(annotated)),
+    ).resolves.toEqual(annotated);
   });
 
   it('continues the recorded PRNG cursor and deduplicates repeated payload bytes', async () => {

@@ -38,6 +38,28 @@ export const EVIDENCE_CLASSES = {
 
 export type EvidenceClass = keyof typeof EVIDENCE_CLASSES;
 
+export const INSTRUMENT_CAPABILITY_IDS = [
+  'token-specimens',
+  'hidden-states',
+  'attention',
+  'logit-lens',
+  'semantic-projection',
+] as const;
+
+export type InstrumentCapabilityId = (typeof INSTRUMENT_CAPABILITY_IDS)[number];
+export type InstrumentCapabilityStatus = 'unavailable' | 'unverified' | 'verified';
+
+/** A model-session declaration. The UI must not infer these values from a model name. */
+export interface InstrumentCapability {
+  readonly evidenceClass: EvidenceClass;
+  readonly id: InstrumentCapabilityId;
+  readonly limits: Readonly<Record<string, number>>;
+  readonly methodVersion: string;
+  readonly profileId: string | null;
+  readonly reason: string;
+  readonly status: InstrumentCapabilityStatus;
+}
+
 export interface EvidenceDatum<T> {
   readonly evidenceClass: EvidenceClass;
   readonly method: string;

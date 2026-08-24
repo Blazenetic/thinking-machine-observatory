@@ -1,6 +1,6 @@
 # Phase 4 readiness — honest instruments and guided laboratory
 
-- Status: Draft implementation contract
+- Status: Implemented contract
 - Depends on: Phase 3 draft PR #4
 - Target outcome: every secondary instrument is either backed by a verified output profile or presents an explicit unavailable state
 
@@ -160,3 +160,28 @@ The ordinary CI gate uses checked small fixtures. Network-backed graph verificat
 - adding accounts, a backend or collaborative notebooks.
 
 Phase 4 is ready to begin with 4A. Work packages 4C–4E remain blocked until 4B accepts the exact capability they consume.
+
+## Implementation result
+
+Phase 4 implements the useful parts of the contract without crossing its evidence gates:
+
+- the active worker session now declares a typed five-capability registry and a model reload clears
+  the previous declaration before loading begins;
+- the verified token specimen bench follows the selected baseline or child history, marks pending
+  selections, renders whitespace/control/Unicode fragments, derives UTF-8 hex and decimal bytes,
+  and provides both a semantic table and tab-separated text alternative;
+- the layer telescope, attention interferometer, logit-lens probe and semantic chart are complete
+  unavailable product states with evidence class, profile, method, limits, reason and limitation;
+- the checked instrument-capability report records that the current adapter exposes logits only,
+  accepts token specimens and rejects secondary-output admission;
+- a future candidate is capped at two layers, two heads, sixteen token positions and 1 MiB before
+  allocation; secondary tensor persistence requires schema 1.3;
+- all eight guided experiments are protocol version 1 with executable predicates that report
+  observed, pending or blocked from trace/capability evidence; and
+- reflections append to immutable trace annotations and survive compact export, replay review and
+  transactional notebook storage.
+
+No purpose-built secondary-output graph was admitted. Work packages 4C–4E therefore resolve to
+honest unavailable instruments, not incomplete visualisations. See the
+[Phase 4 session handover](04-session-04-handover.md) and
+[`instrument-capability-report.json`](../../model-tools/verification/instrument-capability-report.json).
