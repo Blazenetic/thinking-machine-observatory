@@ -134,6 +134,7 @@ pnpm trace:verify:live
 - [Session 03 handover](docs/implementation/03-session-03-handover.md)
 - [Session 04 handover](docs/implementation/04-session-04-handover.md)
 - [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md)
+- [Phase 5 readiness contract](docs/implementation/05-phase-05-readiness.md)
 - [Architecture decisions](docs/adr)
 - [Model verification boundary](model-tools/README.md)
 - [Original product and architecture package](docs/00-project-overview-and-directors-brief.md)
@@ -144,4 +145,4 @@ Phase 5 is release evidence, not feature expansion: accessibility and reduced-mo
 measured browser/device capability results, memory and offline-revisit tests, deployment/security
 decisions, licences and a two-minute first-use study. Hidden states, attention, logit-lens probes
 and semantic projections remain unavailable until an exact purpose-built output profile passes the
-independent gate.
+independent gate. See the [Phase 5 readiness contract](docs/implementation/05-phase-05-readiness.md).
