@@ -14,5 +14,6 @@ These screenshots show the illustrative teaching path. Phase 2 numerical evidenc
 - `model-tools/verification/wasm-fp32-report.json` — accepted comparison;
 - `model-tools/verification/wasm-int8-report.json` — preserved rejection; and
 - `model-tools/verification/live-trace-report.json` — exact selected-token export/import/replay and trace-size evidence.
+- `model-tools/verification/compact-payload-spike-report.json` — Phase 3 compact representation and exact sampler-equivalence evidence.
 
 The live interface remains covered by an opt-in network-backed Playwright test. A screenshot alone is not accepted as proof of numerical equivalence.

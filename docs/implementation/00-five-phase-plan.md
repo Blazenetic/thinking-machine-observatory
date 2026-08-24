@@ -57,7 +57,7 @@ Exit evidence:
 
 ## Phase 3 — Multi-step generation and branch DAG
 
-**Status: readiness drafted; implementation next**
+**Status: readiness drafted with verified compact-payload spike; implementation next**
 
 Outcome: the branch workflow becomes the product’s operational centre rather than a one-step demonstration.
 
@@ -73,6 +73,8 @@ Work:
 - introduce IndexedDB notebook storage with quota handling.
 
 Entry gate: replace repeated expanded 50,257-candidate records with a content-addressed, lossless logit payload while preserving schema 1.1 import and exact sampler replay. The Phase 2 measurement shows that naively repeating the expanded record would add roughly 23 MiB and substantial heap use per step.
+
+Readiness contract: [Phase 3 multi-step generation and branch DAG](03-phase-03-readiness.md).
 
 Exit gate: force the runner-up, run both futures for several tokens, locate the first divergence, export, import and replay without ancestor mutation.
 

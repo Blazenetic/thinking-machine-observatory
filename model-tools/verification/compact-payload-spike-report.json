@@ -1,0 +1,26 @@
+{
+  "contentAddress": "0c2ea6650f31e52fdd9054bb57d652899c51d4dd2b3979300d5e8ec406524998",
+  "decodeDurationMs": 32.11655400000001,
+  "encodeDurationMs": 16.341577,
+  "exactSamplerMatch": true,
+  "expandedTraceJsonBytes": 24179109,
+  "heapDeltaBytes": 68703352,
+  "payloadGzipBytes": 184967,
+  "payloadJsonBytes": 268178,
+  "reductionRatio": 0.9889086897288067,
+  "reportFormatVersion": "1.0.0",
+  "selectedToken": {
+    "draw": {
+      "algorithm": "xoshiro128**",
+      "stateAfter": [4054830488, 2263837939, 2334627848, 326123657],
+      "stateBefore": [3767378832, 2546795259, 4054830488, 2263837939],
+      "value": 0.518601645482704
+    },
+    "interval": [0.5019417101738411, 0.5532351925135095],
+    "mode": "sampled",
+    "probability": 0.051293482339668364,
+    "text": " dark",
+    "tokenId": 3223
+  },
+  "valueCount": 50257
+}

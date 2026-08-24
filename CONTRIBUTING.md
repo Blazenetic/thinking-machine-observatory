@@ -56,6 +56,8 @@ Schema changes require an explicit version and migration decision. Model/runtime
 
 `pnpm fixtures:check` re-hashes the checked source/runtime vectors and re-evaluates the accepted rank/error gates without downloading model weights. `pnpm trace:verify:live` feeds the accepted 50,257-logit hero vector through the production sampler, JSON parser and replay engine. Run the heavyweight `pnpm model:verify` only with both pinned ONNX assets available.
 
+On the Phase 3 readiness branch, `pnpm payload:verify` additionally proves that canonical float32-le/base64 encoding preserves the content address and every sampler field. The codec is a spike until schema 1.2 migration lands; do not write ad hoc payload references into schema 1.1 traces.
+
 ## Pull requests
 
 Keep commits reviewable and use conventional prefixes such as `feat:`, `fix:`, `test:`, `docs:` and `chore:`. Complete the PR template with:

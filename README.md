@@ -128,3 +128,5 @@ pnpm trace:verify:live
 ## Next high-value slice
 
 Phase 3 turns the one-step proof into pause-safe multi-step generation and a branch DAG. Its first prerequisite is a lossless content-addressed logit payload: the intentionally expanded Phase 2 trace measures 23.06 MiB JSON for one step, which must not be repeated naïvely across a future.
+
+The stacked readiness spike preserves every sampler field while reducing the accepted hero vector representation to 261.9 KiB JSON (98.89% smaller). Its proposed schema, PRNG-continuity and generation-controller contract is documented in [Phase 3 readiness](docs/implementation/03-phase-03-readiness.md).
