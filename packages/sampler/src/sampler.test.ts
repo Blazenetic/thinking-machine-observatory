@@ -175,5 +175,14 @@ describe('runSampler', () => {
     expect(() =>
       runSampler(candidates, sampledConfig, { forcedTokenId: 1, suppressedTokenIds: [1] }),
     ).toThrow(SamplerConfigurationError);
+    expect(() =>
+      runSampler(candidates, sampledConfig, { forcedTokenId: 99, suppressedTokenIds: [] }),
+    ).toThrow('candidate universe');
+    expect(() =>
+      runSampler(candidates, sampledConfig, { forcedTokenId: null, suppressedTokenIds: [2, 2] }),
+    ).toThrow('more than once');
+    expect(() => runSampler([{ logit: 1, text: ' invalid', tokenId: -1 }], sampledConfig)).toThrow(
+      'non-negative integers',
+    );
   });
 });

@@ -172,6 +172,9 @@ function assertCandidates(candidates: readonly RawCandidate[]): void {
 
   const tokenIds = new Set<number>();
   for (const candidate of candidates) {
+    if (!Number.isInteger(candidate.tokenId) || candidate.tokenId < 0) {
+      throw new SamplerConfigurationError('Candidate token IDs must be non-negative integers.');
+    }
     if (!Number.isFinite(candidate.logit)) {
       throw new SamplerConfigurationError(`Token ${candidate.tokenId} has a non-finite logit.`);
     }
@@ -179,6 +182,37 @@ function assertCandidates(candidates: readonly RawCandidate[]): void {
       throw new SamplerConfigurationError(`Token ${candidate.tokenId} appears more than once.`);
     }
     tokenIds.add(candidate.tokenId);
+  }
+}
+
+function assertInterventions(
+  candidates: readonly RawCandidate[],
+  interventions: SamplerInterventions,
+): void {
+  const universe = new Set(candidates.map((candidate) => candidate.tokenId));
+  if (
+    interventions.forcedTokenId !== null &&
+    (!Number.isInteger(interventions.forcedTokenId) ||
+      interventions.forcedTokenId < 0 ||
+      !universe.has(interventions.forcedTokenId))
+  ) {
+    throw new SamplerConfigurationError('Forced token must belong to the candidate universe.');
+  }
+
+  const suppressed = new Set<number>();
+  for (const tokenId of interventions.suppressedTokenIds) {
+    if (!Number.isInteger(tokenId) || tokenId < 0 || !universe.has(tokenId)) {
+      throw new SamplerConfigurationError(
+        'Suppressed tokens must belong to the candidate universe.',
+      );
+    }
+    if (suppressed.has(tokenId)) {
+      throw new SamplerConfigurationError(`Suppressed token ${tokenId} appears more than once.`);
+    }
+    suppressed.add(tokenId);
+  }
+  if (interventions.forcedTokenId !== null && suppressed.has(interventions.forcedTokenId)) {
+    throw new SamplerConfigurationError('The same token cannot be both forced and suppressed.');
   }
 }
 
@@ -356,6 +390,7 @@ export function runSampler(
 ): SamplerResult {
   validateSamplerConfig(config);
   assertCandidates(rawCandidates);
+  assertInterventions(rawCandidates, interventions);
 
   const candidates = buildWorkingCandidates(rawCandidates, config, interventions);
   const topKCandidates = applyTopK(candidates, config.topK);

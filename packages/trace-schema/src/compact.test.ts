@@ -250,6 +250,34 @@ describe('compact schema 1.2', () => {
     );
   });
 
+  it('rejects compact steps that only claim a complete candidate universe', async () => {
+    const bundle = appendCompactGenerationStep(
+      emptyBundle(),
+      'compact-baseline',
+      await firstStep(),
+    );
+    const trace = bundle.traces[0];
+    const step = trace?.steps[0];
+    if (!trace || !step) throw new Error('Expected a compact step.');
+
+    expect(() =>
+      validateCompactTraceBundle({
+        ...bundle,
+        traces: [
+          {
+            ...trace,
+            steps: [
+              {
+                ...step,
+                candidateUniverse: { ...step.candidateUniverse, captured: 2 },
+              },
+            ],
+          },
+        ],
+      }),
+    ).toThrow('complete candidate universe');
+  });
+
   it('reports bounded and contradictory construction failures', async () => {
     await expect(
       createCompactGenerationStep({

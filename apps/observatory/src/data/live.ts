@@ -12,6 +12,7 @@ import {
   DISTILGPT2_MODEL,
   DISTILGPT2_RUNTIME,
   DISTILGPT2_VERIFICATION,
+  DISTILGPT2_VOCABULARY_SIZE,
 } from '@observatory/inference-worker';
 import { runSampler } from '@observatory/sampler';
 import {
@@ -88,6 +89,11 @@ function assertAcceptedCapture(capture: PredictionCapture): void {
   ) {
     throw new LiveTraceError('The logit vector does not match the declared candidate universe.');
   }
+  if (capture.candidateUniverse.size !== DISTILGPT2_VOCABULARY_SIZE) {
+    throw new LiveTraceError(
+      `The accepted DistilGPT2 profile requires all ${DISTILGPT2_VOCABULARY_SIZE} vocabulary logits.`,
+    );
+  }
   if (!hasAcceptedIdentity(capture)) {
     throw new LiveTraceError('Only the accepted fp32 WASM build may enter exact live replay.');
   }
@@ -119,6 +125,8 @@ export function assertAcceptedLiveTrace(trace: ExperimentTrace): void {
     trace.steps.length === 0 ||
     trace.steps.some(
       (step) =>
+        step.candidateUniverse.size !== DISTILGPT2_VOCABULARY_SIZE ||
+        step.candidateUniverse.captured !== DISTILGPT2_VOCABULARY_SIZE ||
         step.inference.verificationProfileId !== DISTILGPT2_VERIFICATION.wasmFp32.profileId ||
         step.inference.verificationStatus !== 'verified' ||
         step.inference.logitsSha256 === null,
@@ -147,6 +155,8 @@ export function assertAcceptedCompactLiveBundle(bundle: CompactTraceBundle): voi
       trace.steps.length === 0 ||
       trace.steps.some(
         (step) =>
+          step.candidateUniverse.size !== DISTILGPT2_VOCABULARY_SIZE ||
+          step.candidateUniverse.captured !== DISTILGPT2_VOCABULARY_SIZE ||
           step.inference.logitsSha256 !== step.logitsRef ||
           step.inference.verificationProfileId !== DISTILGPT2_VERIFICATION.wasmFp32.profileId ||
           step.inference.verificationStatus !== 'verified',

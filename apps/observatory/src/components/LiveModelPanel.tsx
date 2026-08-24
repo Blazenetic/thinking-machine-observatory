@@ -403,6 +403,18 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
     setTraceMessage('Generation stopped. The last committed trace remains immutable.');
   };
 
+  const selectTrace = (traceId: string) => {
+    if (!bundle) return;
+    stop();
+    setBundle(selectCompactTrace(bundle, traceId));
+    setActiveTraceId(traceId);
+    setPreview(null);
+    setForcedTokenId(null);
+    setSuppressedTokenIds([]);
+    setController(createGenerationControllerState(controller.workerEpoch));
+    setTraceMessage(`Selected ${traceId}. Continue it to measure a fresh exact-prefix step.`);
+  };
+
   const toggleSuppression = (tokenId: number) => {
     setForcedTokenId((current) => (current === tokenId ? null : current));
     setSuppressedTokenIds((current) =>
@@ -814,11 +826,7 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
                 aria-pressed={resolvedActiveTraceId === trace.traceId}
                 className="branch-card"
                 key={trace.traceId}
-                onClick={() => {
-                  setBundle(selectCompactTrace(bundle, trace.traceId));
-                  setActiveTraceId(trace.traceId);
-                  setPreview(null);
-                }}
+                onClick={() => selectTrace(trace.traceId)}
                 role="listitem"
                 type="button"
               >

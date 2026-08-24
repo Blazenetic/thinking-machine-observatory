@@ -19,6 +19,8 @@ export const DISTILGPT2_MODEL = {
   revision: 'a41c10485c18a64b6606729b6a082330cbd8f49e',
 } as const;
 
+export const DISTILGPT2_VOCABULARY_SIZE = 50_257 as const;
+
 export const DISTILGPT2_RUNTIME =
   '@huggingface/transformers@3.8.1; onnxruntime-web@1.22.0-dev.20250409-89f8206ba4' as const;
 
@@ -69,9 +71,14 @@ const NO_CAPTURE = Object.freeze({ maxCapturedBytes: 0 });
  */
 export function instrumentCapabilitiesForModel(
   model: ModelIdentity,
+  tokenizer: TokenizerIdentity,
 ): readonly InstrumentCapability[] {
   const pinnedTokenizer =
-    model.id === DISTILGPT2_MODEL.id && model.revision === DISTILGPT2_MODEL.revision;
+    model.id === DISTILGPT2_MODEL.id &&
+    model.revision === DISTILGPT2_MODEL.revision &&
+    tokenizer.assetHash === `sha256:${DISTILGPT2_ASSETS.tokenizerBundle.sha256}` &&
+    tokenizer.id === DISTILGPT2_MODEL.id &&
+    tokenizer.revision === DISTILGPT2_MODEL.revision;
   return Object.freeze([
     {
       evidenceClass: 'measured',
@@ -255,17 +262,40 @@ function toLoadProgress(info: ProgressInfo): LoadProgress {
 export function extractFinalLogits(logits: TensorLike): Float32Array {
   const vocabularySize = logits.dims.at(-1);
   const sequenceLength = logits.dims.at(-2);
-  if (!vocabularySize || !sequenceLength || logits.dims.length < 2) {
+  if (
+    !vocabularySize ||
+    !sequenceLength ||
+    logits.dims.length < 2 ||
+    logits.dims.some((dimension) => !Number.isInteger(dimension) || dimension < 1)
+  ) {
     throw new Error(`Unexpected logits shape: [${logits.dims.join(', ')}].`);
   }
 
+  const expectedValues = logits.dims.reduce((product, dimension) => product * dimension, 1);
+  if (expectedValues !== logits.data.length) {
+    throw new Error(
+      `Logits shape [${logits.dims.join(', ')}] declares ${expectedValues} values but received ${logits.data.length}.`,
+    );
+  }
+  const batchSize = logits.dims.slice(0, -2).reduce((product, dimension) => product * dimension, 1);
+  if (batchSize !== 1) {
+    throw new Error(`Expected one logits batch; received ${batchSize}.`);
+  }
+
   const offset = (sequenceLength - 1) * vocabularySize;
-  return Float32Array.from(
-    Array.from({ length: vocabularySize }, (_, tokenId) => Number(logits.data[offset + tokenId])),
-  );
+  return Float32Array.from({ length: vocabularySize }, (_, tokenId) => {
+    const value = Number(logits.data[offset + tokenId]);
+    if (!Number.isFinite(value)) {
+      throw new Error(`Final-position logit ${tokenId} is not finite.`);
+    }
+    return value;
+  });
 }
 
 export function rankTopCandidates(logits: Float32Array, topN: number): readonly RawCandidate[] {
+  if (!Number.isInteger(topN) || topN < 1) {
+    throw new Error('topN must be a positive integer.');
+  }
   const leaders: { logit: number; tokenId: number }[] = [];
   for (let tokenId = 0; tokenId < logits.length; tokenId += 1) {
     const value = logits[tokenId] as number;
@@ -334,7 +364,7 @@ export class TransformersDistilGpt2Adapter {
   }
 
   public get instrumentCapabilities(): readonly InstrumentCapability[] {
-    return instrumentCapabilitiesForModel(this.modelIdentity);
+    return instrumentCapabilitiesForModel(this.modelIdentity, this.tokenizerIdentity);
   }
 
   public get tokenizerIdentity(): TokenizerIdentity {
@@ -411,7 +441,8 @@ export class TransformersDistilGpt2Adapter {
       if (
         inputTokenIds.length === 0 ||
         inputTokenIds.some(
-          (tokenId) => !Number.isInteger(tokenId) || tokenId < 0 || tokenId >= 50_257,
+          (tokenId) =>
+            !Number.isInteger(tokenId) || tokenId < 0 || tokenId >= DISTILGPT2_VOCABULARY_SIZE,
         )
       ) {
         throw new Error('inputTokenIds must contain valid DistilGPT2 vocabulary IDs.');
@@ -444,6 +475,11 @@ export class TransformersDistilGpt2Adapter {
       logits = extractFinalLogits(output.logits);
     } finally {
       output.logits.dispose?.();
+    }
+    if (logits.length !== DISTILGPT2_VOCABULARY_SIZE) {
+      throw new Error(
+        `Pinned DistilGPT2 output must contain ${DISTILGPT2_VOCABULARY_SIZE} logits; received ${logits.length}.`,
+      );
     }
     const candidates = rankTopCandidates(logits, topN).map((candidate) => ({
       ...candidate,

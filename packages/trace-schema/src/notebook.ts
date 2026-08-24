@@ -343,6 +343,7 @@ function quotaError(error: unknown): boolean {
 
 export class IndexedDbTraceNotebook {
   readonly #database: IDBDatabase;
+  #writeQueue: Promise<void> = Promise.resolve();
 
   private constructor(database: IDBDatabase) {
     this.#database = database;
@@ -379,55 +380,68 @@ export class IndexedDbTraceNotebook {
     return state;
   }
 
+  #enqueueWrite(operation: () => Promise<void>): Promise<void> {
+    const queued = this.#writeQueue.then(operation);
+    this.#writeQueue = queued.catch(() => undefined);
+    return queued;
+  }
+
   public async saveBundle(bundle: CompactTraceBundle): Promise<void> {
-    const before = await this.#read();
-    const next = saveBundleToState(before, bundle, new Date().toISOString());
-    const beforeBytes = dataReport(before).approximateBytes;
-    const nextBytes = dataReport(next).approximateBytes;
-    const estimate = await globalThis.navigator?.storage?.estimate?.();
-    if (
-      estimate?.quota !== undefined &&
-      estimate.usage !== undefined &&
-      estimate.usage + Math.max(0, nextBytes - beforeBytes) > estimate.quota * 0.9
-    ) {
-      throw new NotebookQuotaError('Saving would exceed the notebook safety margin.');
-    }
-    const transaction = this.#database.transaction(
-      [TRACE_STORE, PAYLOAD_STORE, METADATA_STORE],
-      'readwrite',
-    );
-    const completion = transactionComplete(transaction);
-    try {
-      replaceState(transaction, next);
-      await completion;
-    } catch (error) {
-      if (quotaError(error)) throw new NotebookQuotaError();
-      throw error;
-    }
+    return this.#enqueueWrite(async () => {
+      const before = await this.#read();
+      const next = saveBundleToState(before, bundle, new Date().toISOString());
+      const beforeBytes = dataReport(before).approximateBytes;
+      const nextBytes = dataReport(next).approximateBytes;
+      const estimate = await globalThis.navigator?.storage?.estimate?.();
+      if (
+        estimate?.quota !== undefined &&
+        estimate.usage !== undefined &&
+        estimate.usage + Math.max(0, nextBytes - beforeBytes) > estimate.quota * 0.9
+      ) {
+        throw new NotebookQuotaError('Saving would exceed the notebook safety margin.');
+      }
+      const transaction = this.#database.transaction(
+        [TRACE_STORE, PAYLOAD_STORE, METADATA_STORE],
+        'readwrite',
+      );
+      const completion = transactionComplete(transaction);
+      try {
+        replaceState(transaction, next);
+        await completion;
+      } catch (error) {
+        if (quotaError(error)) throw new NotebookQuotaError();
+        throw error;
+      }
+    });
   }
 
   public async deleteTrace(traceId: string): Promise<void> {
-    const next = deleteTraceFromState(await this.#read(), traceId);
-    const transaction = this.#database.transaction(
-      [TRACE_STORE, PAYLOAD_STORE, METADATA_STORE],
-      'readwrite',
-    );
-    const completion = transactionComplete(transaction);
-    replaceState(transaction, next);
-    await completion;
+    return this.#enqueueWrite(async () => {
+      const next = deleteTraceFromState(await this.#read(), traceId);
+      const transaction = this.#database.transaction(
+        [TRACE_STORE, PAYLOAD_STORE, METADATA_STORE],
+        'readwrite',
+      );
+      const completion = transactionComplete(transaction);
+      replaceState(transaction, next);
+      await completion;
+    });
   }
 
   public async exportBundle(traceId: string): Promise<CompactTraceBundle> {
+    await this.#writeQueue;
     return bundleFromState(await this.#read(), traceId, new Date().toISOString());
   }
 
   public async listTraces(): Promise<readonly NotebookTraceMetadata[]> {
+    await this.#writeQueue;
     return [...(await this.#read()).metadata.values()].sort((left, right) =>
       right.updatedAt.localeCompare(left.updatedAt),
     );
   }
 
   public async report(): Promise<NotebookDataReport> {
+    await this.#writeQueue;
     return dataReport(await this.#read());
   }
 
