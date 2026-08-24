@@ -8,16 +8,18 @@ A local-first scientific instrument for inspecting next-token prediction, changi
 
 ## Current instrument
 
-Phase 2 adds a verified local next-token path to the exact Phase 1 foundation:
+Phase 3 turns the verified next-token proof into a multi-step, branch-centred instrument:
 
 - an exact, deterministic sampler with temperature, top-k, top-p, greedy mode, suppression, forcing and xoshiro128\*\* seeded selection;
-- a versioned JSON trace schema with immutable append, fork, annotation, validation and compatibility operations;
+- a schema 1.2 ancestry bundle with content-addressed float32 payloads, explicit import limits and lossless schema 1.0/1.1 migration;
 - candidate tables, entropy, selection explanations and Jensen–Shannon branch comparison;
 - a responsive React observatory that can force the runner-up, suppress candidates, commit child traces and export JSON;
 - all eight guided experiment definitions from the design package;
 - a pinned DistilGPT2 fp32 WASM worker that transfers all 50,257 final-position logits;
 - source-framework golden vectors and accepted/rejected backend comparison reports;
-- verified live trace commitment, JSON export/import and deterministic replay; and
+- exact token-ID continuation, serialised PRNG cursors, explicit seed resets and stale-response-safe generation controls;
+- immutable historical forks, first-divergence comparison and portable ancestor-complete export/import;
+- transactional IndexedDB notebook storage with payload reference counts, quota preflight and parent-deletion protection; and
 - unit, coverage and Playwright hero-loop tests in CI.
 
 The default score field remains intentionally labelled **illustrative** so the instrument is immediately useful without a 327.8 MB download. Its ten logits are a teaching fixture, not model output. The optional fp32 WASM path is separately labelled **verified measured** and may enter exact sampling/replay. WebGPU fp16 remains measured but unverified.
@@ -55,7 +57,7 @@ pnpm exec playwright install chromium
 5. Compare selection, entropy and Jensen–Shannon divergence in the Branch Chamber.
 6. Export the selected schema-valid trace as JSON.
 
-Or load **Verified WASM** in the full-vocabulary panel, measure the pinned prompt, commit its exact live trace and export/import it through the trace dock.
+Or load **Verified WASM** in the full-vocabulary panel, pause on the complete distribution, advance or run several exact-prefix steps, fork a historical token, save locally and export/import its ancestry bundle. The initial implementation deliberately reruns the full token-ID prefix; it does not claim unverified KV-cache equivalence.
 
 ## Architecture
 
@@ -66,7 +68,7 @@ The browser application consumes small packages rather than owning scientific lo
 | `apps/observatory`          | React shell, observatory design system and interaction orchestration |
 | `packages/domain`           | Dependency-free scientific and trace vocabulary                      |
 | `packages/sampler`          | Pure deterministic sampler and trace-owned PRNG                      |
-| `packages/trace-schema`     | Zod schema, validation, JSON, immutability and lineage               |
+| `packages/trace-schema`     | Legacy/compact schemas, replay, DAG lineage and local notebook       |
 | `packages/instruments`      | Probability view models, comparisons and selection explanations      |
 | `packages/experiments`      | Versionable guided experiment registry                               |
 | `packages/inference-worker` | Typed worker protocol, capability detection and model adapter        |
@@ -112,8 +114,8 @@ pnpm trace:verify:live
 - No account or backend is required.
 - No analytics or prompt telemetry is present.
 - Model files use the browser/runtime cache.
-- Trace JSON is downloaded only when the user explicitly exports it.
-- IndexedDB notebook persistence is planned, not silently implied by this foundation.
+- Compact trace bundles are downloaded only when the user explicitly exports them.
+- IndexedDB persistence is explicit: the user chooses **Save to local notebook**. Payloads are deduplicated, quota failure is atomic and parents with descendants cannot be deleted accidentally.
 
 ## Documentation
 
@@ -121,12 +123,11 @@ pnpm trace:verify:live
 - [Contribution workflow](CONTRIBUTING.md)
 - [Session 01 handover](docs/implementation/01-session-01-handover.md)
 - [Session 02 handover](docs/implementation/02-session-02-handover.md)
+- [Session 03 handover](docs/implementation/03-session-03-handover.md)
 - [Architecture decisions](docs/adr)
 - [Model verification boundary](model-tools/README.md)
 - [Original product and architecture package](docs/00-project-overview-and-directors-brief.md)
 
 ## Next high-value slice
 
-Phase 3 turns the one-step proof into pause-safe multi-step generation and a branch DAG. Its first prerequisite is a lossless content-addressed logit payload: the intentionally expanded Phase 2 trace measures 23.06 MiB JSON for one step, which must not be repeated naïvely across a future.
-
-The stacked readiness spike preserves every sampler field while reducing the accepted hero vector representation to 261.9 KiB JSON (98.89% smaller). Its proposed schema, PRNG-continuity and generation-controller contract is documented in [Phase 3 readiness](docs/implementation/03-phase-03-readiness.md).
+Phase 4 may add honest secondary instruments only where the model/runtime exposes numerically verified outputs. Token byte/boundary inspection is the low-risk first slice; hidden states, attention, logit-lens probes and semantic projections remain capability-gated rather than inferred from logits or UI decoration.

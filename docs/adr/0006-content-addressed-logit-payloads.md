@@ -1,6 +1,6 @@
 # ADR 0006 — Content-addressed logit payloads
 
-- Status: Proposed; codec spike verified
+- Status: Accepted and implemented
 - Date: 24 August 2026
 
 ## Context
@@ -9,7 +9,7 @@ Schema 1.1 deliberately proves exact live replay by storing all 50,257 expanded 
 
 The measured float32 vector itself is only 201,028 bytes. It is already identified by a SHA-256 in inference provenance and is sufficient, together with decoded specimens, sampler configuration, interventions and PRNG state, to reproduce every derived sampler field.
 
-## Proposed decision
+## Decision
 
 Introduce a schema 1.2 payload table keyed by SHA-256. Encode an embedded logit vector as canonical little-endian float32 bytes represented by canonical base64:
 
@@ -28,7 +28,7 @@ The content address is over the binary little-endian bytes, not JSON or base64 t
 
 Schema 1.1 stays readable. A 1.1 import may be normalised in memory, but no migration may discard its expanded evidence before equivalent replay succeeds. Schema 1.2 export is compact by default and embeds referenced payloads once so a downloaded trace remains self-contained.
 
-The checked codec is a readiness spike under `packages/trace-schema/src/logit-payload.ts`; it is intentionally not exported from the package or wired into the production schema until the 1.2 migration and replay adapter land together. Its provisional one-million-value ceiling bounds allocation during the spike; work package 3A must review and enforce the final trace-level byte, vector and payload-count limits before parsing payload data.
+The codec is exported through `@observatory/trace-schema` and integrated with schema 1.2 ancestry bundles, exact replay and schema 1.0/1.1 migration. Imports enforce trace-level byte, vector, payload, trace and step ceilings before decoding payload data.
 
 ## Evidence
 

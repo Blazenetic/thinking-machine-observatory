@@ -1,6 +1,6 @@
 # Phase 3 readiness — multi-step generation and branch DAG
 
-- Status: Draft implementation contract
+- Status: Implemented contract
 - Depends on: Phase 2 draft PR #3
 - Target outcome: several exact live steps on a baseline and child branch, export/import/replay without ancestor mutation
 
@@ -160,4 +160,13 @@ Property/fuzz coverage should target import limits, DAG cycles and state-event s
 - KV-cache optimisation without golden equivalence; and
 - arbitrary external tensor URLs in trusted trace import.
 
-Phase 3 is ready to begin when PR #3 is accepted and work package 3A's four review decisions are resolved. The codec spike is evidence for the representation, not permission to bypass the schema migration.
+Implementation followed the required order: schema migration and compact replay, then PRNG/controller correctness, then branch/notebook/product surfaces. The readiness spike was treated as representation evidence rather than a shortcut around migration.
+
+## Implemented decisions
+
+- Schema 1.2 stores a bounded decoded top-candidate snapshot for immediate rendering; every probability, filter stage and rank remains derived from the referenced payload.
+- Portable child export is an ancestry bundle: trace nodes and every transitively required payload appear once.
+- Notebook parent deletion is prevented while descendants exist. Users delete descendants first; silent cascade/materialisation is not implemented.
+- Imports are rejected before payload allocation above 32 MiB JSON, 256 payloads, 4,000,000 total float32 values, 128 traces, 1,024 total steps, 256 local steps per trace or 200 decoded candidates per step.
+
+The completed evidence and remaining browser boundary are recorded in [Session 03 handover](03-session-03-handover.md).

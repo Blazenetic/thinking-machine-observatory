@@ -60,6 +60,8 @@ Prediction payload: logits/topN, optional hidden summaries, optional attention, 
 
 # Illustrative trace shape
 
+> Implementation note (24 August 2026): this original 1.0 sketch is retained as design provenance. The current portable format is the schema 1.2 ancestry bundle in ADR 0006/0007; it stores canonical logit payloads by SHA-256 and lightweight divergent steps rather than expanded candidate records.
+
 {  
   "schemaVersion": "1.0.0",  
   "traceId": "uuid",  
@@ -143,4 +145,3 @@ tests/e2e
 | Quantisation alters measurements | Mismatch with reference | Record dtype and validate tolerances |
 | Browser GPU variation | Crashes or wrong performance assumptions | Capability matrix, WASM and demo traces |
 | Trace captures excessive tensors | Storage exhaustion | Top-N summaries and optional external blocks |
-

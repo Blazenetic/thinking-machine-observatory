@@ -9,6 +9,10 @@ import type {
   TokenizerIdentity,
 } from '@observatory/domain';
 
+import type { GenerationRequestContext } from './generation-controller.ts';
+
+export * from './generation-controller.ts';
+
 export const DISTILGPT2_MODEL = {
   id: 'Xenova/distilgpt2',
   revision: 'a41c10485c18a64b6606729b6a082330cbd8f49e',
@@ -65,28 +69,55 @@ export interface LoadProgress {
 export type InferenceWorkerRequest =
   | {
       readonly backend: LiveBackend;
+      readonly context: GenerationRequestContext;
       readonly id: string;
       readonly type: 'load';
     }
   | {
+      readonly context: GenerationRequestContext;
       readonly id: string;
+      readonly inputTokenIds?: readonly number[];
       readonly prompt: string;
       readonly topN: number;
       readonly type: 'predict';
     }
-  | { readonly id: string; readonly type: 'dispose' };
+  | {
+      readonly context: GenerationRequestContext;
+      readonly id: string;
+      readonly type: 'dispose';
+    };
 
 export type InferenceWorkerResponse =
-  | { readonly id: string; readonly progress: LoadProgress; readonly type: 'progress' }
   | {
+      readonly context: GenerationRequestContext;
+      readonly id: string;
+      readonly progress: LoadProgress;
+      readonly type: 'progress';
+    }
+  | {
+      readonly context: GenerationRequestContext;
       readonly id: string;
       readonly load: ModelLoadReport;
       readonly model: ModelIdentity;
       readonly type: 'ready';
     }
-  | { readonly capture: PredictionCapture; readonly id: string; readonly type: 'prediction' }
-  | { readonly id: string; readonly type: 'disposed' }
-  | { readonly id: string; readonly message: string; readonly type: 'error' };
+  | {
+      readonly capture: PredictionCapture;
+      readonly context: GenerationRequestContext;
+      readonly id: string;
+      readonly type: 'prediction';
+    }
+  | {
+      readonly context: GenerationRequestContext;
+      readonly id: string;
+      readonly type: 'disposed';
+    }
+  | {
+      readonly context: GenerationRequestContext;
+      readonly id: string;
+      readonly message: string;
+      readonly type: 'error';
+    };
 
 interface CapabilityScope {
   readonly Worker?: unknown;
@@ -109,6 +140,11 @@ export function detectRuntimeCapabilities(
 interface TensorLike {
   readonly data: ArrayLike<bigint | number>;
   readonly dims: readonly number[];
+  dispose?(): void;
+}
+
+interface TensorConstructor {
+  new (type: 'int64', data: BigInt64Array, dims: number[]): TensorLike;
 }
 
 type TokenizerInputs = Record<string, TensorLike>;
@@ -177,9 +213,9 @@ export function rankTopCandidates(logits: Float32Array, topN: number): readonly 
 }
 
 async function sha256Float32(values: Float32Array): Promise<string> {
-  const bytes = Uint8Array.from(
-    new Uint8Array(values.buffer, values.byteOffset, values.byteLength),
-  );
+  const bytes = new Uint8Array(values.length * 4);
+  const view = new DataView(bytes.buffer);
+  values.forEach((value, index) => view.setFloat32(index * 4, value, true));
   const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
   return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, '0')).join('');
 }
@@ -207,6 +243,7 @@ function tokenSpecimens(tokenizer: RuntimeTokenizer, tokenIds: readonly number[]
 export class TransformersDistilGpt2Adapter {
   readonly #backend: LiveBackend;
   #model: RuntimeModel | null = null;
+  #tensorConstructor: TensorConstructor | null = null;
   #tokenizer: RuntimeTokenizer | null = null;
 
   public constructor(backend: LiveBackend) {
@@ -249,7 +286,8 @@ export class TransformersDistilGpt2Adapter {
   public async load(
     onProgress: (progress: LoadProgress) => void = () => undefined,
   ): Promise<ModelLoadReport> {
-    const { AutoModelForCausalLM, AutoTokenizer } = await import('@huggingface/transformers');
+    const { AutoModelForCausalLM, AutoTokenizer, Tensor } =
+      await import('@huggingface/transformers');
     const progressCallback = (info: ProgressInfo) => onProgress(toLoadProgress(info));
     const device = this.#backend === 'webgpu' ? 'webgpu' : 'wasm';
     const dtype = this.#backend === 'webgpu' ? 'fp16' : 'fp32';
@@ -270,6 +308,7 @@ export class TransformersDistilGpt2Adapter {
     ]);
     this.#tokenizer = tokenizer;
     this.#model = model as RuntimeModel;
+    this.#tensorConstructor = Tensor;
     return {
       cacheStatus,
       durationMs: performance.now() - startedAt,
@@ -280,7 +319,11 @@ export class TransformersDistilGpt2Adapter {
     };
   }
 
-  public async predict(prompt: string, topN = 50): Promise<PredictionCapture> {
+  public async predict(
+    prompt: string,
+    topN = 50,
+    inputTokenIds?: readonly number[],
+  ): Promise<PredictionCapture> {
     if (!this.#model || !this.#tokenizer) throw new Error('Load the model before predicting.');
     if (prompt.trim().length === 0) throw new Error('Prompt must not be empty.');
     if (!Number.isInteger(topN) || topN < 1 || topN > 200) {
@@ -288,9 +331,46 @@ export class TransformersDistilGpt2Adapter {
     }
 
     const startedAt = performance.now();
-    const inputs = await this.#tokenizer(prompt);
-    const output = await this.#model(inputs);
-    const logits = extractFinalLogits(output.logits);
+    let inputs: TokenizerInputs;
+    if (inputTokenIds) {
+      if (!this.#tensorConstructor) throw new Error('Runtime tensor constructor is unavailable.');
+      if (
+        inputTokenIds.length === 0 ||
+        inputTokenIds.some(
+          (tokenId) => !Number.isInteger(tokenId) || tokenId < 0 || tokenId >= 50_257,
+        )
+      ) {
+        throw new Error('inputTokenIds must contain valid DistilGPT2 vocabulary IDs.');
+      }
+      const dims = [1, inputTokenIds.length];
+      inputs = {
+        attention_mask: new this.#tensorConstructor(
+          'int64',
+          new BigInt64Array(inputTokenIds.length).fill(1n),
+          dims,
+        ),
+        input_ids: new this.#tensorConstructor(
+          'int64',
+          BigInt64Array.from(inputTokenIds, BigInt),
+          dims,
+        ),
+      };
+    } else {
+      inputs = await this.#tokenizer(prompt);
+    }
+    const exactInputTokenIds = inputTokenIds ? [...inputTokenIds] : tokenIdsFrom(inputs);
+    let output: { readonly logits: TensorLike };
+    try {
+      output = await this.#model(inputs);
+    } finally {
+      for (const tensor of Object.values(inputs)) tensor.dispose?.();
+    }
+    let logits: Float32Array;
+    try {
+      logits = extractFinalLogits(output.logits);
+    } finally {
+      output.logits.dispose?.();
+    }
     const candidates = rankTopCandidates(logits, topN).map((candidate) => ({
       ...candidate,
       text: this.#tokenizer?.decode([candidate.tokenId], { skip_special_tokens: false }) ?? '',
@@ -311,7 +391,7 @@ export class TransformersDistilGpt2Adapter {
       logitsSha256: await sha256Float32(logits),
       mode: this.#backend === 'webgpu' ? 'live-webgpu' : 'live-wasm',
       model: this.modelIdentity,
-      promptTokens: tokenSpecimens(this.#tokenizer, tokenIdsFrom(inputs)),
+      promptTokens: tokenSpecimens(this.#tokenizer, exactInputTokenIds),
       tokenizer: this.tokenizerIdentity,
       verificationProfileId,
     };
@@ -320,39 +400,70 @@ export class TransformersDistilGpt2Adapter {
   public async dispose(): Promise<void> {
     await this.#model?.dispose();
     this.#model = null;
+    this.#tensorConstructor = null;
     this.#tokenizer = null;
   }
 }
 
+export interface InferenceAdapter {
+  readonly modelIdentity: ModelIdentity;
+  dispose(): Promise<void>;
+  load(onProgress?: (progress: LoadProgress) => void): Promise<ModelLoadReport>;
+  predict(
+    prompt: string,
+    topN?: number,
+    inputTokenIds?: readonly number[],
+  ): Promise<PredictionCapture>;
+}
+
 export function createInferenceWorkerHandler(
   postResponse: (response: InferenceWorkerResponse, transfer?: readonly Transferable[]) => void,
+  createAdapter: (backend: LiveBackend) => InferenceAdapter = (backend) =>
+    new TransformersDistilGpt2Adapter(backend),
 ): (request: InferenceWorkerRequest) => Promise<void> {
-  let adapter: TransformersDistilGpt2Adapter | null = null;
+  let adapter: InferenceAdapter | null = null;
 
   return async (request) => {
     try {
       if (request.type === 'load') {
         await adapter?.dispose();
-        adapter = new TransformersDistilGpt2Adapter(request.backend);
-        const load = await adapter.load((progress) =>
-          postResponse({ id: request.id, progress, type: 'progress' }),
+        const loadingAdapter = createAdapter(request.backend);
+        adapter = loadingAdapter;
+        const load = await loadingAdapter.load((progress) =>
+          postResponse({ context: request.context, id: request.id, progress, type: 'progress' }),
         );
-        postResponse({ id: request.id, load, model: adapter.modelIdentity, type: 'ready' });
+        if (adapter !== loadingAdapter) {
+          await loadingAdapter.dispose();
+          return;
+        }
+        postResponse({
+          context: request.context,
+          id: request.id,
+          load,
+          model: loadingAdapter.modelIdentity,
+          type: 'ready',
+        });
         return;
       }
       if (request.type === 'predict') {
         if (!adapter) throw new Error('Load the model before predicting.');
-        const capture = await adapter.predict(request.prompt, request.topN);
-        postResponse({ capture, id: request.id, type: 'prediction' }, [
+        const predictingAdapter = adapter;
+        const capture = await predictingAdapter.predict(
+          request.prompt,
+          request.topN,
+          request.inputTokenIds,
+        );
+        postResponse({ capture, context: request.context, id: request.id, type: 'prediction' }, [
           capture.logits.buffer as ArrayBuffer,
         ]);
         return;
       }
       await adapter?.dispose();
       adapter = null;
-      postResponse({ id: request.id, type: 'disposed' });
+      postResponse({ context: request.context, id: request.id, type: 'disposed' });
     } catch (error) {
       postResponse({
+        context: request.context,
         id: request.id,
         message: error instanceof Error ? error.message : 'Unknown inference worker error.',
         type: 'error',

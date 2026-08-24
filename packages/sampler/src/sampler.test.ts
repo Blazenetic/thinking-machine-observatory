@@ -141,6 +141,30 @@ describe('runSampler', () => {
     expect(replay.selection).toEqual(first.selection);
   });
 
+  it('continues from an explicit recorded cursor without re-seeding', () => {
+    const first = runSampler(candidates, sampledConfig);
+    const cursor = first.selection.draw?.stateAfter;
+    if (!cursor) throw new Error('Expected a sampled draw.');
+
+    const second = runSampler(candidates, sampledConfig, undefined, cursor);
+    const reSeeded = runSampler(candidates, sampledConfig);
+
+    expect(second.selection.draw?.stateBefore).toEqual(cursor);
+    expect(second.selection.draw?.value).not.toBe(reSeeded.selection.draw?.value);
+    expect(runSampler(candidates, sampledConfig, undefined, cursor).selection).toEqual(
+      second.selection,
+    );
+  });
+
+  it('rejects malformed explicit cursors before sampling', () => {
+    expect(() => runSampler(candidates, sampledConfig, undefined, [0, 0, 0, 0])).toThrow(
+      SamplerConfigurationError,
+    );
+    expect(() => runSampler(candidates, sampledConfig, undefined, [1, 2, 3, -1])).toThrow(
+      SamplerConfigurationError,
+    );
+  });
+
   it('rejects invalid or contradictory inputs', () => {
     expect(() => runSampler(candidates, { ...sampledConfig, temperature: 0 })).toThrow(
       SamplerConfigurationError,

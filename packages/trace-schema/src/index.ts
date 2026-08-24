@@ -10,6 +10,18 @@ import {
 import { runSampler } from '@observatory/sampler';
 import { z } from 'zod';
 
+import {
+  COMPACT_TRACE_LIMITS,
+  COMPACT_TRACE_SCHEMA_VERSION,
+  convertLegacyTraceToCompact,
+  parseCompactTraceBundleJson,
+  type CompactTraceBundle,
+} from './compact.ts';
+
+export * from './compact.ts';
+export * from './logit-payload.ts';
+export * from './notebook.ts';
+
 const EvidenceClassSchema = z.enum([
   'measured',
   'derived',
@@ -442,4 +454,34 @@ export function replayTrace(trace: ExperimentTrace): TraceReplayResult {
     steps,
     traceId: trace.traceId,
   });
+}
+
+/**
+ * Imports the current portable bundle or losslessly migrates a replayable
+ * schema 1.0/1.1 root trace. No verification provenance is invented.
+ */
+export async function parsePortableTraceJson(json: string): Promise<CompactTraceBundle> {
+  if (new TextEncoder().encode(json).byteLength > COMPACT_TRACE_LIMITS.importBytes) {
+    throw new TraceValidationError(
+      `Trace import exceeds ${COMPACT_TRACE_LIMITS.importBytes} bytes.`,
+    );
+  }
+  let version: unknown;
+  try {
+    const value = JSON.parse(json) as { readonly schemaVersion?: unknown };
+    version = value.schemaVersion;
+  } catch (error) {
+    throw new TraceValidationError(
+      `Trace is not valid JSON: ${error instanceof Error ? error.message : 'unknown parse error'}`,
+    );
+  }
+  if (version === COMPACT_TRACE_SCHEMA_VERSION) {
+    return parseCompactTraceBundleJson(json);
+  }
+  const legacy = parseTraceJson(json);
+  const replay = replayTrace(legacy);
+  if (!replay.matches) {
+    throw new TraceValidationError('Legacy trace failed deterministic replay before migration.');
+  }
+  return convertLegacyTraceToCompact(legacy);
 }
