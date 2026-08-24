@@ -1,6 +1,6 @@
 # Local quality evidence
 
-- Source candidate: `8799c6e1e4d38253a6c607632cdddd9902baf2ed`
+- Source candidate: `280734bd2bd367275bae376dec676c1b63581934`
 - Environment: Node 24.19.0, pnpm 11.19.0, Linux x86_64 harness
 - Observation date: 24 August 2026
 

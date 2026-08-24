@@ -2,7 +2,7 @@
 
 ## Outcome
 
-The Phase 5 source candidate is frozen at `8799c6e1e4d38253a6c607632cdddd9902baf2ed`. It hardens the
+The Phase 5 source candidate is frozen at `280734bd2bd367275bae376dec676c1b63581934`. It hardens the
 Observatory for a public release without widening the interpretability surface.
 
 Implemented:
@@ -55,7 +55,7 @@ real Safari, screen-reader and deployed-origin checks remain separate manual rec
 A later documentation-only follow-up adds audience-specific user and developer guides, a
 documentation map, fresh-agent start and handover rules, corrected three-engine Playwright setup,
 and present-tense Phase 5/evidence wording. It does not change the built application, dependency
-lock, evidence manifest or accepted release claims, so the source candidate remains `8799c6e` and
+lock, evidence manifest or accepted release claims, so the source candidate remains `280734b` and
 the candidate-bound evidence commit remains `96ad3c3`.
 
 The first published quality job exposed a shallow-checkout integration issue: `phase5:verify`

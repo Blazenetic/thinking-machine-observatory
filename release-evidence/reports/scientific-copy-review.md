@@ -1,6 +1,6 @@
 # Scientific copy review
 
-- Source candidate: `8799c6e1e4d38253a6c607632cdddd9902baf2ed`
+- Source candidate: `280734bd2bd367275bae376dec676c1b63581934`
 - Scope: `apps/observatory/index.html` and user-facing strings under `apps/observatory/src`
 - Result: passed
 - Reviewer: Codex source inspection

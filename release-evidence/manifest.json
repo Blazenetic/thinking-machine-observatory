@@ -3,7 +3,7 @@
   "profileVersion": "1.0.0",
   "candidate": {
     "label": "phase-5-source-candidate",
-    "commit": "8799c6e1e4d38253a6c607632cdddd9902baf2ed",
+    "commit": "280734bd2bd367275bae376dec676c1b63581934",
     "lockfile": {
       "path": "pnpm-lock.yaml",
       "sha256": "5733e79ae9cd1d92d09d036070f9a7d7ffd7d4fe107034ca50a5901ab8ee179c"
