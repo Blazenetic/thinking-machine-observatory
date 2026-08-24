@@ -21,7 +21,7 @@ test('forces the runner-up into an immutable comparison branch', async ({ page }
 test('supports reversible calibration before a branch is committed', async ({ page }) => {
   await page.goto('/');
 
-  const temperature = page.getByLabel('Temperature');
+  const temperature = page.getByRole('slider', { name: 'Temperature' });
   await temperature.fill('1.5');
   await expect(page.getByText('1.50', { exact: true })).toBeVisible();
 
