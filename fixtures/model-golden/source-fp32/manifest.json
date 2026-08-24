@@ -1,0 +1,1377 @@
+{
+  "browserRuntime": {
+    "assets": [
+      {
+        "path": "config.json",
+        "sha256": "0e0fb9cdeb3a605afc6ce8f1c9830a2d78c7ad2596e498acc66b4ab2338edf51",
+        "sizeBytes": 987
+      },
+      {
+        "path": "generation_config.json",
+        "sha256": "fa12d604e4ab52705c56eb9394c5d6a451cee884607fc25a8cd3388fc775c2be",
+        "sizeBytes": 124
+      },
+      {
+        "path": "merges.txt",
+        "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+        "sizeBytes": 456318
+      },
+      {
+        "path": "special_tokens_map.json",
+        "sha256": "6f50ab5a5a509a1c309d6171f339b196a900dc9c99ad0408ff23bb615fdae7ad",
+        "sizeBytes": 99
+      },
+      {
+        "path": "tokenizer.json",
+        "sha256": "cda20b8ca044949aa07ac4078420c80d1a57139d5f9f33700e46fb2d891e7c66",
+        "sizeBytes": 2107653
+      },
+      {
+        "path": "tokenizer_config.json",
+        "sha256": "551e26ec611d8d0c8edc3ef72e518a38418cb71f40de1347dd486a595e1557d7",
+        "sizeBytes": 234
+      },
+      {
+        "path": "vocab.json",
+        "sha256": "3ba3c3109ff33976c4bd966589c11ee14fcaa1f4c9e5e154c2ed7f99d80709e7",
+        "sizeBytes": 798156
+      }
+    ],
+    "id": "Xenova/distilgpt2",
+    "licence": "Apache-2.0",
+    "revision": "a41c10485c18a64b6606729b6a082330cbd8f49e",
+    "runtime": {
+      "name": "@huggingface/transformers",
+      "onnxRuntimeWeb": "1.22.0-dev.20250409-89f8206ba4",
+      "version": "3.8.1"
+    },
+    "sourceUrl": "https://huggingface.co/Xenova/distilgpt2/tree/a41c10485c18a64b6606729b6a082330cbd8f49e",
+    "targets": [
+      {
+        "asset": {
+          "path": "onnx/model.onnx",
+          "sha256": "d605c4b3740df3960e8f84e4c5735af8d81d19105eb915b692272c08cc800b0c",
+          "sizeBytes": 327825716,
+          "verifiedFromLocalBytes": true
+        },
+        "dtype": "fp32",
+        "verificationStatus": "accepted"
+      },
+      {
+        "asset": {
+          "path": "onnx/model_int8.onnx",
+          "sha256": "80b02da4fe266412bc49c9955a518151c50f9bac062f596a875068492a21f080",
+          "sizeBytes": 236698606,
+          "verifiedFromLocalBytes": true
+        },
+        "dtype": "int8",
+        "verificationStatus": "rejected"
+      }
+    ],
+    "tokenizerBundle": {
+      "canonicalisation": "sorted-json-v1",
+      "includedPaths": [
+        "merges.txt",
+        "special_tokens_map.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "vocab.json"
+      ],
+      "sha256": "fb803549cd431422aa2398fd669a1b2cff3ac8c57ff5843d9a65869a4df0b592"
+    }
+  },
+  "cases": [
+    {
+      "causalMaskCheck": {
+        "finalPositionChangedMaxAbsolute": 39.862571716308594,
+        "mutatedFinalTokenId": 374,
+        "prefixMaxAbsoluteError": 0.0
+      },
+      "id": "hero",
+      "logits": {
+        "encoding": "float32-le",
+        "path": "hero.logits.f32le",
+        "sha256": "ee330d334c51b3622127a2e962f5d77c90a4ade343ba0b801fa2939c09f04cd4",
+        "valueCount": 50257
+      },
+      "positionCheck": {
+        "finalPositionIndex": 3,
+        "logitSequenceLength": 4,
+        "tokenSequenceLength": 4
+      },
+      "prompt": "The night sky was",
+      "promptSha256": "62051ce0a1a3fdc5258cd42e99524971f6c5a44e6d3992908418bb2c9be823c2",
+      "purpose": "Pinned Phase 2 hero prediction",
+      "tokenIds": [464, 1755, 6766, 373],
+      "tokens": [
+        {
+          "byteValues": [84, 104, 101],
+          "position": 0,
+          "text": "The",
+          "tokenId": 464
+        },
+        {
+          "byteValues": [32, 110, 105, 103, 104, 116],
+          "position": 1,
+          "text": " night",
+          "tokenId": 1755
+        },
+        {
+          "byteValues": [32, 115, 107, 121],
+          "position": 2,
+          "text": " sky",
+          "tokenId": 6766
+        },
+        {
+          "byteValues": [32, 119, 97, 115],
+          "position": 3,
+          "text": " was",
+          "tokenId": 373
+        }
+      ],
+      "top50": [
+        {
+          "logit": -68.42955017089844,
+          "text": " a",
+          "tokenId": 257
+        },
+        {
+          "logit": -68.55099487304688,
+          "text": " the",
+          "tokenId": 262
+        },
+        {
+          "logit": -68.9329605102539,
+          "text": " so",
+          "tokenId": 523
+        },
+        {
+          "logit": -69.14128112792969,
+          "text": " full",
+          "tokenId": 1336
+        },
+        {
+          "logit": -69.16205596923828,
+          "text": " clear",
+          "tokenId": 1598
+        },
+        {
+          "logit": -69.3229751586914,
+          "text": " dark",
+          "tokenId": 3223
+        },
+        {
+          "logit": -69.61161041259766,
+          "text": " still",
+          "tokenId": 991
+        },
+        {
+          "logit": -69.70765686035156,
+          "text": " falling",
+          "tokenId": 7463
+        },
+        {
+          "logit": -69.76885986328125,
+          "text": " bright",
+          "tokenId": 6016
+        },
+        {
+          "logit": -69.77493286132812,
+          "text": " just",
+          "tokenId": 655
+        },
+        {
+          "logit": -69.9865951538086,
+          "text": " completely",
+          "tokenId": 3190
+        },
+        {
+          "logit": -70.09632110595703,
+          "text": " going",
+          "tokenId": 1016
+        },
+        {
+          "logit": -70.1393814086914,
+          "text": " not",
+          "tokenId": 407
+        },
+        {
+          "logit": -70.18911743164062,
+          "text": " clearly",
+          "tokenId": 4084
+        },
+        {
+          "logit": -70.19247436523438,
+          "text": " very",
+          "tokenId": 845
+        },
+        {
+          "logit": -70.20658874511719,
+          "text": " getting",
+          "tokenId": 1972
+        },
+        {
+          "logit": -70.33749389648438,
+          "text": " in",
+          "tokenId": 287
+        },
+        {
+          "logit": -70.42442321777344,
+          "text": " too",
+          "tokenId": 1165
+        },
+        {
+          "logit": -70.43810272216797,
+          "text": " filled",
+          "tokenId": 5901
+        },
+        {
+          "logit": -70.44759368896484,
+          "text": " red",
+          "tokenId": 2266
+        },
+        {
+          "logit": -70.45661163330078,
+          "text": " lit",
+          "tokenId": 6578
+        },
+        {
+          "logit": -70.5188980102539,
+          "text": " shining",
+          "tokenId": 22751
+        },
+        {
+          "logit": -70.53834533691406,
+          "text": " almost",
+          "tokenId": 2048
+        },
+        {
+          "logit": -70.5431137084961,
+          "text": " out",
+          "tokenId": 503
+        },
+        {
+          "logit": -70.59785461425781,
+          "text": " also",
+          "tokenId": 635
+        },
+        {
+          "logit": -70.6117935180664,
+          "text": " at",
+          "tokenId": 379
+        },
+        {
+          "logit": -70.61647033691406,
+          "text": " dim",
+          "tokenId": 5391
+        },
+        {
+          "logit": -70.61836242675781,
+          "text": " over",
+          "tokenId": 625
+        },
+        {
+          "logit": -70.6186752319336,
+          "text": " gone",
+          "tokenId": 3750
+        },
+        {
+          "logit": -70.62261199951172,
+          "text": " already",
+          "tokenId": 1541
+        },
+        {
+          "logit": -70.62940216064453,
+          "text": " sky",
+          "tokenId": 6766
+        },
+        {
+          "logit": -70.63255310058594,
+          "text": " always",
+          "tokenId": 1464
+        },
+        {
+          "logit": -70.66248321533203,
+          "text": " blue",
+          "tokenId": 4171
+        },
+        {
+          "logit": -70.6659164428711,
+          "text": " really",
+          "tokenId": 1107
+        },
+        {
+          "logit": -70.69145965576172,
+          "text": " absolutely",
+          "tokenId": 5543
+        },
+        {
+          "logit": -70.69867706298828,
+          "text": " an",
+          "tokenId": 281
+        },
+        {
+          "logit": -70.74043273925781,
+          "text": " much",
+          "tokenId": 881
+        },
+        {
+          "logit": -70.74879455566406,
+          "text": " more",
+          "tokenId": 517
+        },
+        {
+          "logit": -70.77310180664062,
+          "text": " all",
+          "tokenId": 477
+        },
+        {
+          "logit": -70.79574584960938,
+          "text": " turned",
+          "tokenId": 2900
+        },
+        {
+          "logit": -70.85242462158203,
+          "text": " set",
+          "tokenId": 900
+        },
+        {
+          "logit": -70.85552978515625,
+          "text": " becoming",
+          "tokenId": 5033
+        },
+        {
+          "logit": -70.88623809814453,
+          "text": " covered",
+          "tokenId": 5017
+        },
+        {
+          "logit": -70.88861846923828,
+          "text": " shattered",
+          "tokenId": 23273
+        },
+        {
+          "logit": -70.92855834960938,
+          "text": " black",
+          "tokenId": 2042
+        },
+        {
+          "logit": -70.96353912353516,
+          "text": " visible",
+          "tokenId": 7424
+        },
+        {
+          "logit": -70.97102355957031,
+          "text": " suddenly",
+          "tokenId": 6451
+        },
+        {
+          "logit": -70.99929809570312,
+          "text": " finally",
+          "tokenId": 3443
+        },
+        {
+          "logit": -71.00049591064453,
+          "text": " changing",
+          "tokenId": 5609
+        },
+        {
+          "logit": -71.02491760253906,
+          "text": " brighter",
+          "tokenId": 26083
+        }
+      ]
+    },
+    {
+      "causalMaskCheck": {
+        "finalPositionChangedMaxAbsolute": 16.240001678466797,
+        "mutatedFinalTokenId": 12249,
+        "prefixMaxAbsoluteError": 0.0
+      },
+      "id": "punctuation",
+      "logits": {
+        "encoding": "float32-le",
+        "path": "punctuation.logits.f32le",
+        "sha256": "b701de908d588260c3120a2eed1797aade367514717c87eddfbdcd6ed87e94d5",
+        "valueCount": 50257
+      },
+      "positionCheck": {
+        "finalPositionIndex": 3,
+        "logitSequenceLength": 4,
+        "tokenSequenceLength": 4
+      },
+      "prompt": "Wait—what?!",
+      "promptSha256": "d41d2b2f18fcfc7f091ac8f31000259ca3aa3c6c03119ba3d82a5214275ecc78",
+      "purpose": "ASCII and em-dash punctuation boundary",
+      "tokenIds": [21321, 960, 10919, 12248],
+      "tokens": [
+        {
+          "byteValues": [87, 97, 105, 116],
+          "position": 0,
+          "text": "Wait",
+          "tokenId": 21321
+        },
+        {
+          "byteValues": [226, 128, 148],
+          "position": 1,
+          "text": "—",
+          "tokenId": 960
+        },
+        {
+          "byteValues": [119, 104, 97, 116],
+          "position": 2,
+          "text": "what",
+          "tokenId": 10919
+        },
+        {
+          "byteValues": [63, 33],
+          "position": 3,
+          "text": "?!",
+          "tokenId": 12248
+        }
+      ],
+      "top50": [
+        {
+          "logit": -53.254974365234375,
+          "text": "—",
+          "tokenId": 960
+        },
+        {
+          "logit": -53.454566955566406,
+          "text": "?!",
+          "tokenId": 12248
+        },
+        {
+          "logit": -53.86673355102539,
+          "text": "�",
+          "tokenId": 447
+        },
+        {
+          "logit": -53.950775146484375,
+          "text": "?",
+          "tokenId": 30
+        },
+        {
+          "logit": -54.13119888305664,
+          "text": "\n",
+          "tokenId": 198
+        },
+        {
+          "logit": -54.750919342041016,
+          "text": " What",
+          "tokenId": 1867
+        },
+        {
+          "logit": -55.080387115478516,
+          "text": "!",
+          "tokenId": 0
+        },
+        {
+          "logit": -55.18359375,
+          "text": " Why",
+          "tokenId": 4162
+        },
+        {
+          "logit": -55.250606536865234,
+          "text": " I",
+          "tokenId": 314
+        },
+        {
+          "logit": -55.38048553466797,
+          "text": "?\"",
+          "tokenId": 1701
+        },
+        {
+          "logit": -55.51289749145508,
+          "text": " The",
+          "tokenId": 383
+        },
+        {
+          "logit": -55.687252044677734,
+          "text": " It",
+          "tokenId": 632
+        },
+        {
+          "logit": -55.71624755859375,
+          "text": " How",
+          "tokenId": 1374
+        },
+        {
+          "logit": -56.0992546081543,
+          "text": " That",
+          "tokenId": 1320
+        },
+        {
+          "logit": -56.158668518066406,
+          "text": " They",
+          "tokenId": 1119
+        },
+        {
+          "logit": -56.23805618286133,
+          "text": " This",
+          "tokenId": 770
+        },
+        {
+          "logit": -56.27434158325195,
+          "text": " You",
+          "tokenId": 921
+        },
+        {
+          "logit": -56.30221176147461,
+          "text": "…",
+          "tokenId": 1399
+        },
+        {
+          "logit": -56.33071517944336,
+          "text": " Is",
+          "tokenId": 1148
+        },
+        {
+          "logit": -56.4185905456543,
+          "text": "!\"",
+          "tokenId": 2474
+        },
+        {
+          "logit": -56.425559997558594,
+          "text": " We",
+          "tokenId": 775
+        },
+        {
+          "logit": -56.565982818603516,
+          "text": " Are",
+          "tokenId": 4231
+        },
+        {
+          "logit": -56.65436935424805,
+          "text": " A",
+          "tokenId": 317
+        },
+        {
+          "logit": -56.67169952392578,
+          "text": " No",
+          "tokenId": 1400
+        },
+        {
+          "logit": -56.678958892822266,
+          "text": " Did",
+          "tokenId": 7731
+        },
+        {
+          "logit": -56.68366622924805,
+          "text": ".",
+          "tokenId": 13
+        },
+        {
+          "logit": -56.71818923950195,
+          "text": " Oh",
+          "tokenId": 3966
+        },
+        {
+          "logit": -56.73173522949219,
+          "text": " —",
+          "tokenId": 851
+        },
+        {
+          "logit": -56.73651123046875,
+          "text": " Who",
+          "tokenId": 5338
+        },
+        {
+          "logit": -56.777652740478516,
+          "text": "?!\"",
+          "tokenId": 30823
+        },
+        {
+          "logit": -56.77775955200195,
+          "text": " There",
+          "tokenId": 1318
+        },
+        {
+          "logit": -56.8453254699707,
+          "text": " He",
+          "tokenId": 679
+        },
+        {
+          "logit": -56.84859848022461,
+          "text": " Well",
+          "tokenId": 3894
+        },
+        {
+          "logit": -56.85111999511719,
+          "text": " When",
+          "tokenId": 1649
+        },
+        {
+          "logit": -56.864383697509766,
+          "text": "<|endoftext|>",
+          "tokenId": 50256
+        },
+        {
+          "logit": -56.873023986816406,
+          "text": " And",
+          "tokenId": 843
+        },
+        {
+          "logit": -56.92382049560547,
+          "text": ",",
+          "tokenId": 11
+        },
+        {
+          "logit": -56.981510162353516,
+          "text": " Where",
+          "tokenId": 6350
+        },
+        {
+          "logit": -57.061492919921875,
+          "text": " Do",
+          "tokenId": 2141
+        },
+        {
+          "logit": -57.10161209106445,
+          "text": " If",
+          "tokenId": 1002
+        },
+        {
+          "logit": -57.16741943359375,
+          "text": "??",
+          "tokenId": 3548
+        },
+        {
+          "logit": -57.19124984741211,
+          "text": "—\"",
+          "tokenId": 19056
+        },
+        {
+          "logit": -57.33256912231445,
+          "text": "!!",
+          "tokenId": 3228
+        },
+        {
+          "logit": -57.372798919677734,
+          "text": "!?",
+          "tokenId": 22857
+        },
+        {
+          "logit": -57.46522521972656,
+          "text": " (",
+          "tokenId": 357
+        },
+        {
+          "logit": -57.52089309692383,
+          "text": " Wait",
+          "tokenId": 16314
+        },
+        {
+          "logit": -57.53575134277344,
+          "text": " \"",
+          "tokenId": 366
+        },
+        {
+          "logit": -57.56821823120117,
+          "text": " But",
+          "tokenId": 887
+        },
+        {
+          "logit": -57.601253509521484,
+          "text": " Can",
+          "tokenId": 1680
+        },
+        {
+          "logit": -57.67316818237305,
+          "text": " Don",
+          "tokenId": 2094
+        }
+      ]
+    },
+    {
+      "causalMaskCheck": {
+        "finalPositionChangedMaxAbsolute": 6.554607391357422,
+        "mutatedFinalTokenId": 244,
+        "prefixMaxAbsoluteError": 0.0
+      },
+      "id": "unicode",
+      "logits": {
+        "encoding": "float32-le",
+        "path": "unicode.logits.f32le",
+        "sha256": "7b6ad7a4093d27f33c9045ac491fac398da16acf7ec67780fd73c6047119bf5b",
+        "valueCount": 50257
+      },
+      "positionCheck": {
+        "finalPositionIndex": 9,
+        "logitSequenceLength": 10,
+        "tokenSequenceLength": 10
+      },
+      "prompt": "Café déjà vu ☕",
+      "promptSha256": "d5156347efc9e5ef44ca38c3628e9d3aa2aaa36831d157ab15dca9e177b9d983",
+      "purpose": "Accented text and multi-byte symbol boundary",
+      "tokenIds": [34, 1878, 2634, 39073, 73, 24247, 410, 84, 34719, 243],
+      "tokens": [
+        {
+          "byteValues": [67],
+          "position": 0,
+          "text": "C",
+          "tokenId": 34
+        },
+        {
+          "byteValues": [97, 102],
+          "position": 1,
+          "text": "af",
+          "tokenId": 1878
+        },
+        {
+          "byteValues": [195, 169],
+          "position": 2,
+          "text": "é",
+          "tokenId": 2634
+        },
+        {
+          "byteValues": [32, 100, 195, 169],
+          "position": 3,
+          "text": " dé",
+          "tokenId": 39073
+        },
+        {
+          "byteValues": [106],
+          "position": 4,
+          "text": "j",
+          "tokenId": 73
+        },
+        {
+          "byteValues": [195, 160],
+          "position": 5,
+          "text": "à",
+          "tokenId": 24247
+        },
+        {
+          "byteValues": [32, 118],
+          "position": 6,
+          "text": " v",
+          "tokenId": 410
+        },
+        {
+          "byteValues": [117],
+          "position": 7,
+          "text": "u",
+          "tokenId": 84
+        },
+        {
+          "byteValues": [32, 239, 191, 189],
+          "position": 8,
+          "text": " �",
+          "tokenId": 34719
+        },
+        {
+          "byteValues": [239, 191, 189],
+          "position": 9,
+          "text": "�",
+          "tokenId": 243
+        }
+      ],
+      "top50": [
+        {
+          "logit": -43.0396614074707,
+          "text": " �",
+          "tokenId": 34719
+        },
+        {
+          "logit": -43.159385681152344,
+          "text": "️",
+          "tokenId": 37929
+        },
+        {
+          "logit": -43.595069885253906,
+          "text": "\n",
+          "tokenId": 198
+        },
+        {
+          "logit": -44.24012756347656,
+          "text": "�",
+          "tokenId": 158
+        },
+        {
+          "logit": -44.46696090698242,
+          "text": " ",
+          "tokenId": 220
+        },
+        {
+          "logit": -44.475440979003906,
+          "text": ".",
+          "tokenId": 13
+        },
+        {
+          "logit": -44.487117767333984,
+          "text": ",",
+          "tokenId": 11
+        },
+        {
+          "logit": -44.61142349243164,
+          "text": " �",
+          "tokenId": 2343
+        },
+        {
+          "logit": -44.64887237548828,
+          "text": "�",
+          "tokenId": 24583
+        },
+        {
+          "logit": -44.965736389160156,
+          "text": " (",
+          "tokenId": 357
+        },
+        {
+          "logit": -44.989200592041016,
+          "text": "☆",
+          "tokenId": 35283
+        },
+        {
+          "logit": -45.12568664550781,
+          "text": "-",
+          "tokenId": 12
+        },
+        {
+          "logit": -45.13059616088867,
+          "text": "�",
+          "tokenId": 8582
+        },
+        {
+          "logit": -45.19935607910156,
+          "text": " �",
+          "tokenId": 6184
+        },
+        {
+          "logit": -45.23836898803711,
+          "text": "�",
+          "tokenId": 447
+        },
+        {
+          "logit": -45.40521240234375,
+          "text": "�",
+          "tokenId": 26486
+        },
+        {
+          "logit": -45.44576644897461,
+          "text": " �",
+          "tokenId": 12466
+        },
+        {
+          "logit": -45.55617904663086,
+          "text": " �",
+          "tokenId": 20724
+        },
+        {
+          "logit": -45.67947769165039,
+          "text": " �",
+          "tokenId": 1587
+        },
+        {
+          "logit": -45.7044677734375,
+          "text": " �",
+          "tokenId": 12520
+        },
+        {
+          "logit": -45.73322677612305,
+          "text": " m",
+          "tokenId": 285
+        },
+        {
+          "logit": -45.75430679321289,
+          "text": " �",
+          "tokenId": 564
+        },
+        {
+          "logit": -45.763771057128906,
+          "text": "<|endoftext|>",
+          "tokenId": 50256
+        },
+        {
+          "logit": -45.859092712402344,
+          "text": "�",
+          "tokenId": 126
+        },
+        {
+          "logit": -45.862640380859375,
+          "text": "�",
+          "tokenId": 17992
+        },
+        {
+          "logit": -45.892799377441406,
+          "text": " é",
+          "tokenId": 38251
+        },
+        {
+          "logit": -45.9507942199707,
+          "text": ")",
+          "tokenId": 8
+        },
+        {
+          "logit": -46.007171630859375,
+          "text": " a",
+          "tokenId": 257
+        },
+        {
+          "logit": -46.03434371948242,
+          "text": "�",
+          "tokenId": 140
+        },
+        {
+          "logit": -46.039093017578125,
+          "text": "\n\n",
+          "tokenId": 628
+        },
+        {
+          "logit": -46.098411560058594,
+          "text": " l",
+          "tokenId": 300
+        },
+        {
+          "logit": -46.15605545043945,
+          "text": " �",
+          "tokenId": 14519
+        },
+        {
+          "logit": -46.19734191894531,
+          "text": " d",
+          "tokenId": 288
+        },
+        {
+          "logit": -46.20017623901367,
+          "text": "°",
+          "tokenId": 7200
+        },
+        {
+          "logit": -46.21845245361328,
+          "text": " de",
+          "tokenId": 390
+        },
+        {
+          "logit": -46.24274444580078,
+          "text": " (@",
+          "tokenId": 4275
+        },
+        {
+          "logit": -46.25720977783203,
+          "text": "s",
+          "tokenId": 82
+        },
+        {
+          "logit": -46.26220703125,
+          "text": " c",
+          "tokenId": 269
+        },
+        {
+          "logit": -46.278629302978516,
+          "text": " C",
+          "tokenId": 327
+        },
+        {
+          "logit": -46.313026428222656,
+          "text": " f",
+          "tokenId": 277
+        },
+        {
+          "logit": -46.31620788574219,
+          "text": " |",
+          "tokenId": 930
+        },
+        {
+          "logit": -46.33382034301758,
+          "text": "�",
+          "tokenId": 24861
+        },
+        {
+          "logit": -46.33538818359375,
+          "text": "�",
+          "tokenId": 157
+        },
+        {
+          "logit": -46.342159271240234,
+          "text": " —",
+          "tokenId": 851
+        },
+        {
+          "logit": -46.34650421142578,
+          "text": ":",
+          "tokenId": 25
+        },
+        {
+          "logit": -46.34986114501953,
+          "text": " ★",
+          "tokenId": 23883
+        },
+        {
+          "logit": -46.35312271118164,
+          "text": "�",
+          "tokenId": 35266
+        },
+        {
+          "logit": -46.37106704711914,
+          "text": " #",
+          "tokenId": 1303
+        },
+        {
+          "logit": -46.39316177368164,
+          "text": " 1",
+          "tokenId": 352
+        },
+        {
+          "logit": -46.4381217956543,
+          "text": " v",
+          "tokenId": 410
+        }
+      ]
+    },
+    {
+      "causalMaskCheck": {
+        "finalPositionChangedMaxAbsolute": 13.784317016601562,
+        "mutatedFinalTokenId": 2421,
+        "prefixMaxAbsoluteError": 0.0
+      },
+      "id": "leading-space",
+      "logits": {
+        "encoding": "float32-le",
+        "path": "leading-space.logits.f32le",
+        "sha256": "b748799091cc0dbafda639c2eccf717bed1663730d3029d450c2404bc18e807c",
+        "valueCount": 50257
+      },
+      "positionCheck": {
+        "finalPositionIndex": 3,
+        "logitSequenceLength": 4,
+        "tokenSequenceLength": 4
+      },
+      "prompt": "  indented text",
+      "promptSha256": "5100d47067ba94c2d7e79eddb91317b95f33c1e57dc9485ca67980646d2c7c6b",
+      "purpose": "Leading-space byte-level BPE boundary",
+      "tokenIds": [220, 773, 4714, 2420],
+      "tokens": [
+        {
+          "byteValues": [32],
+          "position": 0,
+          "text": " ",
+          "tokenId": 220
+        },
+        {
+          "byteValues": [32, 105, 110, 100],
+          "position": 1,
+          "text": " ind",
+          "tokenId": 773
+        },
+        {
+          "byteValues": [101, 110, 116, 101, 100],
+          "position": 2,
+          "text": "ented",
+          "tokenId": 4714
+        },
+        {
+          "byteValues": [32, 116, 101, 120, 116],
+          "position": 3,
+          "text": " text",
+          "tokenId": 2420
+        }
+      ],
+      "top50": [
+        {
+          "logit": -59.29774475097656,
+          "text": "\n",
+          "tokenId": 198
+        },
+        {
+          "logit": -59.30485916137695,
+          "text": ".",
+          "tokenId": 13
+        },
+        {
+          "logit": -59.415775299072266,
+          "text": ",",
+          "tokenId": 11
+        },
+        {
+          "logit": -60.28242874145508,
+          "text": " is",
+          "tokenId": 318
+        },
+        {
+          "logit": -60.54684066772461,
+          "text": " and",
+          "tokenId": 290
+        },
+        {
+          "logit": -60.66334533691406,
+          "text": " of",
+          "tokenId": 286
+        },
+        {
+          "logit": -60.86796951293945,
+          "text": " (",
+          "tokenId": 357
+        },
+        {
+          "logit": -60.91229248046875,
+          "text": " in",
+          "tokenId": 287
+        },
+        {
+          "logit": -61.01433563232422,
+          "text": " with",
+          "tokenId": 351
+        },
+        {
+          "logit": -61.10700607299805,
+          "text": " that",
+          "tokenId": 326
+        },
+        {
+          "logit": -61.54825973510742,
+          "text": "-",
+          "tokenId": 12
+        },
+        {
+          "logit": -61.55057907104492,
+          "text": " on",
+          "tokenId": 319
+        },
+        {
+          "logit": -61.901939392089844,
+          "text": " to",
+          "tokenId": 284
+        },
+        {
+          "logit": -61.902042388916016,
+          "text": " for",
+          "tokenId": 329
+        },
+        {
+          "logit": -61.9196662902832,
+          "text": " or",
+          "tokenId": 393
+        },
+        {
+          "logit": -61.9904670715332,
+          "text": " text",
+          "tokenId": 2420
+        },
+        {
+          "logit": -62.03461837768555,
+          "text": ":",
+          "tokenId": 25
+        },
+        {
+          "logit": -62.05638122558594,
+          "text": "\n\n",
+          "tokenId": 628
+        },
+        {
+          "logit": -62.06163024902344,
+          "text": ")",
+          "tokenId": 8
+        },
+        {
+          "logit": -62.15911102294922,
+          "text": " by",
+          "tokenId": 416
+        },
+        {
+          "logit": -62.16142654418945,
+          "text": " has",
+          "tokenId": 468
+        },
+        {
+          "logit": -62.22871398925781,
+          "text": " .",
+          "tokenId": 764
+        },
+        {
+          "logit": -62.25871658325195,
+          "text": " message",
+          "tokenId": 3275
+        },
+        {
+          "logit": -62.28111267089844,
+          "text": ";",
+          "tokenId": 26
+        },
+        {
+          "logit": -62.32880401611328,
+          "text": " can",
+          "tokenId": 460
+        },
+        {
+          "logit": -62.37788391113281,
+          "text": " was",
+          "tokenId": 373
+        },
+        {
+          "logit": -62.403133392333984,
+          "text": " from",
+          "tokenId": 422
+        },
+        {
+          "logit": -62.42020797729492,
+          "text": " ,",
+          "tokenId": 837
+        },
+        {
+          "logit": -62.58322525024414,
+          "text": " The",
+          "tokenId": 383
+        },
+        {
+          "logit": -62.59314727783203,
+          "text": " at",
+          "tokenId": 379
+        },
+        {
+          "logit": -62.5984992980957,
+          "text": " as",
+          "tokenId": 355
+        },
+        {
+          "logit": -62.709861755371094,
+          "text": " will",
+          "tokenId": 481
+        },
+        {
+          "logit": -62.728843688964844,
+          "text": " =",
+          "tokenId": 796
+        },
+        {
+          "logit": -62.73501205444336,
+          "text": " are",
+          "tokenId": 389
+        },
+        {
+          "logit": -62.753475189208984,
+          "text": " editor",
+          "tokenId": 5464
+        },
+        {
+          "logit": -62.83234405517578,
+          "text": " [",
+          "tokenId": 685
+        },
+        {
+          "logit": -62.83994674682617,
+          "text": " file",
+          "tokenId": 2393
+        },
+        {
+          "logit": -62.847843170166016,
+          "text": " <",
+          "tokenId": 1279
+        },
+        {
+          "logit": -62.880313873291016,
+          "text": " -",
+          "tokenId": 532
+        },
+        {
+          "logit": -62.895286560058594,
+          "text": " {",
+          "tokenId": 1391
+        },
+        {
+          "logit": -62.920833587646484,
+          "text": " which",
+          "tokenId": 543
+        },
+        {
+          "logit": -62.92194366455078,
+          "text": " |",
+          "tokenId": 930
+        },
+        {
+          "logit": -62.92366409301758,
+          "text": " box",
+          "tokenId": 3091
+        },
+        {
+          "logit": -62.93496322631836,
+          "text": " \"",
+          "tokenId": 366
+        },
+        {
+          "logit": -62.964027404785156,
+          "text": "!",
+          "tokenId": 0
+        },
+        {
+          "logit": -62.971317291259766,
+          "text": " messages",
+          "tokenId": 6218
+        },
+        {
+          "logit": -63.0623664855957,
+          "text": " )",
+          "tokenId": 1267
+        },
+        {
+          "logit": -63.07390213012695,
+          "text": " :",
+          "tokenId": 1058
+        },
+        {
+          "logit": -63.09955978393555,
+          "text": "<|endoftext|>",
+          "tokenId": 50256
+        },
+        {
+          "logit": -63.115013122558594,
+          "text": " –",
+          "tokenId": 784
+        }
+      ]
+    }
+  ],
+  "formatVersion": "1.0.0",
+  "sourceFramework": {
+    "assets": [
+      {
+        "path": "config.json",
+        "sha256": "4ec5947c1d59fee6212cdf3b0ec1a53eac02092554c5ff0a733488cbd2c64f3a",
+        "sizeBytes": 762
+      },
+      {
+        "path": "merges.txt",
+        "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+        "sizeBytes": 456318
+      },
+      {
+        "path": "model.safetensors",
+        "sha256": "e1ff18884359fe8beb795a5f414feb85a6ce3d929ad019c0d958c039d2b94a1b",
+        "sizeBytes": 352824413
+      },
+      {
+        "path": "tokenizer.json",
+        "sha256": "8414cab924d8b9b33013f0d221c5862f365ee9be39c5c2bfae8a5a9e970478a6",
+        "sizeBytes": 1355256
+      },
+      {
+        "path": "tokenizer_config.json",
+        "sha256": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f",
+        "sizeBytes": 26
+      },
+      {
+        "path": "vocab.json",
+        "sha256": "196139668be63f3b5d6574427317ae82f612a97c5d1cdaf36ed2256dbf636783",
+        "sizeBytes": 1042301
+      }
+    ],
+    "dtype": "float32",
+    "id": "distilbert/distilgpt2",
+    "licence": "Apache-2.0",
+    "python": "3.12.13",
+    "revision": "2290a62682d06624634c1f46a6ad5be0f47f38aa",
+    "sourceUrl": "https://huggingface.co/distilbert/distilgpt2/tree/2290a62682d06624634c1f46a6ad5be0f47f38aa",
+    "versions": {
+      "huggingface-hub": "0.29.3",
+      "numpy": "2.2.3",
+      "onnx": "1.17.0",
+      "onnxruntime": "1.20.1",
+      "optimum": "1.24.0",
+      "safetensors": "0.5.3",
+      "tokenizers": "0.21.0",
+      "torch": "2.6.0+cpu",
+      "transformers": "4.49.0"
+    }
+  }
+}

@@ -86,8 +86,10 @@ export function createDemoStep(
     inference: {
       durationMs: null,
       evidenceClass: 'derived',
+      logitsSha256: null,
       mode: 'illustrative-demo',
       note: 'Illustrative fixture logits; sampler transforms and seeded selection are exact.',
+      verificationProfileId: null,
       verificationStatus: 'illustrative',
     },
     inputTokenIds: DEMO_PROMPT_TOKENS.map((token) => token.tokenId),

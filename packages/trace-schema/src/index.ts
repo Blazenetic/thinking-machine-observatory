@@ -7,6 +7,7 @@ import {
   type TokenizerIdentity,
   type TraceAnnotation,
 } from '@observatory/domain';
+import { runSampler } from '@observatory/sampler';
 import { z } from 'zod';
 
 const EvidenceClassSchema = z.enum([
@@ -18,6 +19,7 @@ const EvidenceClassSchema = z.enum([
 ]);
 const ExecutionModeSchema = z.enum(['illustrative-demo', 'live-wasm', 'live-webgpu']);
 const VerificationStatusSchema = z.enum(['illustrative', 'unverified', 'verified']);
+const Sha256Schema = z.string().regex(/^[a-f0-9]{64}$/);
 
 const AssetIdentitySchema = z
   .object({
@@ -106,6 +108,21 @@ const SelectionRecordSchema = z
   })
   .strict();
 
+const LegacyInferenceProvenanceSchema = z
+  .object({
+    durationMs: z.number().finite().nonnegative().nullable(),
+    evidenceClass: EvidenceClassSchema,
+    mode: ExecutionModeSchema,
+    note: z.string().min(1),
+    verificationStatus: VerificationStatusSchema,
+  })
+  .strict();
+
+const InferenceProvenanceSchema = LegacyInferenceProvenanceSchema.extend({
+  logitsSha256: Sha256Schema.nullable(),
+  verificationProfileId: z.string().min(1).nullable(),
+}).strict();
+
 const GenerationStepSchema = z
   .object({
     candidateUniverse: z
@@ -117,15 +134,7 @@ const GenerationStepSchema = z
       })
       .strict(),
     createdOrder: z.number().int().nonnegative(),
-    inference: z
-      .object({
-        durationMs: z.number().finite().nonnegative().nullable(),
-        evidenceClass: EvidenceClassSchema,
-        mode: ExecutionModeSchema,
-        note: z.string().min(1),
-        verificationStatus: VerificationStatusSchema,
-      })
-      .strict(),
+    inference: InferenceProvenanceSchema,
     inputTokenIds: z.array(z.number().int()),
     position: z.number().int().nonnegative(),
     sampler: z
@@ -139,6 +148,10 @@ const GenerationStepSchema = z
       .strict(),
   })
   .strict();
+
+const LegacyGenerationStepSchema = GenerationStepSchema.extend({
+  inference: LegacyInferenceProvenanceSchema,
+}).strict();
 
 const AnnotationSchema = z
   .object({
@@ -179,6 +192,11 @@ export const ExperimentTraceSchema = z
   })
   .strict();
 
+const LegacyExperimentTraceSchema = ExperimentTraceSchema.extend({
+  schemaVersion: z.literal('1.0.0'),
+  steps: z.array(LegacyGenerationStepSchema),
+}).strict();
+
 export class TraceValidationError extends Error {
   public readonly issues: readonly z.core.$ZodIssue[];
 
@@ -217,7 +235,10 @@ function deepFreeze<T>(value: T): T {
 function validateAndFreeze(value: unknown): ExperimentTrace {
   const result = ExperimentTraceSchema.safeParse(value);
   if (!result.success) {
-    throw new TraceValidationError('Trace did not satisfy schema 1.0.0.', result.error.issues);
+    throw new TraceValidationError(
+      `Trace did not satisfy schema ${TRACE_SCHEMA_VERSION}.`,
+      result.error.issues,
+    );
   }
   return deepFreeze(result.data);
 }
@@ -307,6 +328,32 @@ export function parseTraceJson(json: string): ExperimentTrace {
       `Trace is not valid JSON: ${error instanceof Error ? error.message : 'unknown parse error'}`,
     );
   }
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    'schemaVersion' in value &&
+    value.schemaVersion === '1.0.0'
+  ) {
+    const legacy = LegacyExperimentTraceSchema.safeParse(value);
+    if (!legacy.success) {
+      throw new TraceValidationError(
+        'Legacy trace did not satisfy schema 1.0.0.',
+        legacy.error.issues,
+      );
+    }
+    return validateAndFreeze({
+      ...legacy.data,
+      schemaVersion: TRACE_SCHEMA_VERSION,
+      steps: legacy.data.steps.map((step) => ({
+        ...step,
+        inference: {
+          ...step.inference,
+          logitsSha256: null,
+          verificationProfileId: null,
+        },
+      })),
+    });
+  }
   return validateAndFreeze(value);
 }
 
@@ -335,4 +382,64 @@ export function compareTraceCompatibility(
     reasons.push('sampler calculation version differs');
   }
   return deepFreeze({ compatible: reasons.length === 0, reasons });
+}
+
+export interface StepReplayResult {
+  readonly matches: boolean;
+  readonly position: number;
+  readonly reasons: readonly string[];
+}
+
+function canonicalJson(value: unknown): string {
+  const normalise = (item: unknown): unknown => {
+    if (Array.isArray(item)) return item.map(normalise);
+    if (item !== null && typeof item === 'object') {
+      return Object.fromEntries(
+        Object.entries(item)
+          .sort(([left], [right]) => left.localeCompare(right))
+          .map(([key, nested]) => [key, normalise(nested)]),
+      );
+    }
+    return item;
+  };
+  return JSON.stringify(normalise(value));
+}
+
+/** Recomputes a recorded sampler result from its complete candidate universe. */
+export function replayGenerationStep(step: GenerationStep): StepReplayResult {
+  const reasons: string[] = [];
+  if (!step.candidateUniverse.complete) {
+    reasons.push('candidate universe is incomplete');
+  }
+  if (step.sampler.candidates.length !== step.candidateUniverse.size) {
+    reasons.push('recorded candidates do not cover the declared universe');
+  }
+  if (reasons.length > 0) {
+    return deepFreeze({ matches: false, position: step.position, reasons });
+  }
+
+  const replayed = runSampler(
+    step.sampler.candidates.map(({ logit, text, tokenId }) => ({ logit, text, tokenId })),
+    step.sampler.config,
+    step.sampler.interventions,
+  );
+  if (canonicalJson(replayed) !== canonicalJson(step.sampler)) {
+    reasons.push('recomputed sampler record differs');
+  }
+  return deepFreeze({ matches: reasons.length === 0, position: step.position, reasons });
+}
+
+export interface TraceReplayResult {
+  readonly matches: boolean;
+  readonly steps: readonly StepReplayResult[];
+  readonly traceId: string;
+}
+
+export function replayTrace(trace: ExperimentTrace): TraceReplayResult {
+  const steps = trace.steps.map(replayGenerationStep);
+  return deepFreeze({
+    matches: steps.every((step) => step.matches),
+    steps,
+    traceId: trace.traceId,
+  });
 }

@@ -10,6 +10,8 @@ import {
   createTrace,
   forkTrace,
   parseTraceJson,
+  replayGenerationStep,
+  replayTrace,
   serialiseTrace,
   TraceValidationError,
 } from './index';
@@ -49,8 +51,10 @@ function step(createdOrder = 0): GenerationStep {
     inference: {
       durationMs: null,
       evidenceClass: 'derived',
+      logitsSha256: null,
       mode: 'illustrative-demo',
       note: 'Illustrative fixture.',
+      verificationProfileId: null,
       verificationStatus: 'illustrative',
     },
     inputTokenIds: [1],
@@ -127,6 +131,59 @@ describe('trace lifecycle', () => {
     expect(compareTraceCompatibility(left, right)).toEqual({
       compatible: false,
       reasons: ['model dtype differs'],
+    });
+  });
+
+  it('replays a complete trace to the byte-equivalent sampler result', () => {
+    const trace = appendStep(baseTrace(), step());
+    expect(replayTrace(parseTraceJson(serialiseTrace(trace)))).toEqual({
+      matches: true,
+      steps: [{ matches: true, position: 1, reasons: [] }],
+      traceId: trace.traceId,
+    });
+  });
+
+  it('refuses replay when a capture is incomplete or a selection was changed', () => {
+    const incomplete = {
+      ...step(),
+      candidateUniverse: { captured: 1, complete: false, label: 'top one', size: 2 },
+    };
+    expect(replayGenerationStep(incomplete)).toEqual({
+      matches: false,
+      position: 1,
+      reasons: ['candidate universe is incomplete'],
+    });
+
+    const traceJson = JSON.parse(serialiseTrace(appendStep(baseTrace(), step()))) as {
+      steps: Array<{ sampler: { selection: { tokenId: number } } }>;
+    };
+    const firstStep = traceJson.steps[0];
+    if (!firstStep) throw new Error('Expected one test step.');
+    firstStep.sampler.selection.tokenId = 99;
+    expect(replayTrace(parseTraceJson(JSON.stringify(traceJson))).matches).toBe(false);
+  });
+
+  it('migrates a valid 1.0.0 trace without inventing verification evidence', () => {
+    const legacy = JSON.parse(serialiseTrace(appendStep(baseTrace(), step()))) as {
+      schemaVersion: string;
+      steps: Array<{
+        inference: {
+          logitsSha256?: string | null;
+          verificationProfileId?: string | null;
+        };
+      }>;
+    };
+    legacy.schemaVersion = '1.0.0';
+    const legacyStep = legacy.steps[0];
+    if (!legacyStep) throw new Error('Expected one legacy step.');
+    delete legacyStep.inference.logitsSha256;
+    delete legacyStep.inference.verificationProfileId;
+
+    const migrated = parseTraceJson(JSON.stringify(legacy));
+    expect(migrated.schemaVersion).toBe('1.1.0');
+    expect(migrated.steps[0]?.inference).toMatchObject({
+      logitsSha256: null,
+      verificationProfileId: null,
     });
   });
 });

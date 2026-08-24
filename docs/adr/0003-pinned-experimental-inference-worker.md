@@ -1,6 +1,6 @@
 # ADR 0003 — Pinned experimental inference worker
 
-- Status: Provisional
+- Status: Superseded by ADR 0005
 - Date: 24 August 2026
 
 ## Context

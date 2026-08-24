@@ -9,7 +9,9 @@ Counterfactual comparison is trustworthy only when an intervention cannot silent
 
 ## Decision
 
-Use schema version `1.0.0` with strict Zod validation. Store model/tokenizer identity, candidate-universe completeness, raw and transformed candidate records, filters, intervals, PRNG state, selection mode, evidence provenance, calculation versions and lineage. Append, fork and annotate by returning new deeply frozen values.
+Use strict Zod validation. Schema 1.1 stores model/tokenizer identity, candidate-universe completeness, raw and transformed candidate records, filters, intervals, PRNG state, selection mode, evidence provenance, calculation versions and lineage. It adds the full-logit SHA-256 and verification-profile identity needed by verified live steps. Append, fork and annotate by returning new deeply frozen values.
+
+Import migrates valid 1.0 records to 1.1 with both new evidence fields set to `null`; it never invents verification evidence.
 
 Child traces reference the parent and fork step rather than duplicating ancestor steps.
 
@@ -19,3 +21,4 @@ Child traces reference the parent and fork step rather than duplicating ancestor
 - Ancestor byte stability is testable.
 - A child cannot be interpreted without resolving its ancestry once multi-step replay arrives.
 - Future schema migrations must be explicit and may not silently reinterpret measurements.
+- Expanded full-vocabulary records are intentionally retained for the Phase 2 proof. Phase 3 must adopt a separately versioned compact representation before repeating them across multi-step traces.

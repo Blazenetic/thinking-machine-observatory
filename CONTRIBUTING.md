@@ -27,7 +27,7 @@ pnpm test:coverage
 pnpm e2e
 ```
 
-Install Playwright's browser once with `pnpm exec playwright install chromium`. The network-backed local-model smoke is opt-in; see the README.
+Install Playwright's browser once with `pnpm exec playwright install chromium`. The network-backed local-model smoke and reproducibility environment are opt-in; see the README and `model-tools/README.md`.
 
 ## Dependency direction
 
@@ -53,6 +53,8 @@ A useful order is:
 7. document the limitation and next verification gate.
 
 Schema changes require an explicit version and migration decision. Model/runtime changes require pinned identities and fresh golden evidence; a dependency update alone does not establish numerical equivalence.
+
+`pnpm fixtures:check` re-hashes the checked source/runtime vectors and re-evaluates the accepted rank/error gates without downloading model weights. `pnpm trace:verify:live` feeds the accepted 50,257-logit hero vector through the production sampler, JSON parser and replay engine. Run the heavyweight `pnpm model:verify` only with both pinned ONNX assets available.
 
 ## Pull requests
 

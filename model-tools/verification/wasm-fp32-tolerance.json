@@ -1,0 +1,13 @@
+{
+  "profileId": "distilgpt2-wasm-fp32-v1",
+  "requirements": {
+    "causalPrefixMaxAbsoluteError": 0,
+    "maxAbsoluteError": 0.0002,
+    "maxCentredAbsoluteError": 0.0002,
+    "meanAbsoluteError": 0.00005,
+    "meanCentredAbsoluteError": 0.00005,
+    "minimumTop50Overlap": 1,
+    "requireExactTokenizer": true,
+    "requireTop1Match": true
+  }
+}

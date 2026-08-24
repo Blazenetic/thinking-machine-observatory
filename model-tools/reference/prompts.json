@@ -1,0 +1,22 @@
+[
+  {
+    "id": "hero",
+    "prompt": "The night sky was",
+    "purpose": "Pinned Phase 2 hero prediction"
+  },
+  {
+    "id": "punctuation",
+    "prompt": "Wait—what?!",
+    "purpose": "ASCII and em-dash punctuation boundary"
+  },
+  {
+    "id": "unicode",
+    "prompt": "Café déjà vu ☕",
+    "purpose": "Accented text and multi-byte symbol boundary"
+  },
+  {
+    "id": "leading-space",
+    "prompt": "  indented text",
+    "purpose": "Leading-space byte-level BPE boundary"
+  }
+]

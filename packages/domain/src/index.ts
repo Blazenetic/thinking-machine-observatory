@@ -5,7 +5,7 @@
  * validators may depend on it; it must never depend on them.
  */
 
-export const TRACE_SCHEMA_VERSION = '1.0.0' as const;
+export const TRACE_SCHEMA_VERSION = '1.1.0' as const;
 export const SAMPLER_CALCULATION_VERSION = '1' as const;
 
 export const EVIDENCE_CLASSES = {
@@ -143,8 +143,10 @@ export interface CandidateUniverse {
 export interface InferenceProvenance {
   readonly durationMs: number | null;
   readonly evidenceClass: EvidenceClass;
+  readonly logitsSha256: string | null;
   readonly mode: ExecutionMode;
   readonly note: string;
+  readonly verificationProfileId: string | null;
   readonly verificationStatus: VerificationStatus;
 }
 
@@ -207,10 +209,18 @@ export interface RuntimeCapabilities {
   readonly webWorker: boolean;
 }
 
+export type AssetCacheStatus = 'cold-download' | 'unavailable' | 'warm-cache';
+
+export interface ModelLoadReport {
+  readonly cacheStatus: AssetCacheStatus;
+  readonly durationMs: number;
+  readonly modelAssetBytes: number;
+}
+
 export type InferenceStatus =
   | { readonly state: 'idle' }
   | { readonly state: 'loading'; readonly progress: number; readonly message: string }
-  | { readonly state: 'ready'; readonly model: ModelIdentity }
+  | { readonly state: 'ready'; readonly load: ModelLoadReport; readonly model: ModelIdentity }
   | { readonly state: 'predicting' }
   | { readonly state: 'error'; readonly message: string };
 
@@ -218,10 +228,13 @@ export interface PredictionCapture {
   readonly candidateUniverse: CandidateUniverse;
   readonly candidates: readonly RawCandidate[];
   readonly durationMs: number;
+  readonly logits: Float32Array;
+  readonly logitsSha256: string;
   readonly mode: Exclude<ExecutionMode, 'illustrative-demo'>;
   readonly model: ModelIdentity;
   readonly promptTokens: readonly TokenSpecimen[];
   readonly tokenizer: TokenizerIdentity;
+  readonly verificationProfileId: string | null;
 }
 
 export interface GuidedExperiment {

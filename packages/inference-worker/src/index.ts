@@ -1,5 +1,7 @@
 import type {
+  AssetCacheStatus,
   ModelIdentity,
+  ModelLoadReport,
   PredictionCapture,
   RawCandidate,
   RuntimeCapabilities,
@@ -10,6 +12,45 @@ import type {
 export const DISTILGPT2_MODEL = {
   id: 'Xenova/distilgpt2',
   revision: 'a41c10485c18a64b6606729b6a082330cbd8f49e',
+} as const;
+
+export const DISTILGPT2_RUNTIME =
+  '@huggingface/transformers@3.8.1; onnxruntime-web@1.22.0-dev.20250409-89f8206ba4' as const;
+
+export const DISTILGPT2_ASSETS = {
+  tokenizerBundle: {
+    sha256: 'fb803549cd431422aa2398fd669a1b2cff3ac8c57ff5843d9a65869a4df0b592',
+  },
+  wasmFp32: {
+    path: 'onnx/model.onnx',
+    sha256: 'd605c4b3740df3960e8f84e4c5735af8d81d19105eb915b692272c08cc800b0c',
+    sizeBytes: 327_825_716,
+  },
+  wasmInt8Rejected: {
+    path: 'onnx/model_int8.onnx',
+    sha256: '80b02da4fe266412bc49c9955a518151c50f9bac062f596a875068492a21f080',
+    sizeBytes: 236_698_606,
+  },
+  webGpuFp16: {
+    path: 'onnx/model_fp16.onnx',
+    sha256: '0f1853d55a420459d178be4c1804577ec0e4b992568c3991ebdf292b1f4319c0',
+    sizeBytes: 164_003_836,
+  },
+} as const;
+
+export const DISTILGPT2_VERIFICATION = {
+  wasmFp32: {
+    profileId: 'distilgpt2-wasm-fp32-v1',
+    referenceModel: 'distilbert/distilgpt2@2290a62682d06624634c1f46a6ad5be0f47f38aa',
+    report: 'model-tools/verification/wasm-fp32-report.json',
+    status: 'accepted',
+  },
+  wasmInt8: {
+    profileId: 'distilgpt2-wasm-int8-v1',
+    reason: 'Top-1 and causal-prefix checks failed the pinned four-prompt suite.',
+    report: 'model-tools/verification/wasm-int8-report.json',
+    status: 'rejected',
+  },
 } as const;
 
 export type LiveBackend = 'wasm' | 'webgpu';
@@ -37,7 +78,12 @@ export type InferenceWorkerRequest =
 
 export type InferenceWorkerResponse =
   | { readonly id: string; readonly progress: LoadProgress; readonly type: 'progress' }
-  | { readonly id: string; readonly model: ModelIdentity; readonly type: 'ready' }
+  | {
+      readonly id: string;
+      readonly load: ModelLoadReport;
+      readonly model: ModelIdentity;
+      readonly type: 'ready';
+    }
   | { readonly capture: PredictionCapture; readonly id: string; readonly type: 'prediction' }
   | { readonly id: string; readonly type: 'disposed' }
   | { readonly id: string; readonly message: string; readonly type: 'error' };
@@ -100,7 +146,7 @@ function toLoadProgress(info: ProgressInfo): LoadProgress {
   };
 }
 
-function topCandidates(logits: TensorLike, topN: number): readonly RawCandidate[] {
+export function extractFinalLogits(logits: TensorLike): Float32Array {
   const vocabularySize = logits.dims.at(-1);
   const sequenceLength = logits.dims.at(-2);
   if (!vocabularySize || !sequenceLength || logits.dims.length < 2) {
@@ -108,9 +154,15 @@ function topCandidates(logits: TensorLike, topN: number): readonly RawCandidate[
   }
 
   const offset = (sequenceLength - 1) * vocabularySize;
+  return Float32Array.from(
+    Array.from({ length: vocabularySize }, (_, tokenId) => Number(logits.data[offset + tokenId])),
+  );
+}
+
+export function rankTopCandidates(logits: Float32Array, topN: number): readonly RawCandidate[] {
   const leaders: { logit: number; tokenId: number }[] = [];
-  for (let tokenId = 0; tokenId < vocabularySize; tokenId += 1) {
-    const value = Number(logits.data[offset + tokenId]);
+  for (let tokenId = 0; tokenId < logits.length; tokenId += 1) {
+    const value = logits[tokenId] as number;
     if (!Number.isFinite(value)) continue;
 
     const insertionIndex = leaders.findIndex((candidate) => value > candidate.logit);
@@ -122,6 +174,14 @@ function topCandidates(logits: TensorLike, topN: number): readonly RawCandidate[
     }
   }
   return leaders.map(({ logit, tokenId }) => ({ logit, text: '', tokenId }));
+}
+
+async function sha256Float32(values: Float32Array): Promise<string> {
+  const bytes = Uint8Array.from(
+    new Uint8Array(values.buffer, values.byteOffset, values.byteLength),
+  );
+  const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, '0')).join('');
 }
 
 function tokenIdsFrom(inputs: TokenizerInputs): number[] {
@@ -143,10 +203,7 @@ function tokenSpecimens(tokenizer: RuntimeTokenizer, tokenIds: readonly number[]
   });
 }
 
-/**
- * Experimental live adapter. It returns genuine top-N runtime logits but marks
- * the capture incomplete and unverified, so it cannot yet drive exact full-vocabulary sampling.
- */
+/** Pinned local adapter with verified fp32 WASM and isolated experimental WebGPU paths. */
 export class TransformersDistilGpt2Adapter {
   readonly #backend: LiveBackend;
   #model: RuntimeModel | null = null;
@@ -157,29 +214,47 @@ export class TransformersDistilGpt2Adapter {
   }
 
   public get modelIdentity(): ModelIdentity {
+    const asset =
+      this.#backend === 'webgpu' ? DISTILGPT2_ASSETS.webGpuFp16 : DISTILGPT2_ASSETS.wasmFp32;
     return {
-      assetHash: null,
-      dtype: this.#backend === 'webgpu' ? 'fp16' : 'int8',
+      assetHash: `sha256:${asset.sha256}`,
+      dtype: this.#backend === 'webgpu' ? 'fp16' : 'fp32',
       id: DISTILGPT2_MODEL.id,
       revision: DISTILGPT2_MODEL.revision,
-      runtime: '@huggingface/transformers@3.8.1',
-      verificationStatus: 'unverified',
+      runtime: DISTILGPT2_RUNTIME,
+      verificationStatus: this.#backend === 'webgpu' ? 'unverified' : 'verified',
     };
   }
 
   public get tokenizerIdentity(): TokenizerIdentity {
     return {
-      assetHash: null,
+      assetHash: `sha256:${DISTILGPT2_ASSETS.tokenizerBundle.sha256}`,
       id: DISTILGPT2_MODEL.id,
       revision: DISTILGPT2_MODEL.revision,
     };
   }
 
-  public async load(onProgress: (progress: LoadProgress) => void = () => undefined): Promise<void> {
+  async #cacheStatus(): Promise<AssetCacheStatus> {
+    if (!('caches' in globalThis)) return 'unavailable';
+    const asset =
+      this.#backend === 'webgpu' ? DISTILGPT2_ASSETS.webGpuFp16 : DISTILGPT2_ASSETS.wasmFp32;
+    const url = `https://huggingface.co/${DISTILGPT2_MODEL.id}/resolve/${DISTILGPT2_MODEL.revision}/${asset.path}`;
+    try {
+      return (await globalThis.caches.match(url)) ? 'warm-cache' : 'cold-download';
+    } catch {
+      return 'unavailable';
+    }
+  }
+
+  public async load(
+    onProgress: (progress: LoadProgress) => void = () => undefined,
+  ): Promise<ModelLoadReport> {
     const { AutoModelForCausalLM, AutoTokenizer } = await import('@huggingface/transformers');
     const progressCallback = (info: ProgressInfo) => onProgress(toLoadProgress(info));
     const device = this.#backend === 'webgpu' ? 'webgpu' : 'wasm';
-    const dtype = this.#backend === 'webgpu' ? 'fp16' : 'int8';
+    const dtype = this.#backend === 'webgpu' ? 'fp16' : 'fp32';
+    const cacheStatus = await this.#cacheStatus();
+    const startedAt = performance.now();
 
     const [tokenizer, model] = await Promise.all([
       AutoTokenizer.from_pretrained(DISTILGPT2_MODEL.id, {
@@ -195,6 +270,14 @@ export class TransformersDistilGpt2Adapter {
     ]);
     this.#tokenizer = tokenizer;
     this.#model = model as RuntimeModel;
+    return {
+      cacheStatus,
+      durationMs: performance.now() - startedAt,
+      modelAssetBytes:
+        this.#backend === 'webgpu'
+          ? DISTILGPT2_ASSETS.webGpuFp16.sizeBytes
+          : DISTILGPT2_ASSETS.wasmFp32.sizeBytes,
+    };
   }
 
   public async predict(prompt: string, topN = 50): Promise<PredictionCapture> {
@@ -207,25 +290,30 @@ export class TransformersDistilGpt2Adapter {
     const startedAt = performance.now();
     const inputs = await this.#tokenizer(prompt);
     const output = await this.#model(inputs);
-    const candidates = topCandidates(output.logits, topN).map((candidate) => ({
+    const logits = extractFinalLogits(output.logits);
+    const candidates = rankTopCandidates(logits, topN).map((candidate) => ({
       ...candidate,
       text: this.#tokenizer?.decode([candidate.tokenId], { skip_special_tokens: false }) ?? '',
     }));
-    const vocabularySize = output.logits.dims.at(-1) as number;
+    const verificationProfileId =
+      this.#backend === 'wasm' ? DISTILGPT2_VERIFICATION.wasmFp32.profileId : null;
 
     return {
       candidateUniverse: {
-        captured: candidates.length,
-        complete: false,
-        label: `Top ${candidates.length} of ${vocabularySize.toLocaleString()} model logits`,
-        size: vocabularySize,
+        captured: logits.length,
+        complete: true,
+        label: `Complete ${logits.length.toLocaleString()}-logit model vocabulary`,
+        size: logits.length,
       },
       candidates,
       durationMs: performance.now() - startedAt,
+      logits,
+      logitsSha256: await sha256Float32(logits),
       mode: this.#backend === 'webgpu' ? 'live-webgpu' : 'live-wasm',
       model: this.modelIdentity,
       promptTokens: tokenSpecimens(this.#tokenizer, tokenIdsFrom(inputs)),
       tokenizer: this.tokenizerIdentity,
+      verificationProfileId,
     };
   }
 
@@ -237,7 +325,7 @@ export class TransformersDistilGpt2Adapter {
 }
 
 export function createInferenceWorkerHandler(
-  postResponse: (response: InferenceWorkerResponse) => void,
+  postResponse: (response: InferenceWorkerResponse, transfer?: readonly Transferable[]) => void,
 ): (request: InferenceWorkerRequest) => Promise<void> {
   let adapter: TransformersDistilGpt2Adapter | null = null;
 
@@ -246,16 +334,18 @@ export function createInferenceWorkerHandler(
       if (request.type === 'load') {
         await adapter?.dispose();
         adapter = new TransformersDistilGpt2Adapter(request.backend);
-        await adapter.load((progress) =>
+        const load = await adapter.load((progress) =>
           postResponse({ id: request.id, progress, type: 'progress' }),
         );
-        postResponse({ id: request.id, model: adapter.modelIdentity, type: 'ready' });
+        postResponse({ id: request.id, load, model: adapter.modelIdentity, type: 'ready' });
         return;
       }
       if (request.type === 'predict') {
         if (!adapter) throw new Error('Load the model before predicting.');
         const capture = await adapter.predict(request.prompt, request.topN);
-        postResponse({ capture, id: request.id, type: 'prediction' });
+        postResponse({ capture, id: request.id, type: 'prediction' }, [
+          capture.logits.buffer as ArrayBuffer,
+        ]);
         return;
       }
       await adapter?.dispose();

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 
 import type { ExperimentTrace, SamplerConfig } from '@observatory/domain';
 import { SamplerConfigurationError } from '@observatory/sampler';
-import { serialiseTrace } from '@observatory/trace-schema';
 
 import { BranchChamber } from './components/BranchChamber';
 import { CalibrationRail } from './components/CalibrationRail';
@@ -20,6 +19,7 @@ import {
   DEMO_PROMPT,
   WORKBENCH_CONFIG,
 } from './data/demo';
+import { downloadTrace } from './utils/traceFiles';
 
 function branchTitle(config: SamplerConfig, forcedTokenId: number | null, suppressedCount: number) {
   if (forcedTokenId !== null) {
@@ -32,16 +32,6 @@ function branchTitle(config: SamplerConfig, forcedTokenId: number | null, suppre
     return `Suppressed ${suppressedCount} candidate${suppressedCount === 1 ? '' : 's'}`;
   if (config.mode === 'greedy') return 'Greedy counterfactual';
   return `Seed ${config.seed}`;
-}
-
-function exportTrace(trace: ExperimentTrace): void {
-  const blob = new Blob([serialiseTrace(trace)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = `${trace.traceId}.observatory-trace.json`;
-  anchor.click();
-  URL.revokeObjectURL(url);
 }
 
 export function App() {
@@ -249,7 +239,7 @@ export function App() {
           <BranchChamber
             baseline={baseline}
             branches={branches}
-            onExport={exportTrace}
+            onExport={downloadTrace}
             onSelect={setSelectedTraceId}
             selectedTraceId={selectedTraceId}
           />

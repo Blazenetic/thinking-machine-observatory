@@ -31,7 +31,7 @@ Integrity boundary: the default ten-candidate logits are visibly illustrative. N
 
 ## Phase 2 — Verified live next-token slice
 
-**Status: next**
+**Status: complete in draft PR**
 
 Outcome: one pinned DistilGPT2 prompt produces reference-matched tokenizer IDs and full-vocabulary logits in-browser, then uses the existing exact sampler and trace schema.
 
@@ -47,9 +47,17 @@ Work:
 
 Exit gate: a live trace replays to the same selection and passes golden comparisons. The illustrative path remains as instant fallback.
 
+Exit evidence:
+
+- four source-framework prompt fixtures with exact token IDs/fragments and 50,257 fp32 logits each;
+- fp32 WASM: 50/50 exact top-rank positions on every prompt, maximum absolute error below `0.000077`, zero causal-prefix error;
+- int8 WASM rejected with its failed ranks and causal-prefix behaviour retained as evidence;
+- the pinned hero vector selects token `3223` (`" dark"`) after exact sampling and survives JSON import/replay unchanged;
+- one-step expanded trace measured at 23.06 MiB JSON / 1.10 MiB gzip, establishing the Phase 3 compact-storage gate.
+
 ## Phase 3 — Multi-step generation and branch DAG
 
-**Status: planned**
+**Status: readiness drafted; implementation next**
 
 Outcome: the branch workflow becomes the product’s operational centre rather than a one-step demonstration.
 
@@ -63,6 +71,8 @@ Work:
 - synchronise comparisons from the shared ancestor;
 - validate import/export/replay and compatibility warnings;
 - introduce IndexedDB notebook storage with quota handling.
+
+Entry gate: replace repeated expanded 50,257-candidate records with a content-addressed, lossless logit payload while preserving schema 1.1 import and exact sampler replay. The Phase 2 measurement shows that naively repeating the expanded record would add roughly 23 MiB and substantial heap use per step.
 
 Exit gate: force the runner-up, run both futures for several tokens, locate the first divergence, export, import and replay without ancestor mutation.
 
@@ -104,11 +114,11 @@ Exit gate: acceptance document 07 passes with recorded evidence, not assumed sup
 
 ## Risks kept active
 
-| Risk                                                | Current control                                         | Next evidence needed                            |
-| --------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------- |
-| Browser export/runtime disagrees with reference     | Live capture remains unverified and isolated            | Golden IDs/logits and tolerance report          |
-| Truncated top-N is mistaken for a full distribution | Exact live sampling is disabled                         | Complete vocabulary transport design            |
-| Visual polish outruns scientific truth              | Fixture/live status is persistent in UI and schema      | Integrity review of Phase 2 copy and traces     |
-| Worker/model bundle harms first use                 | Instant teaching path; model is opt-in                  | Real cold/warm download and memory measurements |
-| Secondary instruments expand scope                  | Capability-gated Phase 4                                | Verified export outputs and learning value      |
-| Monorepo becomes platform overhead                  | No task runner or backend; source exports remain simple | Reassess only if build graph becomes slow       |
+| Risk                                                | Current control                                         | Next evidence needed                          |
+| --------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------- |
+| Browser export/runtime disagrees with reference     | Only fp32 WASM passed; int8/WebGPU remain isolated      | Re-run profiles on every model/runtime change |
+| Truncated top-N is mistaken for a full distribution | 50,257 logits cross the verified worker boundary        | Compact lossless Phase 3 payload              |
+| Visual polish outruns scientific truth              | Fixture/live/rejected status is persistent in UI/schema | Integrity review of every new instrument      |
+| Worker/model bundle harms first use                 | Instant teaching path; 327.8 MB model is opt-in         | Cross-device browser measurements             |
+| Secondary instruments expand scope                  | Capability-gated Phase 4                                | Verified export outputs and learning value    |
+| Monorepo becomes platform overhead                  | No task runner or backend; source exports remain simple | Reassess only if build graph becomes slow     |

@@ -1,0 +1,13 @@
+{
+  "profileId": "distilgpt2-wasm-int8-v1",
+  "requirements": {
+    "causalPrefixMaxAbsoluteError": 0.00001,
+    "maxAbsoluteError": 20,
+    "maxCentredAbsoluteError": 8,
+    "meanAbsoluteError": 10,
+    "meanCentredAbsoluteError": 1,
+    "minimumTop50Overlap": 0.5,
+    "requireExactTokenizer": true,
+    "requireTop1Match": true
+  }
+}

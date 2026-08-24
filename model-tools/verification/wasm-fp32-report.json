@@ -1,0 +1,219 @@
+{
+  "accepted": true,
+  "backend": {
+    "executionProvider": "wasm",
+    "model": {
+      "assetPath": "onnx/model.onnx",
+      "id": "Xenova/distilgpt2",
+      "revision": "a41c10485c18a64b6606729b6a082330cbd8f49e",
+      "sha256": "d605c4b3740df3960e8f84e4c5735af8d81d19105eb915b692272c08cc800b0c",
+      "variant": "fp32"
+    },
+    "onnxRuntimeWeb": "1.22.0-dev.20250409-89f8206ba4",
+    "transformersJs": "3.8.1"
+  },
+  "cases": [
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 39.862640380859375,
+        "prefixMaxAbsolute": 0
+      },
+      "fixtureId": "hero",
+      "inferenceDurationMs": 70.33335500000021,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": -0.000006146082475917534,
+          "maxAbsolute": 0.0000762939453125,
+          "maxCentredAbsolute": 0.00008244002778841754,
+          "maxRelative": 8.539090547576867e-7,
+          "meanAbsolute": 0.000011185791166218138,
+          "meanCentredAbsolute": 0.000010271650518996038,
+          "meanRelative": 1.3458802015699682e-7,
+          "rootMeanSquare": 0.000014352288975408599
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 0,
+          "top1Match": true,
+          "top10Overlap": 10,
+          "top40BoundaryOverlap": 40,
+          "top50ExactPositions": 50,
+          "top50Overlap": 50,
+          "top50OverlapRatio": 1
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": "fixtures/model-golden/wasm-fp32/hero.logits.f32le",
+        "sha256": "0c2ea6650f31e52fdd9054bb57d652899c51d4dd2b3979300d5e8ec406524998",
+        "valueCount": 50257
+      },
+      "prompt": "The night sky was",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [464, 1755, 6766, 373]
+      },
+      "acceptance": {
+        "failures": [],
+        "passed": true
+      }
+    },
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 16.240032196044922,
+        "prefixMaxAbsolute": 0
+      },
+      "fixtureId": "punctuation",
+      "inferenceDurationMs": 28.720976999999948,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": -0.000010233729805557248,
+          "maxAbsolute": 0.00006103515625,
+          "maxCentredAbsolute": 0.00005601009699305725,
+          "maxRelative": 9.296787506698045e-7,
+          "meanAbsolute": 0.000013074960838982941,
+          "meanCentredAbsolute": 0.000010229790856427079,
+          "meanRelative": 1.9352100282075217e-7,
+          "rootMeanSquare": 0.00001632505245126721
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 0,
+          "top1Match": true,
+          "top10Overlap": 10,
+          "top40BoundaryOverlap": 40,
+          "top50ExactPositions": 50,
+          "top50Overlap": 50,
+          "top50OverlapRatio": 1
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": "fixtures/model-golden/wasm-fp32/punctuation.logits.f32le",
+        "sha256": "1691e6ac0cb8d7095104d160c300feef4e2dd54666c92dcf35191e77cc80695e",
+        "valueCount": 50257
+      },
+      "prompt": "Wait—what?!",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [21321, 960, 10919, 12248]
+      },
+      "acceptance": {
+        "failures": [],
+        "passed": true
+      }
+    },
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 6.554656982421875,
+        "prefixMaxAbsolute": 0
+      },
+      "fixtureId": "unicode",
+      "inferenceDurationMs": 62.360500000000684,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": -0.000013932370161316148,
+          "maxAbsolute": 0.000072479248046875,
+          "maxCentredAbsolute": 0.00005854687788555885,
+          "maxRelative": 0.000001340840156327848,
+          "meanAbsolute": 0.000015680131055087788,
+          "meanCentredAbsolute": 0.000010242723213438629,
+          "meanRelative": 2.886461545158908e-7,
+          "rootMeanSquare": 0.000018957562927313702
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 0,
+          "top1Match": true,
+          "top10Overlap": 10,
+          "top40BoundaryOverlap": 40,
+          "top50ExactPositions": 50,
+          "top50Overlap": 50,
+          "top50OverlapRatio": 1
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": "fixtures/model-golden/wasm-fp32/unicode.logits.f32le",
+        "sha256": "2890a136e5947599d5ef6c291dc96d01ac3cab1a898c3ff704264dac8113a08e",
+        "valueCount": 50257
+      },
+      "prompt": "Café déjà vu ☕",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [34, 1878, 2634, 39073, 73, 24247, 410, 84, 34719, 243]
+      },
+      "acceptance": {
+        "failures": [],
+        "passed": true
+      }
+    },
+    {
+      "causalMask": {
+        "finalPositionChangedMaxAbsolute": 13.784320831298828,
+        "prefixMaxAbsolute": 0
+      },
+      "fixtureId": "leading-space",
+      "inferenceDurationMs": 27.704860000000735,
+      "metrics": {
+        "logitError": {
+          "additiveOffset": 0.0000018318623039296764,
+          "maxAbsolute": 0.00005340576171875,
+          "maxCentredAbsolute": 0.00005157389941482033,
+          "maxRelative": 7.569281089146018e-7,
+          "meanAbsolute": 0.000009179350122790731,
+          "meanCentredAbsolute": 0.000009416019282098624,
+          "meanRelative": 1.2822907911069273e-7,
+          "rootMeanSquare": 0.000011891100724278165
+        },
+        "ranking": {
+          "meanReferenceTop50Displacement": 0,
+          "top1Match": true,
+          "top10Overlap": 10,
+          "top40BoundaryOverlap": 40,
+          "top50ExactPositions": 50,
+          "top50Overlap": 50,
+          "top50OverlapRatio": 1
+        }
+      },
+      "observedLogits": {
+        "encoding": "float32-le",
+        "path": "fixtures/model-golden/wasm-fp32/leading-space.logits.f32le",
+        "sha256": "27f53266809e4848123cff0d55c5547c5b20067e90bf20e9f2c748dc764c0b3b",
+        "valueCount": 50257
+      },
+      "prompt": "  indented text",
+      "tokenizer": {
+        "exact": true,
+        "observedTokenIds": [220, 773, 4714, 2420]
+      },
+      "acceptance": {
+        "failures": [],
+        "passed": true
+      }
+    }
+  ],
+  "environment": {
+    "architecture": "x64",
+    "node": "v24.19.0",
+    "operatingSystem": "linux 6.18.35"
+  },
+  "performance": {
+    "loadDurationMs": 3314.8602229999997,
+    "peakRssBytes": 2003771392,
+    "rssAfterLoadBytes": 1828573184,
+    "rssBeforeLoadBytes": 429658112,
+    "warmHeroInferenceDurationMs": 27.867991999999504
+  },
+  "reportFormatVersion": "1.0.0",
+  "toleranceProfile": {
+    "profileId": "distilgpt2-wasm-fp32-v1",
+    "requirements": {
+      "causalPrefixMaxAbsoluteError": 0,
+      "maxAbsoluteError": 0.0002,
+      "maxCentredAbsoluteError": 0.0002,
+      "meanAbsoluteError": 0.00005,
+      "meanCentredAbsoluteError": 0.00005,
+      "minimumTop50Overlap": 1,
+      "requireExactTokenizer": true,
+      "requireTop1Match": true
+    }
+  }
+}

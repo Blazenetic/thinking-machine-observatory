@@ -1440,13 +1440,17 @@ tbody th {
   border-color: var(--amber);
 }
 
+.integrity-callout--verified {
+  border-color: var(--cyan);
+}
+
 .live-capture {
   margin-block-start: 1rem;
 }
 
 .live-capture__summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 0.6rem;
 }
 
@@ -1466,6 +1470,95 @@ tbody th {
   font-family: ui-monospace, monospace;
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+.trace-dock {
+  padding: 1rem;
+  margin-block-start: 1rem;
+  background: color-mix(in srgb, var(--night) 78%, var(--cyan) 2%);
+  border: 1px solid var(--hairline);
+}
+
+.trace-dock__heading {
+  display: flex;
+  gap: 1rem;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.trace-dock__heading h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 550;
+}
+
+.trace-dock__heading > strong {
+  color: var(--cyan);
+  font-family: ui-monospace, monospace;
+  font-size: 0.64rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.live-model__actions--trace {
+  grid-template-columns: 1.25fr 1fr 1fr;
+}
+
+.trace-file-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  text-align: center;
+}
+
+.trace-file-button:focus-within {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.trace-file-button input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+}
+
+.trace-dock__status {
+  min-height: 1.5em;
+  margin-block: 0.8rem;
+  color: var(--ivory-muted);
+  font-size: 0.72rem;
+}
+
+.trace-dock__readout {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin: 0;
+  background: var(--hairline);
+}
+
+.trace-dock__readout div {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.75rem;
+  background: var(--night);
+}
+
+.trace-dock__readout dt {
+  color: var(--steel);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+}
+
+.trace-dock__readout dd {
+  overflow: hidden;
+  margin: 0;
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 footer {
@@ -1619,6 +1712,10 @@ footer p {
   .live-model__actions {
     grid-template-columns: 1fr;
   }
+
+  .trace-dock__readout {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 560px) {
@@ -1694,6 +1791,10 @@ footer p {
   .capability-grid,
   .model-manifest,
   .live-capture__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .trace-dock__readout {
     grid-template-columns: 1fr;
   }
 
