@@ -1,0 +1,8 @@
+{
+  "appJavaScriptGzipBytes": 108752,
+  "appJavaScriptLimitBytes": 128000,
+  "cssGzipBytes": 6901,
+  "cssLimitBytes": 10240,
+  "workerJavaScriptBytes": 922478,
+  "workerJavaScriptLimitBytes": 1048576
+}

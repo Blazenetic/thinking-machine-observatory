@@ -246,7 +246,7 @@ export function App() {
           </div>
         </section>
 
-        <section className="observation-floor" id="observation-floor">
+        <section className="observation-floor" id="observation-floor" tabIndex={-1}>
           <div className="floor-heading">
             <div>
               <p className="eyebrow">Observation floor</p>
@@ -263,7 +263,13 @@ export function App() {
               <p className="eyebrow">Prompt bench · fixture locked</p>
               <h2 id="prompt-title">Input text</h2>
             </div>
-            <textarea aria-describedby="prompt-note" readOnly rows={2} value={DEMO_PROMPT} />
+            <textarea
+              aria-describedby="prompt-note"
+              aria-label="Illustrative prompt"
+              readOnly
+              rows={2}
+              value={DEMO_PROMPT}
+            />
             <p id="prompt-note">
               The first vertical slice locks the prompt so the illustrative candidate universe is
               never mistaken for output from edited text.

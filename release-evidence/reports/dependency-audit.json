@@ -1,0 +1,7 @@
+{
+  "command": "pnpm audit --prod --audit-level high",
+  "observedAt": "2026-08-24",
+  "result": "passed",
+  "summary": "No known vulnerabilities found",
+  "limitation": "This is the package-registry advisory snapshot available when the candidate was prepared; CI reruns the same high-severity gate."
+}

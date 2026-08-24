@@ -109,6 +109,9 @@ export function ProbabilitySpectrometer({
         <summary>Exact candidate table</summary>
         <div className="table-scroll">
           <table>
+            <caption className="sr-only">
+              Exact illustrative candidate ranks, logits, probabilities and filter status
+            </caption>
             <thead>
               <tr>
                 <th scope="col">Rank</th>

@@ -4,11 +4,13 @@
     "allowJs": true,
     "composite": false,
     "jsx": "react-jsx",
-    "noEmit": true
+    "noEmit": true,
+    "types": ["node", "vite/client"]
   },
   "include": [
     "*.js",
     "*.ts",
+    "apps/**/*.js",
     "apps/**/*.ts",
     "apps/**/*.tsx",
     "packages/**/*.ts",

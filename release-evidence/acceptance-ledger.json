@@ -1,0 +1,495 @@
+{
+  "$schema": "./acceptance-ledger.schema.json",
+  "profileVersion": "1.0.0",
+  "source": "docs/07-acceptance-criteria-and-test-plan.md",
+  "groups": [
+    {
+      "id": "functional",
+      "title": "Launch-blocking functional criteria",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "The observe, intervene, branch, compare and preserve loop must work before public release.",
+      "criteria": [
+        {
+          "id": "TMO-FUNC-001",
+          "requirement": "A user can load a compatible local model or immediately open a bundled verified trace.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-002",
+          "requirement": "A prompt is tokenised and produces a real next-token candidate field.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-003",
+          "requirement": "Generation can pause before sampling.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-004",
+          "requirement": "Temperature, top-k, top-p and seed affect the sampler according to documented rules.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-005",
+          "requirement": "A candidate can be suppressed or forced and the intervention remains visible in lineage.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-006",
+          "requirement": "A child branch does not mutate its ancestor.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-007",
+          "requirement": "Two compatible branches can be compared from their shared ancestor.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-008",
+          "requirement": "A trace exports, validates, imports and replays with the same selected tokens.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-FUNC-009",
+          "requirement": "Every instrument and explanation exposes evidence classification.",
+          "paths": ["illustrative", "verified-wasm", "webgpu", "secondary"]
+        },
+        {
+          "id": "TMO-FUNC-010",
+          "requirement": "Unsupported hardware receives a useful fallback rather than a dead end.",
+          "paths": ["illustrative", "verified-wasm", "webgpu"]
+        }
+      ]
+    },
+    {
+      "id": "mathematics",
+      "title": "Mathematical unit tests",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "Exact sampler mathematics underpins both teaching and verified measured traces.",
+      "criteria": [
+        {
+          "id": "TMO-MATH-001",
+          "requirement": "Stable softmax handles large logits; probabilities remain finite and sum to one.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-MATH-002",
+          "requirement": "Temperature has T=1 identity, sharpens below one, flattens above one and rejects invalid values.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-MATH-003",
+          "requirement": "Top-k handles k=1, vocabulary-sized k and stable ties according to the documented order.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-MATH-004",
+          "requirement": "Top-p applies its boundary rule, retains at least one candidate, handles p=1 and rejects invalid values.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-MATH-005",
+          "requirement": "Survivor probabilities renormalise to one after every filter combination.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-MATH-006",
+          "requirement": "A known seed yields the fixture sequence and deterministic interval boundaries.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-MATH-007",
+          "requirement": "Entropy matches reference distributions and handles zero probabilities.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-MATH-008",
+          "requirement": "Divergence accepts compatible distributions only and handles zero and identical cases.",
+          "paths": ["illustrative", "verified-wasm"]
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "title": "Model correctness tests",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "Only a pinned, independently checked output profile may enter a verified measured trace.",
+      "criteria": [
+        {
+          "id": "TMO-MODEL-001",
+          "requirement": "Tokenizer IDs and decoded fragments match the pinned reference tokenizer.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-MODEL-002",
+          "requirement": "Final logits match source-framework golden fixtures within an explicit backend tolerance.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-MODEL-003",
+          "requirement": "Any promoted hidden-state or attention output matches the reference export for selected fixtures.",
+          "severity": "not-applicable",
+          "severityReason": "Phase 5 keeps hidden-state and attention outputs unavailable and authorises zero capture bytes.",
+          "paths": ["secondary"]
+        },
+        {
+          "id": "TMO-MODEL-004",
+          "requirement": "Causal masking and sequence-position semantics are verified.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-MODEL-005",
+          "requirement": "Quantised builds are evaluated separately and never imply numerical identity with full precision.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-MODEL-006",
+          "requirement": "Model, tokenizer and runtime hashes are captured and displayed.",
+          "paths": ["verified-wasm", "webgpu"]
+        }
+      ]
+    },
+    {
+      "id": "trace",
+      "title": "Trace and replay tests",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "The trace is the Observatory's portable scientific record and must remain exact and immutable.",
+      "criteria": [
+        {
+          "id": "TMO-TRACE-001",
+          "requirement": "Schema validation rejects missing required fields and unknown breaking versions.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-TRACE-002",
+          "requirement": "Export and import preserve prompt IDs, sampler state, PRNG state, interventions and lineage.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-TRACE-003",
+          "requirement": "Replay reproduces selected tokens for golden traces.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-TRACE-004",
+          "requirement": "Branch creation uses the correct parent and fork step.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-TRACE-005",
+          "requirement": "Ancestor content remains byte-stable after descendant changes.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-TRACE-006",
+          "requirement": "Compatibility warnings appear for different model, tokenizer or calculation versions.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-TRACE-007",
+          "requirement": "Migrations are explicit, tested and never silently reinterpret measurements.",
+          "paths": ["illustrative", "verified-wasm"]
+        }
+      ]
+    },
+    {
+      "id": "journeys",
+      "title": "End-to-end scenarios",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "Each scenario exercises a public path or a recovery boundary that supports the release claim.",
+      "criteria": [
+        {
+          "id": "TMO-E2E-001",
+          "requirement": "On first visit a user can choose demonstration mode, force the runner-up and save the branch.",
+          "paths": ["illustrative"]
+        },
+        {
+          "id": "TMO-E2E-002",
+          "requirement": "A supported desktop can cache the model, enter a prompt, pause, inspect and sample five tokens.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-E2E-003",
+          "requirement": "Greedy and seeded stochastic branches can be run and their first divergence located.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-E2E-004",
+          "requirement": "Suppressing the top candidate updates the explanation and the trace can be exported.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-E2E-005",
+          "requirement": "A known trace imports, replays, forks at step three and accepts an annotation.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-E2E-006",
+          "requirement": "With WebGPU denied, WASM or the demo trace still completes a guided experiment.",
+          "paths": ["illustrative", "verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-E2E-007",
+          "requirement": "Interrupted download or inference recovers without corrupting cached model or trace state.",
+          "paths": ["verified-wasm", "webgpu"]
+        }
+      ]
+    },
+    {
+      "id": "visual",
+      "title": "Visual and interaction acceptance",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "The instrument must communicate state and limitations without relying on decoration or guesswork.",
+      "criteria": [
+        {
+          "id": "TMO-VIS-001",
+          "requirement": "Current token, step, selected instrument and evidence class are always identifiable.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-VIS-002",
+          "requirement": "Candidate ranking and probabilities remain legible at normal laptop size.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-VIS-003",
+          "requirement": "Scale changes and filtered candidates are explicit.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-VIS-004",
+          "requirement": "Branch lineage identifies the intervention point and selected comparison tips.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-VIS-005",
+          "requirement": "No major view is a placeholder, decorative chart or unlabelled approximation.",
+          "paths": ["illustrative", "verified-wasm", "secondary"]
+        },
+        {
+          "id": "TMO-VIS-006",
+          "requirement": "Loading, empty, unsupported, stale and error states are intentionally designed.",
+          "paths": ["illustrative", "verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-VIS-007",
+          "requirement": "Reduced-motion mode removes nonessential animation.",
+          "paths": ["release"]
+        }
+      ]
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility acceptance",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "The core learning loop must remain perceivable and operable under WCAG 2.2 AA expectations.",
+      "criteria": [
+        {
+          "id": "TMO-A11Y-001",
+          "requirement": "A keyboard-only user can complete prompt, pause, intervene, branch, compare and save.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-A11Y-002",
+          "requirement": "Focus order follows the workflow and focus is always visible.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-A11Y-003",
+          "requirement": "Controls expose accessible names, current values, ranges and error messages.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-A11Y-004",
+          "requirement": "Charts provide equivalent readable values or summaries.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-A11Y-005",
+          "requirement": "Colour is never the only evidence-class, rank, branch or error cue.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-A11Y-006",
+          "requirement": "Text and controls meet WCAG 2.2 AA contrast and target-size expectations where applicable.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-A11Y-007",
+          "requirement": "Live updates are announced without overwhelming screen-reader users.",
+          "paths": ["release"]
+        }
+      ]
+    },
+    {
+      "id": "resilience",
+      "title": "Performance and resilience",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "A local-first instrument must fail safely and avoid resource growth or corrupted evidence.",
+      "criteria": [
+        {
+          "id": "TMO-RES-001",
+          "requirement": "Model execution and tensor processing cause no sustained main-thread blocking.",
+          "paths": ["verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-RES-002",
+          "requirement": "Capability detection completes before risky allocation and explains the chosen mode.",
+          "paths": ["verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-RES-003",
+          "requirement": "Model loading and prediction can be cancelled safely.",
+          "paths": ["verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-RES-004",
+          "requirement": "Repeated experiments do not exhibit unbounded tensor or session growth.",
+          "paths": ["verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-RES-005",
+          "requirement": "Cache quota failure has clear recovery and cannot corrupt the notebook.",
+          "paths": ["verified-wasm"]
+        },
+        {
+          "id": "TMO-RES-006",
+          "requirement": "A cached model or bundled trace remains usable on an offline revisit where deployment permits.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-RES-007",
+          "requirement": "Large traces warn, bound optional capture or offer a compact export.",
+          "paths": ["verified-wasm", "secondary"]
+        }
+      ]
+    },
+    {
+      "id": "browser",
+      "title": "Browser and device matrix",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "Every published support cell must be backed by measured capability and journey evidence.",
+      "criteria": [
+        {
+          "id": "TMO-BROWSER-001",
+          "requirement": "Current Chromium desktop with WebGPU has a measured experimental support result.",
+          "severity": "advisory",
+          "severityReason": "WebGPU is inspection-only and is not required for the core release path.",
+          "paths": ["webgpu"]
+        },
+        {
+          "id": "TMO-BROWSER-002",
+          "requirement": "Current Chromium without WebGPU reaches the WASM or demonstration path.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-BROWSER-003",
+          "requirement": "Firefox and Safari support levels are documented from real capability results rather than assumed.",
+          "paths": ["illustrative", "verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-BROWSER-004",
+          "requirement": "Android tablet and phone demonstration or reduced-instrument modes are tested.",
+          "paths": ["illustrative"]
+        },
+        {
+          "id": "TMO-BROWSER-005",
+          "requirement": "A low-memory device receives preflight warning and safe model-size and context limits.",
+          "severity": "advisory",
+          "severityReason": "The optional model can be withheld while the instant teaching path remains useful.",
+          "paths": ["verified-wasm", "webgpu"]
+        }
+      ]
+    },
+    {
+      "id": "integrity",
+      "title": "Scientific-integrity acceptance",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "Public copy and instruments must not overstate what the accepted output profile measures.",
+      "criteria": [
+        {
+          "id": "TMO-SCI-001",
+          "requirement": "Attention is never labelled as causal importance.",
+          "paths": ["secondary"]
+        },
+        {
+          "id": "TMO-SCI-002",
+          "requirement": "A projection exposes its method and limitations.",
+          "severity": "not-applicable",
+          "severityReason": "Semantic projection remains unavailable throughout Phase 5.",
+          "paths": ["secondary"]
+        },
+        {
+          "id": "TMO-SCI-003",
+          "requirement": "Probe outputs are labelled Probed and versioned.",
+          "severity": "not-applicable",
+          "severityReason": "Logit-lens and other probes remain unavailable throughout Phase 5.",
+          "paths": ["secondary"]
+        },
+        {
+          "id": "TMO-SCI-004",
+          "requirement": "Demonstration and live inference are unmistakably different.",
+          "paths": ["illustrative", "verified-wasm", "webgpu"]
+        },
+        {
+          "id": "TMO-SCI-005",
+          "requirement": "Selection explanations reconstruct the recorded sampler process.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-SCI-006",
+          "requirement": "Interventions list exactly what changed and what remained fixed.",
+          "paths": ["illustrative", "verified-wasm"]
+        },
+        {
+          "id": "TMO-SCI-007",
+          "requirement": "No user-facing copy anthropomorphises the model's internal state.",
+          "paths": ["release"]
+        }
+      ]
+    },
+    {
+      "id": "handback",
+      "title": "Release handback",
+      "defaultSeverity": "launch-blocking",
+      "severityReason": "A release claim requires a reviewable evidence pack rather than an informal checklist.",
+      "criteria": [
+        {
+          "id": "TMO-HAND-001",
+          "requirement": "The handback provides exact test results.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-HAND-002",
+          "requirement": "The handback provides supported-browser evidence.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-HAND-003",
+          "requirement": "The handback provides performance measurements.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-HAND-004",
+          "requirement": "The handback provides known limitations.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-HAND-005",
+          "requirement": "The handback provides current hero-loop screenshots or recordings.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-HAND-006",
+          "requirement": "The handback provides sample trace fixtures.",
+          "paths": ["release"]
+        },
+        {
+          "id": "TMO-HAND-007",
+          "requirement": "The handback states which instruments are Measured, Derived, Projected, Probed or Interventional.",
+          "paths": ["release"]
+        }
+      ]
+    }
+  ]
+}

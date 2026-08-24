@@ -122,7 +122,7 @@ Readiness contract: [Phase 4 honest instruments and guided laboratory](04-phase-
 
 ## Phase 5 — Public release quality
 
-**Status: planned**
+**Status: source candidate implemented; release-evidence gated**
 
 Outcome: a dependable public portfolio and learning instrument.
 
@@ -137,6 +137,8 @@ Work:
 - presentation screenshots/recording and user testing of the two-minute first experiment.
 
 Exit gate: acceptance document 07 passes with recorded evidence, not assumed support.
+
+Readiness contract: [Phase 5 public release evidence](05-phase-05-readiness.md).
 
 ## Risks kept active
 

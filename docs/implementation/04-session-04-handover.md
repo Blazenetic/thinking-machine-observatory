@@ -108,3 +108,5 @@ Prepare Phase 5 around release evidence rather than additional interpretability 
 the capability gates, run accessibility and browser/device measurements, test memory/offline
 lifecycle, make the deployment and asset-hosting decision, complete public licensing/limitations
 and validate the two-minute first experiment with recorded evidence.
+
+The bounded implementation contract is [Phase 5 public release evidence](05-phase-05-readiness.md).

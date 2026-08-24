@@ -30,6 +30,20 @@ test('supports reversible calibration before a branch is committed', async ({ pa
   await page.getByRole('button', { name: /Commit branch 1/ }).click();
 
   await expect(page.getByRole('button', { name: /B1.*Suppressed 1 candidate/s })).toBeVisible();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export selected trace JSON' }).click();
+  expect((await downloadPromise).suggestedFilename()).toMatch(/\.observatory-trace\.json$/);
+});
+
+test('compares the greedy baseline with a seeded stochastic branch', async ({ page }) => {
+  await page.goto('/');
+
+  await page.getByRole('textbox', { name: 'Seed', exact: true }).fill('0');
+  await page.getByRole('button', { name: /Commit branch 1/ }).click();
+
+  await expect(page.getByLabel('Compared selected tokens')).toContainText('clear');
+  await expect(page.getByLabel('Compared selected tokens')).toContainText('dark');
+  await expect(page.getByText('step 1', { exact: true })).toBeVisible();
 });
 
 test('keeps the instrument usable at a mobile viewport', async ({ page }) => {

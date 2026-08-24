@@ -1,6 +1,6 @@
 # Observatory architecture
 
-This is the canonical, present-tense map of the implemented system after Phases 1–4. The original
+This is the canonical, present-tense map of the implemented Phase 5 source candidate. The original
 product documents describe intent; ADRs record decisions; implementation handovers record session
 evidence. This directory explains how the current code fits together.
 
@@ -16,6 +16,7 @@ flowchart TD
     App["React observatory"] --> Views["Instruments and experiments"]
     App --> Worker["Typed inference worker"]
     App --> Trace["Trace schema and notebook"]
+    App --> Shell["Offline application shell"]
     Views --> Domain["Scientific vocabulary"]
     Trace --> Sampler["Exact sampler and PRNG"]
     Worker --> Domain
@@ -37,6 +38,8 @@ about React, ONNX, Vite or rendering.
 | `packages/inference-worker` | Model identity, capability declarations, worker protocol and Transformers.js adapter           | Does not decide sampler truth or trace admission |
 | `apps/observatory`          | User interaction, state orchestration, accessible tables and local file actions                | Does not reimplement sampler mathematics         |
 | `model-tools`               | Pinned reference generation and accepted/rejected numerical reports                            | Not part of the browser production bundle        |
+| `release-evidence`          | Acceptance mapping, candidate manifest and generated release decision                          | Does not create model evidence or waive a gate   |
+| `scripts`                   | Reproducible release, contrast, policy and bundle checks                                       | Does not promote manual or missing evidence      |
 
 ## Runtime paths
 
@@ -65,8 +68,12 @@ repository and revision.
 
 ## Documentation topology
 
+- [Documentation map](../README.md)
+- [User guide](../user-guide.md)
+- [Developer guide](../developer-guide.md)
 - [Runtime and interaction flows](runtime-flows.md)
 - [Trace, replay and persistence](trace-integrity.md)
+- [Release, offline and deployment boundary](release-boundary.md)
 - [Architecture decisions](../adr)
 - [Implementation handovers](../implementation)
 - [Model verification boundary](../../model-tools/README.md)

@@ -674,6 +674,9 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
           </p>
           <div className="table-scroll">
             <table>
+              <caption className="sr-only">
+                Highest-ranked verified measured candidates and intervention controls
+              </caption>
               <thead>
                 <tr>
                   <th scope="col">Rank</th>

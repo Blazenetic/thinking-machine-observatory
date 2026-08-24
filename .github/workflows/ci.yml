@@ -18,6 +18,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # phase5:verify reads the manifest's earlier source-candidate commit.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
           version: 11.19.0
@@ -34,8 +37,10 @@ jobs:
       - run: pnpm trace:verify:live
       - run: pnpm payload:verify
       - run: pnpm phase4:verify
+      - run: pnpm phase5:verify
       - run: pnpm test:coverage
       - run: pnpm build
+      - run: pnpm phase5:budgets
 
   e2e:
     runs-on: ubuntu-latest
@@ -50,12 +55,12 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm build
       - run: pnpm e2e
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
-          name: playwright-report
+          name: release-browser-evidence
           path: playwright-report/
-          retention-days: 7
+          retention-days: 14

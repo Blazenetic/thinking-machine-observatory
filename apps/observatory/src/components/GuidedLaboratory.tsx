@@ -123,12 +123,13 @@ export function GuidedLaboratory({
                   </label>
                   <textarea
                     id={`reflection-${experiment.id}`}
-                    onChange={(event) =>
+                    onChange={(event) => {
+                      const value = event.currentTarget.value;
                       setDrafts((current) => ({
                         ...current,
-                        [experiment.id]: event.currentTarget.value,
-                      }))
-                    }
+                        [experiment.id]: value,
+                      }));
+                    }}
                     placeholder="Record what the evidence supports and what remains uncertain."
                     rows={3}
                     value={draft}
@@ -136,6 +137,7 @@ export function GuidedLaboratory({
                   <button
                     className="text-button"
                     disabled={draft.trim().length === 0}
+                    id={`append-reflection-${experiment.id}`}
                     onClick={() => {
                       onAddReflection(experiment, draft, evaluation.status);
                       setDrafts((current) => ({ ...current, [experiment.id]: '' }));
