@@ -172,3 +172,49 @@ test('revisits the illustrative instrument offline after the shell is cached', a
     await context.setOffline(false);
   }
 });
+
+test('cancels an interrupted model load without losing the teaching branch', async ({ page }) => {
+  await page.addInitScript(() => {
+    class InterruptedWorker {
+      private readonly listeners = new Map<string, Set<EventListener>>();
+
+      public addEventListener(type: string, listener: EventListener): void {
+        const listeners = this.listeners.get(type) ?? new Set<EventListener>();
+        listeners.add(listener);
+        this.listeners.set(type, listeners);
+      }
+
+      public postMessage(request: { readonly context: unknown; readonly id: string }): void {
+        for (const listener of this.listeners.get('message') ?? []) {
+          listener(
+            new MessageEvent('message', {
+              data: {
+                context: request.context,
+                id: request.id,
+                progress: { message: 'Fixture download interrupted', progress: 25 },
+                type: 'progress',
+              },
+            }),
+          );
+        }
+      }
+
+      public terminate(): void {}
+    }
+
+    Object.defineProperty(globalThis, 'Worker', {
+      configurable: true,
+      value: InterruptedWorker,
+      writable: true,
+    });
+  });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Force runner-up branch' }).click();
+  await page.getByRole('button', { name: 'Load verified WASM' }).click();
+  await expect(page.getByText('Fixture download interrupted')).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel and return to demo' }).click();
+
+  await expect(page.getByRole('button', { name: /B1.*Forced.*dark/s })).toBeVisible();
+  await expect(page.getByLabel('Compared selected tokens')).toContainText('dark');
+  await expect(page.getByRole('button', { name: 'Load verified WASM' })).toBeEnabled();
+});

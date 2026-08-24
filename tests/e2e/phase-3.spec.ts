@@ -206,9 +206,16 @@ test('runs a compact multi-step branch and round-trips its local evidence', asyn
   await expect(page.getByText(/Paused before selection 2/)).toBeVisible();
   await page.getByRole('button', { name: 'Advance one token' }).click();
   await expect(page.getByText(/Paused before selection 3/)).toBeVisible();
+  await page.getByRole('button', { name: 'Advance one token' }).click();
+  await expect(page.getByText(/Paused before selection 4/)).toBeVisible();
+  await page.getByRole('button', { name: 'Advance one token' }).click();
+  await expect(page.getByText(/Paused before selection 5/)).toBeVisible();
+  await page.getByRole('button', { name: 'Advance one token' }).click();
+  await expect(page.getByText(/Paused before selection 6/)).toBeVisible();
 
+  await page.getByLabel('Historical baseline step').selectOption('2');
   await page.getByRole('button', { name: 'Fork decoded alternative' }).click();
-  await expect(page.getByText(/First selection divergence: step 1/)).toBeVisible();
+  await expect(page.getByText(/First selection divergence: step 3/)).toBeVisible();
   await expect(page.getByText(/preserved the baseline bytes/)).toBeVisible();
 
   const experimentNotebook = page.locator('section').filter({
@@ -223,7 +230,7 @@ test('runs a compact multi-step branch and round-trips its local evidence', asyn
   await expect(experimentNotebook.getByText(/forced runner-up changed/)).toBeVisible();
 
   await page.getByRole('button', { name: 'Save to local notebook' }).click();
-  await expect(page.getByText(/Saved 2 traces with 2 deduplicated payloads locally/)).toBeVisible();
+  await expect(page.getByText(/Saved 2 traces with 5 deduplicated payloads locally/)).toBeVisible();
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export ancestry bundle' }).click();

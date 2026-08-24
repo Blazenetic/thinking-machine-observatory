@@ -34,11 +34,18 @@ test('runs, branches, exports, imports and replays verified WASM steps', async (
   await expect(page.getByText(/Paused before selection 2/)).toBeVisible({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Advance one token' }).click();
   await expect(page.getByText(/Paused before selection 3/)).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Advance one token' }).click();
+  await expect(page.getByText(/Paused before selection 4/)).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Advance one token' }).click();
+  await expect(page.getByText(/Paused before selection 5/)).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Advance one token' }).click();
+  await expect(page.getByText(/Paused before selection 6/)).toBeVisible({ timeout: 60_000 });
 
+  await page.getByLabel('Historical baseline step').selectOption('2');
   await page.getByRole('button', { name: 'Fork decoded alternative' }).click();
-  await expect(page.getByText(/First selection divergence: step 1/)).toBeVisible();
+  await expect(page.getByText(/First selection divergence: step 3/)).toBeVisible();
   await page.getByRole('button', { name: 'Continue selected trace' }).click();
-  await expect(page.getByText(/Paused before selection 2/)).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/Paused before selection 4/)).toBeVisible({ timeout: 60_000 });
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export ancestry bundle' }).click();
