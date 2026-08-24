@@ -4,7 +4,126 @@ import type {
   ExperimentTrace,
   GenerationStep,
   SelectionRecord,
+  TokenSpecimen,
 } from '@observatory/domain';
+
+export const TOKEN_FRAGMENT_BYTE_METHOD = 'utf8-text-encoder-v1' as const;
+
+export type TokenSpecimenOrigin = 'generated' | 'pending' | 'prompt';
+
+export interface TokenSelectionSpecimen {
+  readonly text: string;
+  readonly tokenId: number;
+}
+
+export interface TokenSpecimenRow {
+  readonly byteDecimal: string;
+  readonly byteHex: string;
+  readonly byteValues: readonly number[];
+  readonly codePoints: string;
+  readonly fragmentLabel: string;
+  readonly origin: TokenSpecimenOrigin;
+  readonly position: number;
+  readonly rawText: string;
+  readonly recordedBytesMatch: boolean | null;
+  readonly tokenId: number;
+}
+
+export function utf8FragmentBytes(text: string): readonly number[] {
+  return [...new TextEncoder().encode(text)];
+}
+
+function visibleCharacter(character: string): string {
+  if (character === ' ') return '␠';
+  if (character === '\n') return '↵';
+  if (character === '\r') return '␍';
+  if (character === '\t') return '⇥';
+  const codePoint = character.codePointAt(0) ?? 0;
+  if (codePoint < 32 || codePoint === 127) return `\\u{${codePoint.toString(16).padStart(4, '0')}}`;
+  return character;
+}
+
+export function visibleTokenFragment(text: string): string {
+  if (text.length === 0) return '∅ empty fragment';
+  return [...text].map(visibleCharacter).join('');
+}
+
+function codePointLabel(text: string): string {
+  if (text.length === 0) return 'none';
+  return [...text]
+    .map(
+      (character) =>
+        `U+${(character.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, '0')}`,
+    )
+    .join(' ');
+}
+
+function specimenRow(
+  specimen: TokenSelectionSpecimen,
+  origin: TokenSpecimenOrigin,
+  position: number,
+  recordedBytes: readonly number[] | null,
+): TokenSpecimenRow {
+  const byteValues = utf8FragmentBytes(specimen.text);
+  return {
+    byteDecimal: byteValues.join(' '),
+    byteHex: byteValues.map((value) => value.toString(16).toUpperCase().padStart(2, '0')).join(' '),
+    byteValues,
+    codePoints: codePointLabel(specimen.text),
+    fragmentLabel: visibleTokenFragment(specimen.text),
+    origin,
+    position,
+    rawText: specimen.text,
+    recordedBytesMatch:
+      recordedBytes === null
+        ? null
+        : byteValues.length === recordedBytes.length &&
+          byteValues.every((value, index) => value === recordedBytes[index]),
+    tokenId: specimen.tokenId,
+  };
+}
+
+export function buildTokenSpecimenRows(input: {
+  readonly generated: readonly TokenSelectionSpecimen[];
+  readonly pending?: TokenSelectionSpecimen | null;
+  readonly promptTokens: readonly TokenSpecimen[];
+}): readonly TokenSpecimenRow[] {
+  const promptRows = input.promptTokens.map((token) =>
+    specimenRow(token, 'prompt', token.position, token.byteValues),
+  );
+  const generatedRows = input.generated.map((selection, index) =>
+    specimenRow(selection, 'generated', input.promptTokens.length + index, null),
+  );
+  const pendingRow = input.pending
+    ? [
+        specimenRow(
+          input.pending,
+          'pending',
+          input.promptTokens.length + input.generated.length,
+          null,
+        ),
+      ]
+    : [];
+  return Object.freeze([...promptRows, ...generatedRows, ...pendingRow]);
+}
+
+export function tokenSpecimenTextAlternative(rows: readonly TokenSpecimenRow[]): string {
+  return [
+    'position\torigin\ttoken_id\tdecoded_fragment\tutf8_hex\tutf8_decimal\tcode_points\trecorded_bytes_match',
+    ...rows.map((row) =>
+      [
+        row.position,
+        row.origin,
+        row.tokenId,
+        JSON.stringify(row.rawText),
+        row.byteHex,
+        row.byteDecimal,
+        row.codePoints,
+        row.recordedBytesMatch === null ? 'not-recorded' : String(row.recordedBytesMatch),
+      ].join('\t'),
+    ),
+  ].join('\n');
+}
 
 export interface ProbabilityRow {
   readonly cumulativeProbabilityBeforeTopP: number | null;

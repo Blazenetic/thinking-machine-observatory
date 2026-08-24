@@ -1,6 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { SamplerConfig, SamplerInterventions } from '@observatory/domain';
+import type {
+  InstrumentCapabilityStatus,
+  SamplerConfig,
+  SamplerInterventions,
+} from '@observatory/domain';
+import {
+  formatExperimentReflection,
+  type ExperimentEvaluation,
+  type ExperimentObservationSnapshot,
+  type VersionedGuidedExperiment,
+} from '@observatory/experiments';
 import {
   acceptInferenceCapture,
   beginGenerationCommit,
@@ -19,6 +29,7 @@ import {
 } from '@observatory/inference-worker';
 import {
   appendCompactGenerationStep,
+  appendCompactTraceAnnotation,
   compareCompactTraceSelections,
   forkCompactTrace,
   IndexedDbTraceNotebook,
@@ -44,6 +55,9 @@ import {
   readPortableTraceFile,
 } from '../utils/traceFiles';
 import { EvidenceBadge } from './EvidenceBadge';
+import { CapabilityInstrumentRack } from './CapabilityInstrumentRack';
+import { LiveExperimentNotebook } from './LiveExperimentNotebook';
+import { TokenSpecimenBench } from './TokenSpecimenBench';
 
 interface LiveModelPanelProps {
   readonly prompt: string;
@@ -91,8 +105,17 @@ function controllerFor(context: GenerationRequestContext): GenerationControllerS
 }
 
 export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
-  const { cancel, capabilities, capture, captureContext, load, predict, status, stop } =
-    useLiveInference();
+  const {
+    cancel,
+    capabilities,
+    capture,
+    captureContext,
+    instrumentCapabilities,
+    load,
+    predict,
+    status,
+    stop,
+  } = useLiveInference();
   const [bundle, setBundle] = useState<CompactTraceBundle | null>(null);
   const [activeTraceId, setActiveTraceId] = useState<string | null>(null);
   const [preview, setPreview] = useState<CompactStepWithPayload | null>(null);
@@ -124,6 +147,37 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
         : [],
     [bundle, resolvedActiveTraceId],
   );
+  const activeTrace = useMemo(
+    () => bundle?.traces.find((trace) => trace.traceId === resolvedActiveTraceId) ?? null,
+    [bundle, resolvedActiveTraceId],
+  );
+  const tokenCapability =
+    instrumentCapabilities.find((capability) => capability.id === 'token-specimens') ?? null;
+  const experimentObservations = useMemo<ExperimentObservationSnapshot>(() => {
+    const histories = bundle
+      ? bundle.traces.map((trace) => resolveCompactTraceHistory(bundle, trace.traceId))
+      : [];
+    const steps = histories.flat();
+    const capabilityStatuses: Partial<
+      Record<(typeof instrumentCapabilities)[number]['id'], InstrumentCapabilityStatus>
+    > = {};
+    for (const capability of instrumentCapabilities) {
+      capabilityStatuses[capability.id] = capability.status;
+    }
+    return {
+      attentionInterventions: 0,
+      capabilities: capabilityStatuses,
+      distinctPrompts: new Set(bundle?.traces.map((trace) => trace.prompt) ?? []).size,
+      distinctSeeds: new Set(steps.map((step) => step.sampler.config.seed)).size,
+      distinctTemperatures: new Set(steps.map((step) => step.sampler.config.temperature)).size,
+      distinctTopP: new Set(steps.map((step) => step.sampler.config.topP)).size,
+      forcedSelections: steps.filter((step) => step.sampler.selection.mode === 'forced').length,
+      probeSweeps: 0,
+      tokenSpecimens: activeTrace?.promptTokens.length ?? 0,
+      whitespaceBoundaries:
+        activeTrace?.promptTokens.filter((token) => token.text.startsWith(' ')).length ?? 0,
+    };
+  }, [activeTrace, bundle, instrumentCapabilities]);
   const baselineTraceId = bundle?.traces[0]?.traceId ?? null;
   const comparison = useMemo(
     () =>
@@ -136,6 +190,31 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
     [baselineTraceId, bundle, resolvedActiveTraceId],
   );
   const bundleBytes = useMemo(() => (bundle ? portableTraceByteLength(bundle) : null), [bundle]);
+
+  const appendExperimentReflection = useCallback(
+    (
+      experiment: VersionedGuidedExperiment,
+      reflection: string,
+      observationStatus: ExperimentEvaluation['status'],
+    ) => {
+      if (!bundle || !resolvedActiveTraceId) return;
+      const note = formatExperimentReflection({
+        experimentId: experiment.id,
+        experimentVersion: experiment.protocolVersion,
+        observationStatus,
+        reflection,
+      });
+      const annotated = appendCompactTraceAnnotation(bundle, resolvedActiveTraceId, {
+        note,
+        step: activeHistory.length > 0 ? activeHistory.length - 1 : null,
+      });
+      setBundle(annotated);
+      setTraceMessage(
+        `Reflection appended to ${activeTrace?.title ?? resolvedActiveTraceId}; export or save the bundle to retain it.`,
+      );
+    },
+    [activeHistory.length, activeTrace?.title, bundle, resolvedActiveTraceId],
+  );
 
   const startNewBaseline = useCallback(() => {
     const traceId = `live-${globalThis.crypto.randomUUID()}`;
@@ -443,12 +522,12 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
     <section aria-labelledby="live-model-title" className="live-model instrument-frame">
       <div className="instrument-heading">
         <div>
-          <p className="eyebrow">Verified local instrument · Phase 3</p>
+          <p className="eyebrow">Verified local instrument · Phase 4</p>
           <h2 id="live-model-title">Multi-step DistilGPT2 observatory</h2>
           <p>
-            Exact token IDs, content-addressed logits and a serialised PRNG cursor now carry a
-            baseline or counterfactual future through pause, intervention, replay and local
-            persistence.
+            Exact token specimens, content-addressed logits and a serialised PRNG cursor carry a
+            baseline or counterfactual future through pause, intervention, evidence-gated
+            observation, replay and local persistence.
           </p>
         </div>
         <EvidenceBadge evidenceClass="measured" />
@@ -492,6 +571,8 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
         WebGPU remains inspection-only. The rejected int8 graph is never used by this sampler.
         Accepted fp32 asset <code>{DISTILGPT2_ASSETS.wasmFp32.sha256.slice(0, 12)}</code>…
       </p>
+
+      <CapabilityInstrumentRack capabilities={instrumentCapabilities} />
 
       <div className="live-model__actions">
         <button
@@ -625,6 +706,14 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
         </div>
       )}
 
+      <TokenSpecimenBench
+        capability={tokenCapability}
+        generated={activeHistory.map((step) => step.sampler.selection)}
+        pending={preview?.step.sampler.selection ?? null}
+        promptTokens={activeTrace?.promptTokens ?? capture?.promptTokens ?? []}
+        traceLabel={activeTrace?.title ?? (capture ? 'measured prefix' : 'awaiting trace')}
+      />
+
       <section aria-labelledby="generation-controls-title" className="trace-dock generation-dock">
         <div className="trace-dock__heading">
           <div>
@@ -728,6 +817,7 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
                 onClick={() => {
                   setBundle(selectCompactTrace(bundle, trace.traceId));
                   setActiveTraceId(trace.traceId);
+                  setPreview(null);
                 }}
                 role="listitem"
                 type="button"
@@ -851,6 +941,13 @@ export function LiveModelPanel({ prompt }: LiveModelPanelProps) {
           </dl>
         )}
       </section>
+
+      <LiveExperimentNotebook
+        activeAnnotations={activeTrace?.annotations ?? []}
+        activeTraceTitle={activeTrace?.title ?? null}
+        observations={experimentObservations}
+        onAppend={appendExperimentReflection}
+      />
 
       <p className="instrument-note">
         The accepted fp32 graph is 327.8 MB. Initial correctness reruns the exact full prefix; no

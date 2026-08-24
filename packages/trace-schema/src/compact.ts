@@ -696,6 +696,38 @@ export function appendCompactGenerationStep(
   });
 }
 
+export function appendCompactTraceAnnotation(
+  bundle: CompactTraceBundle,
+  traceId: string,
+  annotation: Omit<TraceAnnotation, 'createdAt' | 'id'> & {
+    readonly createdAt?: string;
+    readonly id?: string;
+  },
+): CompactTraceBundle {
+  const current = validateCompactTraceBundle(bundle);
+  const trace = current.traces.find((item) => item.traceId === traceId);
+  if (!trace) throw new CompactTraceError(`Trace ${traceId} does not exist.`);
+  const historyLength = resolveCompactTraceHistory(current, traceId).length;
+  if (annotation.step !== null && annotation.step >= historyLength) {
+    throw new CompactTraceError(`Annotation step must be below ${historyLength}.`);
+  }
+  const nextAnnotation: TraceAnnotation = {
+    note: annotation.note,
+    step: annotation.step,
+    createdAt: annotation.createdAt ?? new Date().toISOString(),
+    id: annotation.id ?? defaultId(),
+  };
+  return validateCompactTraceBundle({
+    ...current,
+    exportedAt: new Date().toISOString(),
+    traces: current.traces.map((item) =>
+      item.traceId === traceId
+        ? { ...item, annotations: [...item.annotations, nextAnnotation] }
+        : item,
+    ),
+  });
+}
+
 export interface ForkCompactTraceInput {
   readonly createdAt?: string;
   readonly forkStep: number;

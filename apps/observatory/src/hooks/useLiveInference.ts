@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
   InferenceStatus,
+  InstrumentCapability,
   ModelIdentity,
   ModelLoadReport,
   PredictionCapture,
@@ -32,6 +33,9 @@ export function useLiveInference() {
   const [status, setStatus] = useState<InferenceStatus>({ state: 'idle' });
   const [capture, setCapture] = useState<PredictionCapture | null>(null);
   const [captureContext, setCaptureContext] = useState<GenerationRequestContext | null>(null);
+  const [instrumentCapabilities, setInstrumentCapabilities] = useState<
+    readonly InstrumentCapability[]
+  >([]);
 
   const ensureWorker = useCallback(() => {
     if (workerReference.current) return workerReference.current;
@@ -64,6 +68,7 @@ export function useLiveInference() {
         activeRequestReference.current = null;
         loadReportReference.current = response.load;
         modelReference.current = response.model;
+        setInstrumentCapabilities(response.instrumentCapabilities ?? []);
         setStatus({ load: response.load, model: response.model, state: 'ready' });
       } else if (response.type === 'prediction') {
         activeRequestReference.current = null;
@@ -120,6 +125,7 @@ export function useLiveInference() {
       modelReference.current = null;
       setCapture(null);
       setCaptureContext(null);
+      setInstrumentCapabilities([]);
       setStatus({ message: 'Preparing model loader', progress: 0, state: 'loading' });
       const context: GenerationRequestContext = {
         generationId: id('model-load'),
@@ -182,6 +188,7 @@ export function useLiveInference() {
     modelReference.current = null;
     setCapture(null);
     setCaptureContext(null);
+    setInstrumentCapabilities([]);
     setStatus({ state: 'idle' });
   }, [replaceWorker]);
 
@@ -198,6 +205,7 @@ export function useLiveInference() {
     capabilities,
     capture,
     captureContext,
+    instrumentCapabilities,
     load,
     predict,
     status,

@@ -1,7 +1,14 @@
 import { useMemo, useState } from 'react';
 
 import type { ExperimentTrace, SamplerConfig } from '@observatory/domain';
+import {
+  formatExperimentReflection,
+  type ExperimentEvaluation,
+  type ExperimentObservationSnapshot,
+  type VersionedGuidedExperiment,
+} from '@observatory/experiments';
 import { SamplerConfigurationError } from '@observatory/sampler';
+import { addAnnotation } from '@observatory/trace-schema';
 
 import { BranchChamber } from './components/BranchChamber';
 import { CalibrationRail } from './components/CalibrationRail';
@@ -35,7 +42,7 @@ function branchTitle(config: SamplerConfig, forcedTokenId: number | null, suppre
 }
 
 export function App() {
-  const baseline = useMemo(() => createBaselineTrace(), []);
+  const [baseline, setBaseline] = useState<ExperimentTrace>(() => createBaselineTrace());
   const [branches, setBranches] = useState<readonly ExperimentTrace[]>([]);
   const [selectedTraceId, setSelectedTraceId] = useState(baseline.traceId);
   const [config, setConfig] = useState<SamplerConfig>(WORKBENCH_CONFIG);
@@ -137,6 +144,58 @@ export function App() {
 
   const forcedToken =
     DEMO_CANDIDATES.find((candidate) => candidate.tokenId === forcedTokenId)?.text ?? null;
+  const selectedTrace = branches.find((trace) => trace.traceId === selectedTraceId) ?? baseline;
+  const experimentObservations = useMemo<ExperimentObservationSnapshot>(() => {
+    const traces = [baseline, ...branches];
+    const steps = traces.flatMap((trace) => trace.steps);
+    return {
+      attentionInterventions: 0,
+      capabilities: {
+        attention: 'unavailable',
+        'hidden-states': 'unavailable',
+        'logit-lens': 'unavailable',
+        'semantic-projection': 'unavailable',
+        'token-specimens': 'unverified',
+      },
+      distinctPrompts: new Set(traces.map((trace) => trace.prompt)).size,
+      distinctSeeds: new Set(steps.map((step) => step.sampler.config.seed)).size,
+      distinctTemperatures: new Set(steps.map((step) => step.sampler.config.temperature)).size,
+      distinctTopP: new Set(steps.map((step) => step.sampler.config.topP)).size,
+      forcedSelections: steps.filter((step) => step.sampler.selection.mode === 'forced').length,
+      probeSweeps: 0,
+      tokenSpecimens: selectedTrace.promptTokens.length,
+      whitespaceBoundaries: selectedTrace.promptTokens.filter((token) => token.text.startsWith(' '))
+        .length,
+    };
+  }, [baseline, branches, selectedTrace]);
+
+  const addExperimentReflection = (
+    experiment: VersionedGuidedExperiment,
+    reflection: string,
+    status: ExperimentEvaluation['status'],
+  ) => {
+    const note = formatExperimentReflection({
+      experimentId: experiment.id,
+      experimentVersion: experiment.protocolVersion,
+      observationStatus: status,
+      reflection,
+    });
+    const annotate = (trace: ExperimentTrace) =>
+      addAnnotation(trace, {
+        note,
+        step: trace.steps.length > 0 ? trace.steps.length - 1 : null,
+      });
+    if (selectedTrace.traceId === baseline.traceId) {
+      setBaseline(annotate);
+    } else {
+      setBranches((current) =>
+        current.map((trace) => (trace.traceId === selectedTrace.traceId ? annotate(trace) : trace)),
+      );
+    }
+    setAnnouncement(
+      `Reflection appended to ${selectedTrace.title}; prior annotations are unchanged.`,
+    );
+  };
 
   return (
     <div className="app-shell">
@@ -245,7 +304,13 @@ export function App() {
           />
         </section>
 
-        <GuidedLaboratory onLoadRunnerUp={forceRunnerUp} />
+        <GuidedLaboratory
+          activeAnnotations={selectedTrace.annotations}
+          activeTraceTitle={selectedTrace.title}
+          observations={experimentObservations}
+          onAddReflection={addExperimentReflection}
+          onLoadRunnerUp={forceRunnerUp}
+        />
         <LiveModelPanel prompt={DEMO_PROMPT} />
       </main>
 

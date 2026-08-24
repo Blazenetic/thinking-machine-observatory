@@ -8,18 +8,20 @@ A local-first scientific instrument for inspecting next-token prediction, changi
 
 ## Current instrument
 
-Phase 3 turns the verified next-token proof into a multi-step, branch-centred instrument:
+Phase 4 turns the verified multi-step branch observatory into a capability-gated learning instrument:
 
 - an exact, deterministic sampler with temperature, top-k, top-p, greedy mode, suppression, forcing and xoshiro128\*\* seeded selection;
 - a schema 1.2 ancestry bundle with content-addressed float32 payloads, explicit import limits and lossless schema 1.0/1.1 migration;
 - candidate tables, entropy, selection explanations and Jensen–Shannon branch comparison;
 - a responsive React observatory that can force the runner-up, suppress candidates, commit child traces and export JSON;
-- all eight guided experiment definitions from the design package;
+- all eight guided experiments as versioned protocols with executable observation predicates and append-only reflections;
 - a pinned DistilGPT2 fp32 WASM worker that transfers all 50,257 final-position logits;
 - source-framework golden vectors and accepted/rejected backend comparison reports;
 - exact token-ID continuation, serialised PRNG cursors, explicit seed resets and stale-response-safe generation controls;
 - immutable historical forks, first-divergence comparison and portable ancestor-complete export/import;
 - transactional IndexedDB notebook storage with payload reference counts, quota preflight and parent-deletion protection; and
+- a verified token specimen bench with visible boundaries, code points, derived UTF-8 bytes, a semantic table and copyable text;
+- session-scoped capability declarations plus deliberate unavailable states for hidden states, attention, probes and projections; and
 - unit, coverage and Playwright hero-loop tests in CI.
 
 The default score field remains intentionally labelled **illustrative** so the instrument is immediately useful without a 327.8 MB download. Its ten logits are a teaching fixture, not model output. The optional fp32 WASM path is separately labelled **verified measured** and may enter exact sampling/replay. WebGPU fp16 remains measured but unverified.
@@ -59,6 +61,12 @@ pnpm exec playwright install chromium
 
 Or load **Verified WASM** in the full-vocabulary panel, pause on the complete distribution, advance or run several exact-prefix steps, fork a historical token, save locally and export/import its ancestry bundle. The initial implementation deliberately reruns the full token-ID prefix; it does not claim unverified KV-cache equivalence.
 
+The token specimen bench follows the selected branch and pending step. Inspect the exact IDs and
+decoded fragments, compare derived UTF-8 bytes in the table, then select a guided protocol. A
+protocol reports observed, pending or blocked from its evidence predicates; saving a reflection
+does not manufacture completion. Live-trace reflections travel with export and explicit notebook
+saves.
+
 ## Architecture
 
 The browser application consumes small packages rather than owning scientific logic itself.
@@ -86,7 +94,7 @@ The dependency direction is deliberate: UI and runtimes depend on the exact core
 | Local DistilGPT2 WASM               | Pinned `Xenova/distilgpt2` fp32 graph       | Verified measured   | Full-vocabulary sampling and replay                         |
 | Local DistilGPT2 WebGPU             | Pinned `Xenova/distilgpt2` fp16 graph       | Unverified measured | Inspection only; trace commitment disabled                  |
 | Local DistilGPT2 int8               | Pinned graph and retained comparison report | Rejected            | Evidence only; never offered to the exact sampler           |
-| Hidden states, attention and probes | Not implemented                             | Unavailable         | Never simulated or inferred                                 |
+| Hidden states, attention and probes | Session capability registry                 | Unavailable         | Zero allocation; never simulated or inferred                |
 
 The interface uses Measured, Derived, Projected, Probed and Interventional evidence labels. It does not claim to reveal thought, intent, consciousness or a complete causal explanation.
 
@@ -124,10 +132,16 @@ pnpm trace:verify:live
 - [Session 01 handover](docs/implementation/01-session-01-handover.md)
 - [Session 02 handover](docs/implementation/02-session-02-handover.md)
 - [Session 03 handover](docs/implementation/03-session-03-handover.md)
+- [Session 04 handover](docs/implementation/04-session-04-handover.md)
+- [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md)
 - [Architecture decisions](docs/adr)
 - [Model verification boundary](model-tools/README.md)
 - [Original product and architecture package](docs/00-project-overview-and-directors-brief.md)
 
 ## Next high-value slice
 
-Phase 4 may add honest secondary instruments only where the model/runtime exposes numerically verified outputs. Token byte/boundary inspection is the low-risk first slice; hidden states, attention, logit-lens probes and semantic projections remain capability-gated rather than inferred from logits or UI decoration.
+Phase 5 is release evidence, not feature expansion: accessibility and reduced-motion review,
+measured browser/device capability results, memory and offline-revisit tests, deployment/security
+decisions, licences and a two-minute first-use study. Hidden states, attention, logit-lens probes
+and semantic projections remain unavailable until an exact purpose-built output profile passes the
+independent gate.

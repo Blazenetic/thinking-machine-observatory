@@ -7,6 +7,7 @@ import {
   DISTILGPT2_MODEL,
   DISTILGPT2_VERIFICATION,
   extractFinalLogits,
+  instrumentCapabilitiesForModel,
   rankTopCandidates,
   type InferenceAdapter,
   type InferenceWorkerResponse,
@@ -19,6 +20,27 @@ describe('inference boundary', () => {
     expect(DISTILGPT2_ASSETS.tokenizerBundle.sha256).toMatch(/^[a-f0-9]{64}$/);
     expect(DISTILGPT2_VERIFICATION.wasmFp32.status).toBe('accepted');
     expect(DISTILGPT2_VERIFICATION.wasmInt8.status).toBe('rejected');
+  });
+
+  it('declares verified token specimens and zero-allocation unavailable instruments', () => {
+    const capabilities = instrumentCapabilitiesForModel({
+      assetHash: `sha256:${DISTILGPT2_ASSETS.wasmFp32.sha256}`,
+      dtype: 'fp32',
+      id: DISTILGPT2_MODEL.id,
+      revision: DISTILGPT2_MODEL.revision,
+      runtime: 'fixture',
+      verificationStatus: 'verified',
+    });
+
+    expect(capabilities.find((item) => item.id === 'token-specimens')).toMatchObject({
+      evidenceClass: 'measured',
+      status: 'verified',
+    });
+    expect(
+      capabilities
+        .filter((item) => item.id !== 'token-specimens')
+        .every((item) => item.status === 'unavailable' && item.limits.maxCapturedBytes === 0),
+    ).toBe(true);
   });
 
   it('detects capabilities without assuming browser globals', () => {
@@ -68,6 +90,7 @@ describe('inference boundary', () => {
     } as const;
     const adapter: InferenceAdapter = {
       dispose: () => Promise.resolve(),
+      instrumentCapabilities: instrumentCapabilitiesForModel(model),
       load: (onProgress) => {
         onProgress?.({
           loadedBytes: 5,
@@ -121,5 +144,9 @@ describe('inference boundary', () => {
       'prediction',
       'disposed',
     ]);
+    const ready = responses.find((response) => response.type === 'ready');
+    expect(ready?.type).toBe('ready');
+    if (ready?.type !== 'ready') throw new Error('Expected a ready response.');
+    expect(ready.instrumentCapabilities).toHaveLength(5);
   });
 });

@@ -90,7 +90,7 @@ Exit evidence:
 
 ## Phase 4 — Honest instruments and guided laboratory
 
-**Status: planned; capability-gated**
+**Status: implemented; unsupported outputs capability-gated**
 
 Outcome: secondary instruments teach from real supported outputs.
 
@@ -105,6 +105,20 @@ Work:
 - accessible data/table alternatives for every dense visual.
 
 Exit gate: each displayed datum declares its evidence class and provenance; unsupported outputs have an honest unavailable state.
+
+Exit evidence:
+
+- a session-scoped five-capability registry admits verified token specimens and authorises zero
+  bytes for four unavailable secondary instruments;
+- token positions, IDs, decoded fragments, code points and derived UTF-8 bytes stay synchronised to
+  the active baseline, child and pending step with table/text alternatives;
+- a checked report rejects secondary-output admission for the current logits-only export and fixes
+  the first future capture budget;
+- all eight experiment protocols evaluate executable evidence predicates rather than completion
+  clicks; and
+- append-only reflections round-trip in compact ancestry bundles and local notebook records.
+
+Readiness contract: [Phase 4 honest instruments and guided laboratory](04-phase-04-readiness.md).
 
 ## Phase 5 — Public release quality
 
@@ -126,11 +140,11 @@ Exit gate: acceptance document 07 passes with recorded evidence, not assumed sup
 
 ## Risks kept active
 
-| Risk                                                | Current control                                         | Next evidence needed                          |
-| --------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------- |
-| Browser export/runtime disagrees with reference     | Only fp32 WASM passed; int8/WebGPU remain isolated      | Re-run profiles on every model/runtime change |
-| Truncated top-N is mistaken for a full distribution | 50,257 logits cross the verified worker boundary        | Compact lossless Phase 3 payload              |
-| Visual polish outruns scientific truth              | Fixture/live/rejected status is persistent in UI/schema | Integrity review of every new instrument      |
-| Worker/model bundle harms first use                 | Instant teaching path; 327.8 MB model is opt-in         | Cross-device browser measurements             |
-| Secondary instruments expand scope                  | Capability-gated Phase 4                                | Verified export outputs and learning value    |
-| Monorepo becomes platform overhead                  | No task runner or backend; source exports remain simple | Reassess only if build graph becomes slow     |
+| Risk                                                | Current control                                         | Next evidence needed                             |
+| --------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------ |
+| Browser export/runtime disagrees with reference     | Only fp32 WASM passed; int8/WebGPU remain isolated      | Re-run profiles on every model/runtime change    |
+| Truncated top-N is mistaken for a full distribution | 50,257 logits cross the verified worker boundary        | Compact lossless Phase 3 payload                 |
+| Visual polish outruns scientific truth              | Fixture/live/rejected status is persistent in UI/schema | Integrity review of every new instrument         |
+| Worker/model bundle harms first use                 | Instant teaching path; 327.8 MB model is opt-in         | Cross-device browser measurements                |
+| Secondary instruments expand scope                  | Four explicit zero-allocation unavailable states        | Verified purpose-built export and learning value |
+| Monorepo becomes platform overhead                  | No task runner or backend; source exports remain simple | Reassess only if build graph becomes slow        |
