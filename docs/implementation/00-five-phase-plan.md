@@ -90,7 +90,7 @@ Exit evidence:
 
 ## Phase 4 — Honest instruments and guided laboratory
 
-**Status: planned; capability-gated**
+**Status: readiness drafted; capability-gated**
 
 Outcome: secondary instruments teach from real supported outputs.
 
@@ -105,6 +105,8 @@ Work:
 - accessible data/table alternatives for every dense visual.
 
 Exit gate: each displayed datum declares its evidence class and provenance; unsupported outputs have an honest unavailable state.
+
+Readiness contract: [Phase 4 honest instruments and guided laboratory](04-phase-04-readiness.md).
 
 ## Phase 5 — Public release quality
 

@@ -124,10 +124,11 @@ pnpm trace:verify:live
 - [Session 01 handover](docs/implementation/01-session-01-handover.md)
 - [Session 02 handover](docs/implementation/02-session-02-handover.md)
 - [Session 03 handover](docs/implementation/03-session-03-handover.md)
+- [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md)
 - [Architecture decisions](docs/adr)
 - [Model verification boundary](model-tools/README.md)
 - [Original product and architecture package](docs/00-project-overview-and-directors-brief.md)
 
 ## Next high-value slice
 
-Phase 4 may add honest secondary instruments only where the model/runtime exposes numerically verified outputs. Token byte/boundary inspection is the low-risk first slice; hidden states, attention, logit-lens probes and semantic projections remain capability-gated rather than inferred from logits or UI decoration.
+Phase 4 begins with the token specimen bench and a typed capability registry. Hidden states, attention, logit-lens probes and semantic projections remain blocked until their exact model/runtime output passes a separate golden profile. See the [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md).

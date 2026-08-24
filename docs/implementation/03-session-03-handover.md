@@ -71,4 +71,4 @@ This workspace still could not run Chromium because browser network/socket launc
 
 ## Phase 4 boundary
 
-Phase 4 should begin with the exact token specimen byte/boundary instrument, then admit other instruments one capability at a time. Attention and hidden-state views require a purpose-built export, source-framework golden fixtures, causal-mask/shape checks, bounded capture and an adjacent limitation statement. Unsupported outputs remain explicitly unavailable.
+Phase 4 should begin with the exact token specimen byte/boundary instrument, then admit other instruments one capability at a time. Attention and hidden-state views require a purpose-built export, source-framework golden fixtures, causal-mask/shape checks, bounded capture and an adjacent limitation statement. Unsupported outputs remain explicitly unavailable. The bounded contract is recorded in [Phase 4 readiness](04-phase-04-readiness.md).
