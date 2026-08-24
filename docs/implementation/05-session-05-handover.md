@@ -50,17 +50,23 @@ zero-byte or truncated archive. No browser result is claimed locally. The draft 
 evidence-gated until GitHub's candidate Chromium, Firefox and WebKit job completes. Physical Android,
 real Safari, screen-reader and deployed-origin checks remain separate manual records.
 
-## Post-candidate documentation pass
+## Publication follow-up
 
 A later documentation-only follow-up adds audience-specific user and developer guides, a
 documentation map, fresh-agent start and handover rules, corrected three-engine Playwright setup,
-and present-tense Phase 5/evidence wording. It does not change the built application, dependency
-lock, evidence manifest or accepted release claims, so the source candidate remains `280734b` and
-the candidate-bound evidence commit remains `96ad3c3`.
+and present-tense Phase 5/evidence wording. That change did not alter the built application,
+dependency lock, evidence manifest or accepted release claims.
 
 The first published quality job exposed a shallow-checkout integration issue: `phase5:verify`
 correctly asks Git for the earlier candidate, but the default checkout contained only the PR head.
 The quality job now fetches full history before verifying candidate ancestry and lockfile contents.
+
+The first real three-engine run then exposed ambiguous Playwright locators, a non-portable CSS
+`zoom` simulation and an unreliable WebKit offline-reload driver path. The browser-stable candidate
+scopes controls to their visible experiment, uses a half-width reflow proxy, records the WebKit
+offline driver gap as skipped, and gives the service-worker shell an absolute, versioned cache key.
+Because the shell changed, this is a new source candidate at `280734b`; evidence is rebound in
+`38e773b`.
 
 ## Release decision
 
