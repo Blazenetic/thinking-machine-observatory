@@ -23,14 +23,20 @@ describe('inference boundary', () => {
   });
 
   it('declares verified token specimens and zero-allocation unavailable instruments', () => {
-    const capabilities = instrumentCapabilitiesForModel({
+    const model = {
       assetHash: `sha256:${DISTILGPT2_ASSETS.wasmFp32.sha256}`,
       dtype: 'fp32',
       id: DISTILGPT2_MODEL.id,
       revision: DISTILGPT2_MODEL.revision,
       runtime: 'fixture',
       verificationStatus: 'verified',
-    });
+    } as const;
+    const tokenizer = {
+      assetHash: `sha256:${DISTILGPT2_ASSETS.tokenizerBundle.sha256}`,
+      id: DISTILGPT2_MODEL.id,
+      revision: DISTILGPT2_MODEL.revision,
+    } as const;
+    const capabilities = instrumentCapabilitiesForModel(model, tokenizer);
 
     expect(capabilities.find((item) => item.id === 'token-specimens')).toMatchObject({
       evidenceClass: 'measured',
@@ -41,6 +47,13 @@ describe('inference boundary', () => {
         .filter((item) => item.id !== 'token-specimens')
         .every((item) => item.status === 'unavailable' && item.limits.maxCapturedBytes === 0),
     ).toBe(true);
+
+    expect(
+      instrumentCapabilitiesForModel(model, {
+        ...tokenizer,
+        assetHash: `sha256:${'0'.repeat(64)}`,
+      }).find((item) => item.id === 'token-specimens'),
+    ).toMatchObject({ profileId: null, status: 'unverified' });
   });
 
   it('detects capabilities without assuming browser globals', () => {
@@ -68,6 +81,15 @@ describe('inference boundary', () => {
       }),
     ).toEqual(new Float32Array([20, 21, 22]));
     expect(() => extractFinalLogits({ data: [], dims: [0] })).toThrow('Unexpected logits shape');
+    expect(() => extractFinalLogits({ data: [1, 2], dims: [1, 2, 2] })).toThrow(
+      'declares 4 values',
+    );
+    expect(() =>
+      extractFinalLogits({ data: [1, 2, 3, 4, 5, Number.NaN], dims: [1, 2, 3] }),
+    ).toThrow('not finite');
+    expect(() => extractFinalLogits({ data: new Float32Array(12), dims: [2, 2, 3] })).toThrow(
+      'one logits batch',
+    );
   });
 
   it('ranks only the requested display candidates with stable token-ID ties', () => {
@@ -76,6 +98,7 @@ describe('inference boundary', () => {
       { logit: 4, text: '', tokenId: 2 },
       { logit: 2, text: '', tokenId: 0 },
     ]);
+    expect(() => rankTopCandidates(new Float32Array([1]), 0)).toThrow('positive integer');
   });
 
   it('echoes generation, request and epoch identity across the worker protocol', async () => {
@@ -90,7 +113,11 @@ describe('inference boundary', () => {
     } as const;
     const adapter: InferenceAdapter = {
       dispose: () => Promise.resolve(),
-      instrumentCapabilities: instrumentCapabilitiesForModel(model),
+      instrumentCapabilities: instrumentCapabilitiesForModel(model, {
+        assetHash: null,
+        id: 'fixture',
+        revision: '1',
+      }),
       load: (onProgress) => {
         onProgress?.({
           loadedBytes: 5,

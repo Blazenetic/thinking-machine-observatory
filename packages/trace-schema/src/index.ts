@@ -52,7 +52,7 @@ const TokenSpecimenSchema = z
     byteValues: z.array(z.number().int().min(0).max(255)),
     position: z.number().int().nonnegative(),
     text: z.string(),
-    tokenId: z.number().int(),
+    tokenId: z.number().int().nonnegative(),
   })
   .strict();
 
@@ -68,8 +68,8 @@ const SamplerConfigSchema = z
 
 const SamplerInterventionsSchema = z
   .object({
-    forcedTokenId: z.number().int().nullable(),
-    suppressedTokenIds: z.array(z.number().int()),
+    forcedTokenId: z.number().int().nonnegative().nullable(),
+    suppressedTokenIds: z.array(z.number().int().nonnegative()),
   })
   .strict();
 
@@ -88,7 +88,7 @@ const CandidateRecordSchema = z
     retainedByTopP: z.boolean(),
     temperatureScaledLogit: z.number().finite().nullable(),
     text: z.string(),
-    tokenId: z.number().int(),
+    tokenId: z.number().int().nonnegative(),
   })
   .strict();
 
@@ -116,7 +116,7 @@ const SelectionRecordSchema = z
     mode: z.enum(['forced', 'greedy', 'sampled']),
     probability: z.number().finite().min(0).max(1),
     text: z.string(),
-    tokenId: z.number().int(),
+    tokenId: z.number().int().nonnegative(),
   })
   .strict();
 
@@ -147,7 +147,7 @@ const GenerationStepSchema = z
       .strict(),
     createdOrder: z.number().int().nonnegative(),
     inference: InferenceProvenanceSchema,
-    inputTokenIds: z.array(z.number().int()),
+    inputTokenIds: z.array(z.number().int().nonnegative()),
     position: z.number().int().nonnegative(),
     sampler: z
       .object({

@@ -1,7 +1,7 @@
 # Phase 5 readiness — public release evidence
 
 - Status: Draft implementation contract
-- Depends on: Phase 4 draft PR #5
+- Depends on: merged Phases 1–4 and the integration-hardening baseline on `main`
 - Target outcome: a dependable public portfolio and learning instrument whose support claims are
   backed by recorded evidence
 

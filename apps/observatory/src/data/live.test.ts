@@ -6,6 +6,7 @@ import {
   DISTILGPT2_MODEL,
   DISTILGPT2_RUNTIME,
   DISTILGPT2_VERIFICATION,
+  DISTILGPT2_VOCABULARY_SIZE,
 } from '@observatory/inference-worker';
 import {
   createEmbeddedFloat32Payload,
@@ -23,15 +24,24 @@ import {
 } from './live';
 
 function capture(status: PredictionCapture['model']['verificationStatus'] = 'verified') {
+  const logits = new Float32Array(DISTILGPT2_VOCABULARY_SIZE).fill(-30);
+  logits[0] = 0;
+  logits[1] = 2;
+  logits[2] = 1;
   return {
-    candidateUniverse: { captured: 3, complete: true, label: 'complete fixture', size: 3 },
+    candidateUniverse: {
+      captured: DISTILGPT2_VOCABULARY_SIZE,
+      complete: true,
+      label: 'complete fixture',
+      size: DISTILGPT2_VOCABULARY_SIZE,
+    },
     candidates: [
       { logit: 2, text: ' sky', tokenId: 1 },
       { logit: 1, text: ' dark', tokenId: 2 },
       { logit: 0, text: ' clear', tokenId: 0 },
     ],
     durationMs: 12,
-    logits: new Float32Array([0, 2, 1]),
+    logits,
     logitsSha256: 'a'.repeat(64),
     mode: 'live-wasm',
     model: {
@@ -59,7 +69,7 @@ describe('verified live trace', () => {
       createdAt: '2026-08-24T04:00:00.000Z',
       traceId: 'live-fixture',
     });
-    expect(trace.steps[0]?.sampler.candidates).toHaveLength(3);
+    expect(trace.steps[0]?.sampler.candidates).toHaveLength(DISTILGPT2_VOCABULARY_SIZE);
     expect(trace.steps[0]?.inference).toMatchObject({
       logitsSha256: 'a'.repeat(64),
       verificationProfileId: DISTILGPT2_VERIFICATION.wasmFp32.profileId,
@@ -94,6 +104,13 @@ describe('verified live trace', () => {
         candidateUniverse: { captured: 2, complete: false, label: 'top two', size: 3 },
       }),
     ).toThrow('complete vocabulary');
+    expect(() =>
+      createLiveTrace('T', {
+        ...capture(),
+        candidateUniverse: { captured: 3, complete: true, label: 'short vector', size: 3 },
+        logits: new Float32Array([0, 2, 1]),
+      }),
+    ).toThrow(`all ${DISTILGPT2_VOCABULARY_SIZE}`);
   });
 
   it('does not trust a self-declared verified trace from another asset', () => {

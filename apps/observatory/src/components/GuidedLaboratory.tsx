@@ -32,6 +32,9 @@ export function GuidedLaboratory({
   onLoadRunnerUp,
 }: GuidedLaboratoryProps) {
   const [drafts, setDrafts] = useState<Readonly<Record<string, string>>>({});
+  const [openExperiments, setOpenExperiments] = useState<ReadonlySet<string>>(
+    () => new Set(['force-runner-up']),
+  );
 
   return (
     <section aria-labelledby="laboratory-title" className="laboratory instrument-frame">
@@ -58,7 +61,17 @@ export function GuidedLaboratory({
               className="experiment-card"
               data-status={evaluation.status}
               key={experiment.id}
-              open={index === 4}
+              onToggle={(event) => {
+                const isOpen = event.currentTarget.open;
+                setOpenExperiments((current) => {
+                  if (current.has(experiment.id) === isOpen) return current;
+                  const next = new Set(current);
+                  if (isOpen) next.add(experiment.id);
+                  else next.delete(experiment.id);
+                  return next;
+                });
+              }}
+              open={openExperiments.has(experiment.id)}
             >
               <summary>
                 <span>{String(index + 1).padStart(2, '0')}</span>
