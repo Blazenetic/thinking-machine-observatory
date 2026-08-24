@@ -71,6 +71,9 @@ saves.
 
 The browser application consumes small packages rather than owning scientific logic itself.
 
+Start with the [canonical architecture map](docs/architecture/README.md) for the implemented runtime,
+dependency graph, evidence boundaries and links to the detailed flows.
+
 | Workspace                   | Responsibility                                                       |
 | --------------------------- | -------------------------------------------------------------------- |
 | `apps/observatory`          | React shell, observatory design system and interaction orchestration |
@@ -127,12 +130,17 @@ pnpm trace:verify:live
 
 ## Documentation
 
+- [Canonical architecture map](docs/architecture/README.md)
+- [Runtime and interaction flows](docs/architecture/runtime-flows.md)
+- [Trace, replay and persistence integrity](docs/architecture/trace-integrity.md)
+- [Human and AI agent guide](AGENTS.md)
 - [Five-phase implementation plan](docs/implementation/00-five-phase-plan.md)
 - [Contribution workflow](CONTRIBUTING.md)
 - [Session 01 handover](docs/implementation/01-session-01-handover.md)
 - [Session 02 handover](docs/implementation/02-session-02-handover.md)
 - [Session 03 handover](docs/implementation/03-session-03-handover.md)
 - [Session 04 handover](docs/implementation/04-session-04-handover.md)
+- [Phase 1–4 integration hardening](docs/implementation/integration-hardening-2026-08-24.md)
 - [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md)
 - [Architecture decisions](docs/adr)
 - [Model verification boundary](model-tools/README.md)

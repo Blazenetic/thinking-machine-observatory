@@ -164,7 +164,7 @@ const TokenSpecimenSchema = z
     byteValues: z.array(z.number().int().min(0).max(255)),
     position: z.number().int().nonnegative(),
     text: z.string(),
-    tokenId: z.number().int(),
+    tokenId: z.number().int().nonnegative(),
   })
   .strict();
 const InferenceSchema = z
@@ -189,8 +189,8 @@ const SamplerConfigSchema = z
   .strict();
 const InterventionsSchema = z
   .object({
-    forcedTokenId: z.number().int().nullable(),
-    suppressedTokenIds: z.array(z.number().int()),
+    forcedTokenId: z.number().int().nonnegative().nullable(),
+    suppressedTokenIds: z.array(z.number().int().nonnegative()),
   })
   .strict();
 const SelectionSchema = z
@@ -210,7 +210,7 @@ const SelectionSchema = z
     mode: z.enum(['forced', 'greedy', 'sampled']),
     probability: z.number().finite().min(0).max(1),
     text: z.string(),
-    tokenId: z.number().int(),
+    tokenId: z.number().int().nonnegative(),
   })
   .strict();
 const PayloadSchema = z
@@ -223,7 +223,7 @@ const PayloadSchema = z
   .strict();
 const CompactStepSchema = z
   .object({
-    candidateTokenIds: z.array(z.number().int()).min(1).nullable(),
+    candidateTokenIds: z.array(z.number().int().nonnegative()).min(1).nullable(),
     candidateUniverse: z
       .object({
         captured: z.number().int().nonnegative(),
@@ -234,10 +234,10 @@ const CompactStepSchema = z
       .strict(),
     createdOrder: z.number().int().nonnegative(),
     decodedCandidates: z
-      .array(z.object({ text: z.string(), tokenId: z.number().int() }).strict())
+      .array(z.object({ text: z.string(), tokenId: z.number().int().nonnegative() }).strict())
       .max(COMPACT_TRACE_LIMITS.displayCandidatesPerStep),
     inference: InferenceSchema,
-    inputTokenIds: z.array(z.number().int()).min(1).max(4_096),
+    inputTokenIds: z.array(z.number().int().nonnegative()).min(1).max(4_096),
     logitsRef: Sha256Schema,
     position: z.number().int().positive(),
     sampler: z
@@ -581,6 +581,12 @@ export function validateCompactTraceBundle(bundle: CompactTraceBundle): CompactT
     const history = resolveCompactTraceHistory(parsed, trace.traceId);
     const inheritedLength = trace.parent?.forkStep ?? 0;
     for (const step of trace.steps) {
+      if (
+        !step.candidateUniverse.complete ||
+        step.candidateUniverse.captured !== step.candidateUniverse.size
+      ) {
+        throw new CompactTraceError('Compact exact replay requires a complete candidate universe.');
+      }
       const payload = parsed.payloads[step.logitsRef];
       if (!payload) throw new CompactTraceError(`Missing payload ${step.logitsRef}.`);
       if (payload.sha256 !== step.logitsRef) {

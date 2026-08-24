@@ -166,7 +166,7 @@ const candidates: readonly RawCandidate[] = [
   { logit: 1, text: ' two', tokenId: 1 },
 ];
 
-async function baselineBundle() {
+async function baselineBundle(traceId = 'notebook-baseline', title = 'Notebook baseline') {
   const empty = createCompactTraceBundle({
     createdAt: '2026-08-24T00:00:00.000Z',
     mode: 'illustrative-demo',
@@ -174,9 +174,9 @@ async function baselineBundle() {
     prompt: 'Notebook',
     promptTokens: [{ byteValues: [78], position: 0, text: 'Notebook', tokenId: 10 }],
     rootSeed: config.seed,
-    title: 'Notebook baseline',
+    title,
     tokenizer,
-    traceId: 'notebook-baseline',
+    traceId,
   });
   const step = await createCompactGenerationStep({
     candidateUniverse: universe,
@@ -186,7 +186,7 @@ async function baselineBundle() {
     inputTokenIds: [10],
     rawCandidates: candidates,
   });
-  return appendCompactGenerationStep(empty, 'notebook-baseline', step);
+  return appendCompactGenerationStep(empty, traceId, step);
 }
 
 describe('local trace notebook', () => {
@@ -223,6 +223,30 @@ describe('local trace notebook', () => {
     expect((await notebook.report()).traceCount).toBe(0);
     notebook.close();
     expect(factory.database.closed).toBe(true);
+  });
+
+  it('serialises concurrent IndexedDB writes without losing either trace', async () => {
+    const factory = new FakeIndexedDbFactory();
+    Object.defineProperty(globalThis, 'indexedDB', {
+      configurable: true,
+      value: factory,
+    });
+    const notebook = await IndexedDbTraceNotebook.open('indexed-db-concurrency');
+    const first = await baselineBundle();
+    const second = await baselineBundle('notebook-second', 'Notebook second');
+
+    await Promise.all([notebook.saveBundle(first), notebook.saveBundle(second)]);
+
+    expect((await notebook.listTraces()).map((trace) => trace.traceId).sort()).toEqual([
+      'notebook-baseline',
+      'notebook-second',
+    ]);
+    expect(await notebook.report()).toMatchObject({
+      payloadCount: 1,
+      payloadReferences: 2,
+      traceCount: 2,
+    });
+    notebook.close();
   });
 
   it('persists ancestry and deduplicated payload references', async () => {

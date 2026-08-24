@@ -2,6 +2,9 @@
 
 This is a learning project with a production-minded scientific core. Contributions should make the instrument more useful without making its claims less precise.
 
+Read the [agent operating contract](AGENTS.md) and [canonical architecture map](docs/architecture/README.md)
+before changing a package boundary, trace format or evidence status.
+
 ## Working principles
 
 1. Deepen **observe → intervene → branch → compare** before adding a disconnected surface.
