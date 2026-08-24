@@ -67,7 +67,7 @@ test('completes the first experiment and export using keyboard activation', asyn
   await expect(reflection).toBeVisible();
   await reflection.focus();
   await page.keyboard.type('The sampler override changed the selected token, not model intent.');
-  const append = page.locator('#reflection-force-runner-up + button');
+  const append = reflection.locator('xpath=following-sibling::button[1]');
   await expect(append).toBeEnabled();
   await expect(append).toBeVisible();
   await append.focus();
