@@ -4,7 +4,7 @@
 - Candidate: `ae9f7605a9cf613695c4363faa3e5250b67673a8` (phase-5-source-candidate)
 - Evidence profile: `1.0.0`
 - Decision: **NOT READY**
-- Launch blockers: **35**
+- Launch blockers: **22**
 
 Only `passed` satisfies a launch-blocking criterion. This summary counts `blocked` and
 `not-run` as unresolved evidence, never as success.
@@ -13,46 +13,33 @@ Only `passed` satisfies a launch-blocking criterion. This summary counts `blocke
 
 | Passed | Failed | Blocked | Not run |
 | -----: | -----: | ------: | ------: |
-| 38 | 0 | 29 | 11 |
+| 51 | 0 | 16 | 11 |
 
 ## Launch blockers
 
 | Criterion | Result | Requirement |
 | --------- | ------ | ----------- |
-| TMO-FUNC-001 | blocked | A user can load a compatible local model or immediately open a bundled verified trace. |
 | TMO-FUNC-002 | blocked | A prompt is tokenised and produces a real next-token candidate field. |
-| TMO-FUNC-003 | blocked | Generation can pause before sampling. |
-| TMO-FUNC-005 | blocked | A candidate can be suppressed or forced and the intervention remains visible in lineage. |
 | TMO-FUNC-010 | blocked | Unsupported hardware receives a useful fallback rather than a dead end. |
-| TMO-E2E-001 | blocked | On first visit a user can choose demonstration mode, force the runner-up and save the branch. |
 | TMO-E2E-002 | not-run | A supported desktop can cache the model, enter a prompt, pause, inspect and sample five tokens. |
-| TMO-E2E-003 | blocked | Greedy and seeded stochastic branches can be run and their first divergence located. |
-| TMO-E2E-004 | blocked | Suppressing the top candidate updates the explanation and the trace can be exported. |
 | TMO-E2E-005 | blocked | A known trace imports, replays, forks at step three and accepts an annotation. |
 | TMO-E2E-006 | blocked | With WebGPU denied, WASM or the demo trace still completes a guided experiment. |
-| TMO-E2E-007 | blocked | Interrupted download or inference recovers without corrupting cached model or trace state. |
 | TMO-VIS-001 | blocked | Current token, step, selected instrument and evidence class are always identifiable. |
 | TMO-VIS-002 | blocked | Candidate ranking and probabilities remain legible at normal laptop size. |
 | TMO-VIS-003 | blocked | Scale changes and filtered candidates are explicit. |
 | TMO-VIS-004 | blocked | Branch lineage identifies the intervention point and selected comparison tips. |
 | TMO-VIS-005 | blocked | No major view is a placeholder, decorative chart or unlabelled approximation. |
 | TMO-VIS-006 | blocked | Loading, empty, unsupported, stale and error states are intentionally designed. |
-| TMO-VIS-007 | blocked | Reduced-motion mode removes nonessential animation. |
 | TMO-A11Y-001 | blocked | A keyboard-only user can complete prompt, pause, intervene, branch, compare and save. |
 | TMO-A11Y-002 | blocked | Focus order follows the workflow and focus is always visible. |
-| TMO-A11Y-003 | blocked | Controls expose accessible names, current values, ranges and error messages. |
-| TMO-A11Y-004 | blocked | Charts provide equivalent readable values or summaries. |
 | TMO-A11Y-005 | blocked | Colour is never the only evidence-class, rank, branch or error cue. |
-| TMO-A11Y-006 | blocked | Text and controls meet WCAG 2.2 AA contrast and target-size expectations where applicable. |
 | TMO-A11Y-007 | not-run | Live updates are announced without overwhelming screen-reader users. |
 | TMO-RES-001 | not-run | Model execution and tensor processing cause no sustained main-thread blocking. |
 | TMO-RES-004 | not-run | Repeated experiments do not exhibit unbounded tensor or session growth. |
-| TMO-RES-006 | blocked | A cached model or bundled trace remains usable on an offline revisit where deployment permits. |
 | TMO-BROWSER-002 | blocked | Current Chromium without WebGPU reaches the WASM or demonstration path. |
 | TMO-BROWSER-003 | not-run | Firefox and Safari support levels are documented from real capability results rather than assumed. |
 | TMO-BROWSER-004 | not-run | Android tablet and phone demonstration or reduced-instrument modes are tested. |
 | TMO-SCI-004 | blocked | Demonstration and live inference are unmistakably different. |
-| TMO-HAND-002 | blocked | The handback provides supported-browser evidence. |
 | TMO-HAND-005 | blocked | The handback provides current hero-loop screenshots or recordings. |
 
 ## Advisory gaps
@@ -74,10 +61,13 @@ Only `passed` satisfies a launch-blocking criterion. This summary counts `blocke
 
 | Record | Result | Criteria | Method |
 | ------ | ------ | -------: | ------ |
-| EV-LOCAL-EXACT-CORE | passed | 33 | Pinned local exact-core, coverage, build-budget and dependency-audit gates. |
+| EV-LOCAL-EXACT-CORE | passed | 34 | Pinned local exact-core, coverage, build-budget and dependency-audit gates. |
 | EV-LOCAL-EVIDENCE-BOUNDARY | passed | 5 | Capability declarations, model identity, evidence vocabulary and static release policy verification. |
 | EV-SECONDARY-NOT-APPLICABLE | not-run | 3 | Accepted Phase 5 scope and zero-allocation capability report. |
-| EV-LOCAL-BROWSER-BLOCKED | blocked | 29 | Candidate Playwright suite passed in GitHub CI; grouped live and manual criteria remain unresolved. |
-| EV-UNRUN-EXTENDED-JOURNEYS | not-run | 1 | No candidate evidence yet covers every exact step in these extended live, divergence, suppression, step-three replay and interruption scenarios. |
+| EV-CI-PLAYWRIGHT-ILLUSTRATIVE | passed | 10 | GitHub CI run 28 established the illustrative hero loop, named controls, table captions, reduced motion, 24px targets and the supported-browser handback. |
+| EV-CI-PLAYWRIGHT-OFFLINE-SHELL | passed | 1 | Chromium and Firefox cached the production shell and completed the illustrative runner-up branch while the Playwright context was offline. |
+| EV-CI-PLAYWRIGHT-INTERRUPT | passed | 1 | A fixture worker reports an interrupted load; cancelling returns to the teaching branch without losing the committed comparison. |
+| EV-LOCAL-BROWSER-BLOCKED | blocked | 16 | Candidate Playwright suite passed, but these criteria still require live-model, WebGPU-denied, visual-inspection, keyboard-order, colour-cue, or current-screenshot evidence that run 28 did not establish. |
+| EV-UNRUN-EXTENDED-JOURNEYS | not-run | 1 | The opt-in network-backed live-model journey that caches DistilGPT2, pauses, inspects and samples five tokens has not been run against the candidate. |
 | EV-UNRUN-PERFORMANCE-LIFECYCLE | not-run | 2 | Named-device long-task and ten-cycle retained-heap measurements have not been gathered. |
 | EV-UNRUN-MANUAL-ENVIRONMENTS | not-run | 5 | Screen-reader, WebGPU, physical browser/device and low-memory reviews await named environments. |

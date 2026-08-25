@@ -24,8 +24,12 @@ export interface AcceptanceLedger {
 }
 
 export interface ReleaseEnvironment {
+  readonly browser?: string;
+  readonly browserVersion?: string;
   readonly capabilities: Readonly<Record<string, string>>;
+  readonly deviceClass: string;
   readonly id: string;
+  readonly operatingSystem: string;
 }
 
 export interface ReleaseEvidenceRecord {
@@ -42,8 +46,10 @@ export interface ReleaseEvidenceRecord {
     readonly value: number;
   }[];
   readonly method: {
+    readonly command?: string;
     readonly description: string;
     readonly kind: 'automated' | 'inspection' | 'manual' | 'not-run' | 'user-study';
+    readonly protocol?: string;
   };
   readonly observedAt?: string;
   readonly result: EvidenceResult;
@@ -51,6 +57,7 @@ export interface ReleaseEvidenceRecord {
 }
 
 export interface ReleaseManifest {
+  readonly $schema?: string;
   readonly candidate: {
     readonly commit: string;
     readonly label: string;
@@ -80,10 +87,28 @@ export interface ReleaseSummary {
   readonly resolved: ReadonlyMap<string, ResolvedCriterion>;
 }
 
+/**
+ * Paths that freeze with the source candidate. Evidence, documentation and
+ * verifier scripts may follow in a later commit; the built app, scientific
+ * packages, fixtures, lockfile and browser suite may not.
+ */
+export const SOURCE_CANDIDATE_PATHS = [
+  'apps/',
+  'packages/',
+  'fixtures/',
+  'tests/',
+  'playwright.config.ts',
+  'vitest.config.ts',
+  'package.json',
+  'pnpm-lock.yaml',
+  'pnpm-workspace.yaml',
+] as const;
+
 const RESULTS = new Set<EvidenceResult>(['blocked', 'failed', 'not-run', 'passed']);
 const SEVERITIES = new Set<EvidenceSeverity>(['advisory', 'launch-blocking', 'not-applicable']);
 const CRITERION_ID = /^TMO-[A-Z0-9]+-[0-9]{3}$/;
 const EVIDENCE_ID = /^EV-[A-Z0-9-]+$/;
+const BLOCKED_CLAIM = /\bremains blocked\b|\bremain unresolved\b/i;
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -103,6 +128,16 @@ export function flattenLedger(ledger: AcceptanceLedger): readonly {
 }[] {
   return ledger.groups.flatMap((group) =>
     group.criteria.map((criterion) => ({ criterion, group })),
+  );
+}
+
+export function sourceCandidateDrift(changedPaths: readonly string[]): readonly string[] {
+  return changedPaths.filter((path) =>
+    SOURCE_CANDIDATE_PATHS.some((frozen) =>
+      frozen.endsWith('/')
+        ? path === frozen.slice(0, -1) || path.startsWith(frozen)
+        : path === frozen,
+    ),
   );
 }
 
@@ -180,6 +215,7 @@ function validateMeasurement(
 export function validateManifest(ledger: AcceptanceLedger, manifest: ReleaseManifest): void {
   validateLedger(ledger);
   assert(manifest.profileVersion === '1.0.0', 'Manifest profileVersion must be 1.0.0.');
+  assertNonEmpty(manifest.$schema, 'Manifest $schema');
   assertNonEmpty(manifest.candidate.label, 'Candidate label');
   assert(
     /^[a-f0-9]{40}$/.test(manifest.candidate.commit),
@@ -200,6 +236,11 @@ export function validateManifest(ledger: AcceptanceLedger, manifest: ReleaseMani
   const coveredCriteria: string[] = [];
   const ledgerCriteria = new Set(flattenLedger(ledger).map(({ criterion }) => criterion.id));
 
+  for (const environment of manifest.environments) {
+    assertNonEmpty(environment.operatingSystem, `Environment ${environment.id} operatingSystem`);
+    assertNonEmpty(environment.deviceClass, `Environment ${environment.id} deviceClass`);
+  }
+
   for (const evidence of manifest.evidence) {
     assert(EVIDENCE_ID.test(evidence.id), `Invalid evidence id ${evidence.id}.`);
     assert(RESULTS.has(evidence.result), `Evidence ${evidence.id} has an invalid result.`);
@@ -217,7 +258,7 @@ export function validateManifest(ledger: AcceptanceLedger, manifest: ReleaseMani
     for (const environmentId of evidence.environments) {
       assert(
         knownEnvironments.has(environmentId),
-        `Evidence ${evidence.id} cites unknown environment ${environmentId}.`,
+        `Evidence ${evidence.id} cites unknown ${environmentId}.`,
       );
     }
     if (evidence.result === 'passed') {
@@ -232,6 +273,10 @@ export function validateManifest(ledger: AcceptanceLedger, manifest: ReleaseMani
       assert(
         !Number.isNaN(Date.parse(evidence.observedAt)),
         `Evidence ${evidence.id} observation date is invalid.`,
+      );
+      assert(
+        !BLOCKED_CLAIM.test(evidence.limitation),
+        `Passed evidence ${evidence.id} cannot claim it remains blocked.`,
       );
     } else {
       assertNonEmpty(evidence.limitation, `Evidence ${evidence.id} limitation`);

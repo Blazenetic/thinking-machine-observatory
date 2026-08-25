@@ -15,5 +15,15 @@ interrupted model-load recovery.
 The six skips were the opt-in network-backed live-model journey in all three engines, forced-colour
 emulation in Firefox and WebKit, and WebKit offline automation. The run did not provide physical
 device, real screen-reader, deployed-origin, learner-study or current hero screenshot evidence.
-Those boundaries are why the grouped browser evidence record remains `blocked` even though this CI
-run passed.
+
+The post-Phase-5 evidence split records only the criteria this run actually established:
+
+- `EV-CI-PLAYWRIGHT-ILLUSTRATIVE` — hero loop, named controls, table captions, reduced motion,
+  24px targets and the supported-browser handback;
+- `EV-CI-PLAYWRIGHT-OFFLINE-SHELL` — Chromium/Firefox cached-shell fetch plus in-session branch
+  (not a full offline reload, not a cached model);
+- `EV-CI-PLAYWRIGHT-INTERRUPT` — fixture-worker load interruption on the teaching path.
+
+Remaining live-model, WebGPU-denied, visual-inspection, complete keyboard-order and screenshot
+criteria stay in `EV-LOCAL-BROWSER-BLOCKED`. Read `release-evidence/summary.md` for the machine
+decision.

@@ -19,7 +19,9 @@ count.
 3. Read `release-evidence/summary.md` and `manifest.json` before making a release-readiness claim.
 4. Install with `pnpm install --frozen-lockfile`; use the pinned Node 24 and pnpm 11 toolchain.
 5. Identify whether the task changes the frozen source candidate, adds evidence for it or only
-   improves repository guidance. Do not silently mix those scopes.
+   improves repository guidance. Do not silently mix those scopes. Frozen candidate inputs are
+   `apps/`, `packages/`, `fixtures/`, `tests/`, `package.json`, the lockfile, workspace file and
+   Playwright/Vitest configs. `scripts/`, `docs/` and `release-evidence/` may follow that SHA.
 
 Use `docs/developer-guide.md` for task routing and commands. A clean worktree is not proof that the
 remote branch or PR is current; verify both before publishing.
@@ -48,16 +50,17 @@ instead of silently weakening the boundary.
 
 ## Repository map and dependency direction
 
-| Area                        | Owns                                                          | May depend on                |
-| --------------------------- | ------------------------------------------------------------- | ---------------------------- |
-| `packages/domain`           | Shared scientific vocabulary                                  | Nothing                      |
-| `packages/sampler`          | Exact sampler, metrics and PRNG                               | `domain`                     |
-| `packages/trace-schema`     | Validation, replay, compact bundles and notebook              | `domain`, `sampler`          |
-| `packages/instruments`      | Pure display/comparison view models                           | `domain`                     |
-| `packages/experiments`      | Versioned learning protocols and predicates                   | `domain`                     |
-| `packages/inference-worker` | Runtime capabilities, typed worker protocol and model adapter | `domain`                     |
-| `apps/observatory`          | React interaction orchestration                               | Public package APIs          |
-| `model-tools`               | Independent source/runtime evidence                           | Pinned external environments |
+| Area                           | Owns                                                          | May depend on                    |
+| ------------------------------ | ------------------------------------------------------------- | -------------------------------- |
+| `packages/domain`              | Shared scientific vocabulary                                  | Nothing                          |
+| `packages/sampler`             | Exact sampler, metrics and PRNG                               | `domain`                         |
+| `packages/trace-schema`        | Validation, replay, compact bundles and notebook              | `domain`, `sampler`              |
+| `packages/instruments`         | Pure display/comparison view models                           | `domain`                         |
+| `packages/experiments`         | Versioned learning protocols and predicates                   | `domain`                         |
+| `packages/inference-worker`    | Runtime capabilities, typed worker protocol and model adapter | `domain`                         |
+| `apps/observatory`             | React interaction orchestration                               | Public package APIs              |
+| `model-tools`                  | Independent source/runtime evidence                           | Pinned external environments     |
+| `scripts` / `release-evidence` | Verifiers, ledger, candidate manifest, generated decision     | Must not mutate frozen app paths |
 
 Do not import React, Vite, ONNX, browser workers or IndexedDB into the exact core. Do not bypass a
 package API with a relative cross-workspace import.

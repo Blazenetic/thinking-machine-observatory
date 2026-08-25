@@ -13,18 +13,27 @@ download.
 
 ```mermaid
 flowchart TD
-    App["React observatory"] --> Views["Instruments and experiments"]
-    App --> Worker["Typed inference worker"]
-    App --> Trace["Trace schema and notebook"]
-    App --> Shell["Offline application shell"]
-    Views --> Domain["Scientific vocabulary"]
-    Trace --> Sampler["Exact sampler and PRNG"]
-    Worker --> Domain
+    App["apps/observatory"] --> Instruments["packages/instruments"]
+    App --> Experiments["packages/experiments"]
+    App --> Worker["packages/inference-worker"]
+    App --> Trace["packages/trace-schema"]
+    App --> Sampler["packages/sampler"]
+    App --> Domain["packages/domain"]
+    Trace --> Sampler
+    Trace --> Domain
     Sampler --> Domain
+    Instruments --> Domain
+    Experiments --> Domain
+    Worker --> Domain
+    Worker --> Transformers["@huggingface/transformers 3.8.1"]
+    Golden["model-tools / verify-golden"] --> Ort["onnxruntime-web 1.22.0-dev"]
 ```
 
 The dependency rule is one-way: runtime and UI layers consume the exact core; the core does not know
-about React, ONNX, Vite or rendering.
+about React, ONNX, Vite or rendering. The application may call public package APIs directly,
+including `runSampler`. Browser inference loads Transformers.js; the Node golden path uses
+`onnxruntime-web` as a verification-time dependency. Those are different programs bound by the
+accepted WASM report, not by a shared import.
 
 ## Workspace responsibilities
 

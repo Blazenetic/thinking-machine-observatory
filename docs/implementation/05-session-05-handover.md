@@ -80,9 +80,13 @@ must not be tagged while any launch-blocking criterion is failed, blocked or not
 ## Next bounded evidence work
 
 1. Split and promote only the individual browser criteria directly established by CI run 28.
+   Done in the post-Phase-5 evidence follow-up; see
+   [06-post-phase-5-review.md](06-post-phase-5-review.md).
 2. Capture current hero-loop screenshots or a recording from the exact source candidate.
 3. Deploy that candidate to the prepared static host and run the header, offline and hero-loop
    smoke.
 4. Complete a named desktop screen-reader smoke and available physical Android/Safari checks.
 5. Run `first-branch-v1` with up to five representative learners and repair any comprehension
    blocker before tagging.
+6. Keep 1.1 PRNG replay, compact cursor chaining, live logit hashing, cache-first navigation and
+   control-naming repairs for a _new_ source candidate. Do not mix them into an evidence commit.

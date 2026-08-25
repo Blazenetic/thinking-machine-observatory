@@ -5,8 +5,10 @@ import { isAbsolute, normalize, resolve } from 'node:path';
 
 import {
   renderReleaseSummary,
+  sourceCandidateDrift,
   summariseRelease,
   validateManifest,
+  SOURCE_CANDIDATE_PATHS,
   type AcceptanceLedger,
   type ReleaseManifest,
 } from './lib/release-evidence.ts';
@@ -24,6 +26,10 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
+function git(args: readonly string[]): string {
+  return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
+}
+
 function safeRepositoryPath(path: string): string {
   const normalised = normalize(path);
   assert(!isAbsolute(path), `Evidence artifact must be repository-relative: ${path}.`);
@@ -36,7 +42,13 @@ const manifest = readJson<ReleaseManifest>(manifestPath);
 validateManifest(ledger, manifest);
 
 const candidate = manifest.candidate.commit;
-execFileSync('git', ['cat-file', '-e', `${candidate}^{commit}`], { cwd: root });
+git(['cat-file', '-e', `${candidate}^{commit}`]);
+try {
+  git(['merge-base', '--is-ancestor', candidate, 'HEAD']);
+} catch {
+  throw new Error(`Candidate ${candidate} is not an ancestor of HEAD.`);
+}
+
 const lockfileAtCandidate = execFileSync(
   'git',
   ['show', `${candidate}:${manifest.candidate.lockfile.path}`],
@@ -46,6 +58,15 @@ const lockfileHash = createHash('sha256').update(lockfileAtCandidate).digest('he
 assert(
   lockfileHash === manifest.candidate.lockfile.sha256,
   `Candidate lockfile hash mismatch: expected ${manifest.candidate.lockfile.sha256}, observed ${lockfileHash}.`,
+);
+
+const changed = git(['diff', '--name-only', candidate, '--', ...SOURCE_CANDIDATE_PATHS])
+  .split('\n')
+  .filter(Boolean);
+const drift = sourceCandidateDrift(changed);
+assert(
+  drift.length === 0,
+  `Source candidate ${candidate} drifted. Rebind the candidate before changing: ${drift.join(', ')}.`,
 );
 
 for (const evidence of manifest.evidence) {
