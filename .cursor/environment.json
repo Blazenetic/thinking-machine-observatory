@@ -1,0 +1,12 @@
+{
+  "name": "The Thinking Machine Observatory",
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "bash -lc 'nvm use 24 >/dev/null 2>&1; pnpm dev'"
+    }
+  ],
+  "ports": [{ "name": "vite-dev", "port": 5173 }]
+}
