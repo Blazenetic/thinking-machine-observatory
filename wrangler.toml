@@ -1,0 +1,10 @@
+# Static-host contract for Cloudflare Workers Builds / Pages.
+# Wrangler 4.x refuses to auto-detect a project at a pnpm workspace root.
+# This file is the explicit target so `npx wrangler deploy` can run from `/`.
+# There is no Worker script, Pages Function or application backend.
+
+name = "thinking-machine-observatory"
+compatibility_date = "2026-08-28"
+
+[assets]
+directory = "./apps/observatory/dist"

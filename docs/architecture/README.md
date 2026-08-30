@@ -83,7 +83,8 @@ repository and revision.
 - [Runtime and interaction flows](runtime-flows.md)
 - [Trace, replay and persistence](trace-integrity.md)
 - [Release, offline and deployment boundary](release-boundary.md)
-- [Architecture decisions](../adr)
+- [Architecture decisions](../adr), including [ADR 0010](../adr/0010-static-host-wrangler-target.md)
+  for the workspace-root Wrangler target
 - [Implementation handovers](../implementation)
 - [Model verification boundary](../../model-tools/README.md)
 - [Agent and contributor contract](../../AGENTS.md)

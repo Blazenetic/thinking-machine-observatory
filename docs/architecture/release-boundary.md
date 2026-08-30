@@ -55,6 +55,12 @@ or claim the service worker provides offline model availability. Static-host pol
 source, while the deployed-origin header smoke remains a distinct evidence record that cannot pass
 until a real URL is observed.
 
+The Cloudflare host builds from the repository root and deploys with `npx wrangler deploy`.
+Repository-root `wrangler.toml` is the explicit static-asset target for that command: it names
+`apps/observatory/dist` and does not introduce a Worker script. Wrangler stays a host tool, not a
+workspace dependency. See [static release](../deployment/static-release.md) and
+[ADR 0010](../adr/0010-static-host-wrangler-target.md).
+
 ## Browser and accessibility evidence
 
 The ordinary Playwright configuration runs Chromium, Firefox and WebKit. The release suite covers

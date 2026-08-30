@@ -7,6 +7,7 @@ const licence = readFileSync(resolve(root, 'LICENSE'), 'utf8');
 const notices = readFileSync(resolve(root, 'THIRD_PARTY_NOTICES.md'), 'utf8');
 const privacy = readFileSync(resolve(root, 'PRIVACY.md'), 'utf8');
 const deployment = readFileSync(resolve(root, 'docs/deployment/static-release.md'), 'utf8');
+const wrangler = readFileSync(resolve(root, 'wrangler.toml'), 'utf8');
 
 const requiredHeaderFragments = [
   "default-src 'self'",
@@ -37,5 +38,24 @@ for (const statement of ['No account', 'No analytics', 'No prompt telemetry']) {
   if (!privacy.includes(statement)) throw new Error(`Privacy notice omits ${statement}.`);
 }
 if (!deployment.includes('Rollback')) throw new Error('Static deployment runbook needs rollback.');
+if (!deployment.includes('npx wrangler deploy')) {
+  throw new Error('Static deployment runbook needs the workspace-root Wrangler deploy command.');
+}
+if (!deployment.includes('thinking-machine-observatory')) {
+  throw new Error('Static deployment runbook needs the Cloudflare project name.');
+}
+
+if (!wrangler.includes('name = "thinking-machine-observatory"')) {
+  throw new Error('Wrangler config must name the Cloudflare project.');
+}
+if (!wrangler.includes('directory = "./apps/observatory/dist"')) {
+  throw new Error('Wrangler config must target the observatory production bundle.');
+}
+if (/(^|\\n)\\s*main\\s*=/.test(wrangler)) {
+  throw new Error('Wrangler config must not introduce a Worker script.');
+}
+if (wrangler.includes('pages_build_output_dir')) {
+  throw new Error('Wrangler config must stay on static assets, not a Pages Functions project.');
+}
 
 console.log('Static release policy, rights, third-party notices and privacy wording are complete.');
