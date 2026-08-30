@@ -78,7 +78,7 @@ const capture: PredictionCapture = {
   candidateUniverse: {
     captured: logits.length,
     complete: true,
-    label: `Complete ${logits.length.toLocaleString()}-logit model vocabulary`,
+    label: `Complete ${logits.length}-logit model vocabulary`,
     size: logits.length,
   },
   candidates,
@@ -125,6 +125,8 @@ const selectedToken = trace.steps[0]?.sampler.selection;
 const importedToken = imported.steps[0]?.sampler.selection;
 
 invariant(replay.matches, replay.steps.flatMap((step) => step.reasons).join('; '));
+invariant(selectedToken?.tokenId === 3223, 'hero selected token is not the pinned 3223');
+invariant(selectedToken?.text === ' dark', 'hero selected token text is not " dark"');
 invariant(selectedToken?.tokenId === importedToken?.tokenId, 'selected token ID changed');
 invariant(selectedToken?.text === importedToken?.text, 'selected token text changed');
 invariant(
@@ -168,6 +170,6 @@ if (process.argv.includes('--write-report')) {
 
 console.log(
   `Live trace replayed token ${selectedToken?.tokenId} (${JSON.stringify(selectedToken?.text)}) ` +
-    `from ${logits.length.toLocaleString()} logits; JSON ${(report.jsonBytes / 1024 / 1024).toFixed(2)} MiB, ` +
+    `from ${logits.length} logits; JSON ${(report.jsonBytes / 1024 / 1024).toFixed(2)} MiB, ` +
     `gzip ${(gzipBytes / 1024 / 1024).toFixed(2)} MiB.`,
 );

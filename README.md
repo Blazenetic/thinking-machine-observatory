@@ -175,6 +175,7 @@ pnpm trace:verify:live
 - [Session 03 handover](docs/implementation/03-session-03-handover.md)
 - [Session 04 handover](docs/implementation/04-session-04-handover.md)
 - [Session 05 handover](docs/implementation/05-session-05-handover.md)
+- [Post-Phase-5 engineering review](docs/implementation/06-post-phase-5-review.md)
 - [Phase 1–4 integration hardening](docs/implementation/integration-hardening-2026-08-24.md)
 - [Phase 4 readiness contract](docs/implementation/04-phase-04-readiness.md)
 - [Phase 5 readiness contract](docs/implementation/05-phase-05-readiness.md)
@@ -188,8 +189,19 @@ pnpm trace:verify:live
 
 ## Next high-value slice
 
-Freeze the Phase 5 source candidate, collect CI and deployed-origin evidence, complete one named
-desktop screen-reader smoke plus physical Android/Safari checks where devices are available, then
-run the consented two-minute learner protocol. These are evidence tasks, not interpretability
-feature work. Hidden states, attention, logit-lens probes and semantic projections remain
-unavailable until an exact purpose-built output profile passes the independent gate.
+The Phase 5 source candidate is already frozen at `ae9f7605a9cf613695c4363faa3e5250b67673a8`.
+CI run 28 established the illustrative desktop path. Do not mix app repairs with evidence
+promotion.
+
+Evidence still needed on this candidate: current hero screenshots, deployed-origin smoke, one
+named screen-reader pass, available Android/Safari checks, the opt-in DistilGPT2 journey, and the
+consented two-minute learner protocol.
+
+The next _source_ candidate, if taken, should repair 1.1 PRNG replay, compact cursor chaining,
+live logit hashing, cache-first navigation, skip-target focus, Force/Suppress names and a real
+tab-order journey — then rebind evidence. Hidden states, attention, logit-lens probes and semantic
+projections remain unavailable until an exact purpose-built output profile passes the independent
+gate.
+
+See [the post-Phase-5 review](docs/implementation/06-post-phase-5-review.md) for the defect list
+and owner decisions.

@@ -59,6 +59,13 @@ Structural validation rejects, among other failures:
 An imported payload is hashed before any sampler consumes it. Every imported compact step is then
 recomputed through the production sampler and compared with its recorded compact sampler record.
 
+Schema 1.1 expanded replay is weaker. `replayGenerationStep` reseeds from `config.seed` and does
+not pass the recorded PRNG cursor. Compact 1.2 replay does. Portable import of a 1.0/1.1 file
+requires that seed-based replay to succeed, so multi-step expanded traces that continued a cursor
+cannot migrate that way. Compact validation also chains the exact token-ID prefix but does not yet
+require `prngStateAfter` of step _n_ to equal `prngStateBefore` of step _n+1_ unless a seed reset
+was recorded.
+
 ## Verified live profile
 
 The fp32 live admission layer adds stricter checks:
@@ -69,6 +76,10 @@ The fp32 live admission layer adds stricter checks:
 - every step identifies the accepted verification profile;
 - every step's logit identity matches its payload reference; and
 - every step contains the complete 50,257-token DistilGPT2 vocabulary.
+
+The compact live path also requires the recorded logit hash to match the canonical payload. The
+expanded `createLiveTrace` helper currently trusts the capture's `logitsSha256` field after
+identity checks; hashing the vector there is remaining candidate work.
 
 The generic trace schema intentionally also supports small complete teaching universes. Only the
 live admission layer binds a trace to DistilGPT2's vocabulary.

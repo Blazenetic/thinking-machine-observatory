@@ -10,10 +10,10 @@ starting logits are illustrative, not measured model output.
 1. Open the **Observation floor** and inspect “The night sky was”. The prompt is intentionally
    locked so edited text cannot be mistaken for output from the fixture.
 2. Review the ranked candidates and their probabilities in the Probability Spectrometer.
-3. Choose **Force runner-up branch**. This changes the selection intervention, not the baseline
-   score field.
-4. Choose **Commit branch 1**. The preview becomes an immutable child trace; the baseline remains
-   available.
+3. Choose **Force runner-up branch**. That action is itself a commit: it creates an interventional
+   child that selects the second-ranked token. The baseline is unchanged.
+4. Alternatively, change temperature, top-k, top-p, mode or seed, or **Suppress** a candidate, then
+   choose **Commit branch 1**. Calibration previews stay reversible until that commit.
 5. In the Branch Chamber, compare the selected tokens, entropy and Jensen–Shannon divergence.
 6. Choose **Export selected trace JSON** to keep a portable local copy.
 

@@ -64,9 +64,14 @@ name match is not fresh numerical evidence.
 ## Release-evidence workflow
 
 Phase 5 separates the frozen source candidate from its later evidence commit. The manifest names
-the source SHA and lockfile hash; this avoids asking a commit to contain its own hash. A later
-documentation-only commit may follow without rebinding when it does not change the built app,
-public support claims or accepted evidence artefacts.
+the source SHA and lockfile hash; this avoids asking a commit to contain its own hash. Frozen
+inputs are `apps/`, `packages/`, `fixtures/`, `tests/`, root `package.json`, the lockfile, workspace
+file and Playwright/Vitest configs. `scripts/`, `docs/` and `release-evidence/` may follow that SHA.
+A later documentation-only commit may follow without rebinding when it does not change the built
+app, public support claims or accepted evidence artefacts.
+
+`scripts/lib/release-evidence.ts` exports `SOURCE_CANDIDATE_PATHS`. `pnpm phase5:verify` fails if
+those paths differ between the named candidate and the current tree.
 
 When application behaviour, dependencies, generated assets or release claims change:
 

@@ -28,6 +28,8 @@
       "id": "github-actions-playwright",
       "operatingSystem": "GitHub Actions Ubuntu x86_64 runner",
       "deviceClass": "ephemeral CI runner",
+      "browser": "Playwright Chromium, Firefox and WebKit",
+      "browserVersion": "1.62.1",
       "capabilities": {
         "node": "24.19.0",
         "pnpm": "11.19.0",
@@ -39,6 +41,7 @@
     {
       "id": "EV-LOCAL-EXACT-CORE",
       "criteria": [
+        "TMO-FUNC-003",
         "TMO-FUNC-004",
         "TMO-FUNC-006",
         "TMO-FUNC-007",
@@ -86,7 +89,8 @@
         "release-evidence/reports/dependency-audit.json",
         "model-tools/verification/wasm-fp32-report.json",
         "model-tools/verification/live-trace-report.json",
-        "fixtures/traces/demo-baseline.observatory-trace.json"
+        "fixtures/traces/demo-baseline.observatory-trace.json",
+        "packages/inference-worker/src/generation-controller.test.ts"
       ],
       "measurements": [
         {
@@ -180,42 +184,97 @@
       "limitation": "These criteria are classified not-applicable because hidden states, attention, probes and projections remain unavailable; no output was promoted or tested."
     },
     {
-      "id": "EV-LOCAL-BROWSER-BLOCKED",
+      "id": "EV-CI-PLAYWRIGHT-ILLUSTRATIVE",
       "criteria": [
         "TMO-FUNC-001",
-        "TMO-FUNC-002",
-        "TMO-FUNC-003",
         "TMO-FUNC-005",
-        "TMO-FUNC-010",
         "TMO-E2E-001",
         "TMO-E2E-003",
         "TMO-E2E-004",
+        "TMO-VIS-007",
+        "TMO-A11Y-003",
+        "TMO-A11Y-004",
+        "TMO-A11Y-006",
+        "TMO-HAND-002"
+      ],
+      "result": "passed",
+      "method": {
+        "kind": "automated",
+        "description": "GitHub CI run 28 established the illustrative hero loop, named controls, table captions, reduced motion, 24px targets and the supported-browser handback.",
+        "command": "pnpm exec playwright install chromium firefox webkit && pnpm e2e"
+      },
+      "environments": ["github-actions-playwright"],
+      "artifacts": [
+        "release-evidence/reports/github-ci-browser.md",
+        "tests/e2e/hero-loop.spec.ts",
+        "tests/e2e/release-quality.spec.ts",
+        "scripts/verify-colour-contrast.ts"
+      ],
+      "limitation": "Illustrative teaching path on Playwright desktop engines only. The optional DistilGPT2 download, physical devices, screen readers and deployed origin are out of scope for this record. Colour-contrast evidence is the checked CSS-token script, not a painted-page WCAG audit.",
+      "reviewer": "GitHub Actions CI and Codex evidence review",
+      "observedAt": "2026-08-25T00:17:15+10:00"
+    },
+    {
+      "id": "EV-CI-PLAYWRIGHT-OFFLINE-SHELL",
+      "criteria": ["TMO-RES-006"],
+      "result": "passed",
+      "method": {
+        "kind": "automated",
+        "description": "Chromium and Firefox cached the production shell and completed the illustrative runner-up branch while the Playwright context was offline.",
+        "command": "pnpm exec playwright test tests/e2e/release-quality.spec.ts --project=chromium --project=firefox"
+      },
+      "environments": ["github-actions-playwright"],
+      "artifacts": [
+        "release-evidence/reports/github-ci-browser.md",
+        "tests/e2e/release-quality.spec.ts",
+        "apps/observatory/public/service-worker.js"
+      ],
+      "limitation": "WebKit offline automation was skipped. The test proves a cached same-origin shell and in-session illustrative branch, not a full offline reload and not a cached model. Deployed-origin headers remain a separate record.",
+      "reviewer": "GitHub Actions CI and Codex evidence review",
+      "observedAt": "2026-08-25T00:17:15+10:00"
+    },
+    {
+      "id": "EV-CI-PLAYWRIGHT-INTERRUPT",
+      "criteria": ["TMO-E2E-007"],
+      "result": "passed",
+      "method": {
+        "kind": "automated",
+        "description": "A fixture worker reports an interrupted load; cancelling returns to the teaching branch without losing the committed comparison.",
+        "command": "pnpm exec playwright test tests/e2e/release-quality.spec.ts"
+      },
+      "environments": ["github-actions-playwright"],
+      "artifacts": [
+        "release-evidence/reports/github-ci-browser.md",
+        "tests/e2e/release-quality.spec.ts"
+      ],
+      "limitation": "The interruption is a Playwright init-script worker, not a Hugging Face byte stream or a corrupted model cache. Teaching-path state is what this record covers.",
+      "reviewer": "GitHub Actions CI and Codex evidence review",
+      "observedAt": "2026-08-25T00:17:15+10:00"
+    },
+    {
+      "id": "EV-LOCAL-BROWSER-BLOCKED",
+      "criteria": [
+        "TMO-FUNC-002",
+        "TMO-FUNC-010",
         "TMO-E2E-005",
         "TMO-E2E-006",
-        "TMO-E2E-007",
         "TMO-VIS-001",
         "TMO-VIS-002",
         "TMO-VIS-003",
         "TMO-VIS-004",
         "TMO-VIS-005",
         "TMO-VIS-006",
-        "TMO-VIS-007",
         "TMO-A11Y-001",
         "TMO-A11Y-002",
-        "TMO-A11Y-003",
-        "TMO-A11Y-004",
         "TMO-A11Y-005",
-        "TMO-A11Y-006",
-        "TMO-RES-006",
         "TMO-BROWSER-002",
         "TMO-SCI-004",
-        "TMO-HAND-002",
         "TMO-HAND-005"
       ],
       "result": "blocked",
       "method": {
         "kind": "automated",
-        "description": "Candidate Playwright suite passed in GitHub CI; grouped live and manual criteria remain unresolved.",
+        "description": "Candidate Playwright suite passed, but these criteria still require live-model, WebGPU-denied, visual-inspection, keyboard-order, colour-cue, or current-screenshot evidence that run 28 did not establish.",
         "command": "pnpm exec playwright install chromium firefox webkit && pnpm e2e"
       },
       "environments": ["local-node24-linux", "github-actions-playwright"],
@@ -225,9 +284,7 @@
         "release-evidence/reports/local-quality.md",
         "release-evidence/manual-review.md"
       ],
-      "limitation": "Run 28 passed 33 journeys with six declared skips. It did not run the opt-in live-model journey, WebKit offline coverage, non-Chromium forced-colour emulation, physical devices, screen readers or current release screenshots, so this grouped record remains blocked.",
-      "reviewer": "GitHub Actions CI and Codex evidence review",
-      "observedAt": "2026-08-25T00:17:15+10:00"
+      "limitation": "Run 28 passed 33 journeys with six declared skips. It did not import a known live trace before forking, deny WebGPU, capture current hero screenshots, prove complete keyboard tab order, or establish Chromium-without-WebGPU as a distinct capability cell."
     },
     {
       "id": "EV-UNRUN-EXTENDED-JOURNEYS",
@@ -235,11 +292,11 @@
       "result": "not-run",
       "method": {
         "kind": "not-run",
-        "description": "No candidate evidence yet covers every exact step in these extended live, divergence, suppression, step-three replay and interruption scenarios."
+        "description": "The opt-in network-backed live-model journey that caches DistilGPT2, pauses, inspects and samples five tokens has not been run against the candidate."
       },
       "environments": [],
-      "artifacts": ["docs/07-acceptance-criteria-and-test-plan.md"],
-      "limitation": "Existing unit and fixture paths establish components of these journeys but are not promoted to full end-to-end acceptance."
+      "artifacts": ["tests/e2e/live-model.spec.ts"],
+      "limitation": "tests/e2e/live-model.spec.ts is skipped unless RUN_LIVE_MODEL=1. Fixture-worker journeys are not this criterion."
     },
     {
       "id": "EV-UNRUN-PERFORMANCE-LIFECYCLE",

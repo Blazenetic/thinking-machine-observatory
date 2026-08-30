@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   renderReleaseSummary,
+  sourceCandidateDrift,
   summariseRelease,
   validateManifest,
   type AcceptanceLedger,
@@ -33,13 +34,21 @@ const ledger: AcceptanceLedger = {
 
 function manifest(result: 'blocked' | 'failed' | 'not-run' | 'passed'): ReleaseManifest {
   return {
+    $schema: './release-evidence.schema.json',
     candidate: {
       commit: 'a'.repeat(40),
       label: 'test',
       lockfile: { path: 'pnpm-lock.yaml', sha256: 'b'.repeat(64) },
       runtime: { node: '24.x', packageManager: 'pnpm@11.19.0' },
     },
-    environments: [{ capabilities: { runner: 'fixture' }, id: 'test-runner' }],
+    environments: [
+      {
+        capabilities: { runner: 'fixture' },
+        deviceClass: 'ephemeral development runner',
+        id: 'test-runner',
+        operatingSystem: 'Linux x86_64 harness',
+      },
+    ],
     evidence: [
       {
         artifacts: ['test-report.json'],
@@ -118,5 +127,51 @@ describe('release evidence', () => {
       ],
     };
     expect(() => validateManifest(ledger, invalid)).toThrow(/misses bundle threshold/);
+  });
+
+  it('rejects a pass whose limitation still claims the record remains blocked', () => {
+    const candidate = manifest('passed');
+    const invalid: ReleaseManifest = {
+      ...candidate,
+      evidence: [
+        {
+          ...candidate.evidence[0]!,
+          limitation: 'Grouped live and manual criteria remain unresolved.',
+        },
+      ],
+    };
+    expect(() => validateManifest(ledger, invalid)).toThrow(/cannot claim it remains blocked/);
+  });
+
+  it('rejects a manifest that omits $schema', () => {
+    const candidate = manifest('passed');
+    expect(() => validateManifest(ledger, { ...candidate, $schema: '' })).toThrow(/\$schema/);
+  });
+
+  it('rejects environments that omit host identity fields', () => {
+    const candidate = manifest('passed');
+    const invalid = {
+      ...candidate,
+      environments: [{ capabilities: { runner: 'fixture' }, id: 'test-runner' }],
+    } as unknown as ReleaseManifest;
+    expect(() => validateManifest(ledger, invalid)).toThrow(/operatingSystem/);
+  });
+
+  it('treats application and test paths as frozen source-candidate inputs', () => {
+    expect(sourceCandidateDrift(['release-evidence/manifest.json', 'docs/user-guide.md'])).toEqual(
+      [],
+    );
+    expect(
+      sourceCandidateDrift([
+        'apps/observatory/src/App.tsx',
+        'packages/sampler/src/index.ts',
+        'tests/e2e/hero-loop.spec.ts',
+        'docs/architecture/README.md',
+      ]),
+    ).toEqual([
+      'apps/observatory/src/App.tsx',
+      'packages/sampler/src/index.ts',
+      'tests/e2e/hero-loop.spec.ts',
+    ]);
   });
 });
