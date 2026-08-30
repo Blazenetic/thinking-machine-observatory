@@ -10,7 +10,7 @@ implementation boundary or measured result.
 | ----------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | Visitor or learner      | [User guide](user-guide.md)                                  | [Privacy](../PRIVACY.md), [scientific rules](05-scientific-integrity-and-interpretability-rules.md)       |
 | Developer               | [Developer guide](developer-guide.md)                        | [Architecture](architecture/README.md), [contributing](../CONTRIBUTING.md)                                |
-| Coding agent            | [Agent operating contract](../AGENTS.md)                     | newest [implementation handover](implementation/06-cloudflare-workspace-deploy.md)                        |
+| Coding agent            | [Agent operating contract](../AGENTS.md)                     | newest [implementation review](implementation/06-post-phase-5-review.md)                                  |
 | Release reviewer        | [Generated evidence summary](../release-evidence/summary.md) | [readiness contract](implementation/05-phase-05-readiness.md), [deployment](deployment/static-release.md) |
 | Model-evidence reviewer | [Model verification boundary](../model-tools/README.md)      | [scientific rules](05-scientific-integrity-and-interpretability-rules.md)                                 |
 
