@@ -2,10 +2,11 @@
 
 ## Decision
 
-The first public candidate remains a static HTTPS application with no Functions, backend, account
-system or analytics. Cloudflare Pages is the prepared host because it can build the pnpm workspace,
-serve immutable hashed assets and apply the checked `apps/observatory/public/_headers` rules to
-static responses. This is a deployment target, not a new application dependency.
+The first public candidate remains a static HTTPS application with no Functions, Worker script,
+backend, account system or analytics. Cloudflare Pages / Workers Builds is the prepared host
+because it can build the pnpm workspace, serve immutable hashed assets and apply the checked
+`apps/observatory/public/_headers` rules to static responses. This is a deployment target, not a
+new application dependency. Wrangler is invoked only by the host; it is not a workspace package.
 
 The model and tokenizer remain on their pinned upstream Hugging Face source. The release does not
 mirror 327.8 MB of weights. The interface discloses the download before the user initiates it, and
@@ -20,6 +21,7 @@ the exact identities, hashes, licence and verification profile remain in the rep
 - build command: `pnpm build`
 - output directory: `apps/observatory/dist`
 - application base: `/` on a dedicated origin
+- deploy target: repository-root `wrangler.toml`, which names `./apps/observatory/dist`
 
 `public/_headers` is copied into the production root. It provides the content security policy,
 cross-origin isolation boundary, permissions policy, referrer policy, MIME protection, immutable
@@ -27,6 +29,32 @@ hashed-asset caching and a no-cache service-worker rule. The CSP admits only the
 families required by the optional model path; inline scripts, framing, object embedding, forms to
 other origins, camera, microphone, location, payment and USB are denied. Inline styles remain
 allowed because probability bars use bounded React style values.
+
+## Cloudflare dashboard
+
+Keep the project root at the repository root so `pnpm install --frozen-lockfile` can see the
+workspace. Do not set the root directory to `apps/observatory`.
+
+| Setting          | Value                          |
+| ---------------- | ------------------------------ |
+| Framework preset | None                           |
+| Build command    | `pnpm build`                   |
+| Deploy command   | `npx wrangler deploy`          |
+| Root directory   | `/`                            |
+| Project name     | `thinking-machine-observatory` |
+
+The default host command `npx wrangler deploy` is load-bearing. Wrangler 4.x application detection
+refuses to guess a package when it is started at a pnpm workspace root. The committed
+`wrangler.toml` is the explicit project target: it selects the built observatory assets and
+declares that there is no Worker script. `-c wrangler.toml` is optional once that file exists at
+the root; keep it if a future host image starts Wrangler from another directory.
+
+The `name` field must match the Cloudflare project. If the dashboard project was created under a
+different name, change the dashboard name to `thinking-machine-observatory` or change the config
+to match — do not leave them split.
+
+Classic Pages Git integration that uploads a build output directory, without a Wrangler deploy
+command, still uses `apps/observatory/dist` and `_headers`. That path does not need `wrangler.toml`.
 
 ## Release smoke
 
@@ -56,6 +84,8 @@ browser/runtime cache and are outside the application service worker.
 
 ## Host references
 
+- [Cloudflare Workers static assets](https://developers.cloudflare.com/workers/static-assets/)
+- [Cloudflare Workers headers](https://developers.cloudflare.com/workers/static-assets/headers/)
 - [Cloudflare Pages custom headers](https://developers.cloudflare.com/pages/configuration/headers/)
 - [Cloudflare Pages serving and caching behaviour](https://developers.cloudflare.com/pages/configuration/serving-pages/)
 - [Cloudflare Pages limits](https://developers.cloudflare.com/pages/platform/limits/)

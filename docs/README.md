@@ -10,7 +10,7 @@ implementation boundary or measured result.
 | ----------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | Visitor or learner      | [User guide](user-guide.md)                                  | [Privacy](../PRIVACY.md), [scientific rules](05-scientific-integrity-and-interpretability-rules.md)       |
 | Developer               | [Developer guide](developer-guide.md)                        | [Architecture](architecture/README.md), [contributing](../CONTRIBUTING.md)                                |
-| Coding agent            | [Agent operating contract](../AGENTS.md)                     | newest [implementation review](implementation/06-post-phase-5-review.md)                                  |
+| Coding agent            | [Agent operating contract](../AGENTS.md)                     | newest [implementation handover](implementation/06-cloudflare-workspace-deploy.md)                        |
 | Release reviewer        | [Generated evidence summary](../release-evidence/summary.md) | [readiness contract](implementation/05-phase-05-readiness.md), [deployment](deployment/static-release.md) |
 | Model-evidence reviewer | [Model verification boundary](../model-tools/README.md)      | [scientific rules](05-scientific-integrity-and-interpretability-rules.md)                                 |
 
@@ -31,6 +31,8 @@ instrument, browser or release criterion. Only the named evidence profile can do
 - `architecture/` explains package boundaries, runtime flow, replay integrity and static release.
 - `implementation/00-five-phase-plan.md` records the delivery sequence.
 - `implementation/05-session-05-handover.md` records the completed Phase 5 source and local gates.
+- `implementation/06-cloudflare-workspace-deploy.md` records the Wrangler workspace-root deploy
+  target; it does not rebind the Phase 5 candidate.
 - `implementation/06-post-phase-5-review.md` is the post-candidate engineering review: split
   evidence, remaining launch blockers and owner decisions.
 - `deployment/static-release.md` is the host-neutral build, smoke and rollback runbook.

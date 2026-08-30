@@ -60,6 +60,11 @@ documentation map, fresh-agent start and handover rules, corrected three-engine 
 and present-tense Phase 5/evidence wording. That change did not alter the built application,
 dependency lock, evidence manifest or accepted release claims.
 
+A later Cloudflare Pages / Workers Builds deploy failed after a successful production build:
+Wrangler 4.x application detection refuses to guess a package at the pnpm workspace root. That
+host-target repair is recorded in [session 06](06-cloudflare-workspace-deploy.md) and does not
+rebind this candidate.
+
 The first published quality job exposed a shallow-checkout integration issue: `phase5:verify`
 correctly asks Git for the earlier candidate, but the default checkout contained only the PR head.
 The quality job now fetches full history before verifying candidate ancestry and lockfile contents.

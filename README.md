@@ -8,14 +8,14 @@ A local-first scientific instrument for inspecting next-token prediction, changi
 
 ## Start here
 
-| I want to…                          | Read or run                                                 |
-| ----------------------------------- | ----------------------------------------------------------- |
-| try the two-minute teaching loop    | [User guide](docs/user-guide.md)                            |
-| understand what the evidence means  | [Scientific status](#scientific-status)                     |
-| make a code or documentation change | [Developer guide](docs/developer-guide.md)                  |
-| start a fresh coding-agent session  | [Agent operating contract](AGENTS.md)                       |
-| review release readiness            | [Generated release evidence](release-evidence/summary.md)   |
-| deploy or roll back the static app  | [Static release runbook](docs/deployment/static-release.md) |
+| I want to…                          | Read or run                                                                                |
+| ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| try the two-minute teaching loop    | [User guide](docs/user-guide.md)                                                           |
+| understand what the evidence means  | [Scientific status](#scientific-status)                                                    |
+| make a code or documentation change | [Developer guide](docs/developer-guide.md)                                                 |
+| start a fresh coding-agent session  | [Agent operating contract](AGENTS.md)                                                      |
+| review release readiness            | [Generated release evidence](release-evidence/summary.md)                                  |
+| deploy or roll back the static app  | [Static release runbook](docs/deployment/static-release.md) (`wrangler.toml` at repo root) |
 
 ## Current instrument
 
